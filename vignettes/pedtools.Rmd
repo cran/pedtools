@@ -1,0 +1,437 @@
+---
+title: "Introduction to the pedtools package"
+author: "Magnus Dehli Vigeland"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Introduction to the pedtools package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(kableExtra)
+```
+
+The purpose of this vignette is to show how to work with pedigrees and marker data in `pedtools`. To obtain the latest version of the package I recommend installing it from GitHub as follows:
+```{r, eval = FALSE}
+ # First install devtools if needed
+if(!require(devtools)) install.packages("devtools")
+
+# Install pedtools from github
+devtools::install_github("magnusdv/pedtools")
+```
+
+Now you should be able to load `pedtools`.
+```{r message=FALSE}
+library(pedtools)
+```
+
+
+# Pedigrees
+In `pedtools` and all related packages, pedigrees are stored as `ped` objects. We start by explaining briefly what these objects look like, and their basic constructor. If you are reading this vignette simply to learn how to create a particular pedigree, you may want to skip ahead to section 1.3 where we describe practical shortcuts to common pedigree structures.
+
+## The `ped` class
+
+**The `ped` constructor function**  
+The most direct way to create a pedigree in `pedtools` is with the `ped()` constructor. This takes as input 4 vectors of equal length:
+
+* `id` : individual ID labels (numeric or character)
+* `fid` : id of the fathers (0 if not included)
+* `mid` : id of the mothers (0 if not included)
+* `sex` : gender codes, with entries 0 (unknown), 1 (male) or 2 (female)
+
+In other words, the j'th pedigree member has label `id[j]`, father `fid[j]`, mother `mid[j]`, and gender given by `sex[j]`.
+
+For example, the following creates a family _trio_, i.e. father, mother and child:
+
+```{r}
+ped(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,2))
+```
+
+In this example the child (`id=3`) is female, since the associated entry in `sex` is 2. Note that missing parents are printed as `*`. Individuals without parents are called _founders_ of the pedigree, while the _nonfounders_ have both parents specified. It is not allowed to have exactly one parent. 
+
+Instead of numerical labels as above, we could have used character strings. Let us create the trio again, with more informative labels, and store it in a variable named `trio`.
+```{r}
+trio = ped(id = c("fa", "mo", "girl"), fid = c("","","fa"), mid = c("","","mo"), sex = c(1,2,2))
+trio
+```
+The special strings `"0"`, `""` and `NA` are all interpreted as a missing parent.
+
+**The internal structure of `ped` objects**  
+From the way it is printed, the object `trio` appears to be a data frame, but this is not exactly true. Rather it is an object of class `ped`, which is basically a list. We can see the actual content of `trio` by unclassing it:
+```{r}
+unclass(trio)
+```
+
+In most cases it is not recommended for regular users to interact directly with the internal slots of a `ped`, since this can have unfortunate consequences unless you know exactly what you are doing. Instead, one should use accessor functions like `relabel()`, `parents()` and `getSex()`. The most important accessors are described within this vignette, while others are documented in the help page `?ped_utils`.
+
+## Basic pedigree plots
+To plot a pedigree, simply use `plot()`.
+
+```{r eval=FALSE}
+plot(trio)
+```
+
+```{r echo=FALSE, fig.dim = c(2,2)}
+plot(trio, margins = c(1,1,1,1))
+```
+
+Several options are available for controlling the appearance of individual pedigree members and the plot as a whole. A complete overview can be found in the documentation `?plot.ped`, but a quick example should get you started:
+
+```{r eval=FALSE}
+plot(trio, deceased = "fa", starred = "mo", shaded = "girl", 
+     col = c("green", "red", "blue"), title = "Trio 1")
+```
+```{r echo=FALSE, fig.dim = c(2,2)}
+plot(trio, deceased = "fa", starred = "mo", shaded = "girl", 
+     col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,1.5,1))
+```
+
+
+## Built-in pedigree structures {#builtin}
+Rather than using the `ped()` function directly, it is usually quicker and safer to build pedigrees step by step, applying the arsenal of utility functions offered by `pedtools`. A typical workflow is as follows:
+
+1. Choose one of the basic pedigree structures as starting point.
+1. Add/remove individuals as needed.
+1. Modify attributes like genders and labels.
+
+You will find several examples below, but first let us list the available tools for each of the 3 steps. 
+
+**Basic pedigrees**  
+The following pedigree structures serve as starting points for pedigree constructions. For parameters and details, see `?ped_basic`.
+
+* `singleton()`, a pedigree consisting of a single individual
+* `nuclearPed()`, a nuclear pedigree (parents+children)
+* `halfSibPed()`, two sibships with one parent in common
+* `linearPed()`, a straight line of successors
+* `cousinPed()`, cousins of specified degree/removal
+* `halfCousinPed()`, half cousins of specified degree/removal
+
+There are also more specialized structures, including double cousins and breeding schemes like consecutive matings between full siblings. Look them up in `?ped_complex` if you are interested.
+
+**Add/remove/extract individuals**  
+The functions below are used to modify an existing `ped` object by adding/removing individuals, or extracting a sub-pedigree. For details, see `?ped_modify`.
+
+* `addChildren()`, with special cases `addSon()` and `addDaughter()`
+* `addParents()`
+* `removeIndividuals()`
+* `branch()` 
+* `subset()`
+
+**Edit labels and attributes**  
+The following functions modify various attributes of a `ped` object. See `?ped_modify` for parameters and details. 
+
+* `swapSex()`
+* `relabel()`
+* `setFamid()` 
+
+## Examples of pedigree construction
+### Example 1: Trio {-}
+As our first example we will recreate the `trio` pedigree without using the `ped()` constructor. To give a hint of the flexibility, we show 3 alternative ways to code this.
+
+**Alternative A**  
+The obvious starting point is `nuclearPed()`, with `nch=1` to indicate 1 child. By default, this creates a trio with numeric labels (father=1; mother=2; child=3) and a male child. Hence we fix the gender with `swapSex()`, and edit the labels with `relabel()`:
+
+```{r}
+trio2 = nuclearPed(nch = 1)
+trio2 = swapSex(trio2, id = 3)
+trio2 = relabel(trio2, new = c("fa", "mo", "girl"))
+```
+
+**Alternative B (quickest and best)**  
+The previous approach can be condensed into a one-liner, since `nuclearPed()` allows an alternative syntax in which child genders and labels are specified directly:
+```{r}
+trio3 = nuclearPed(father = "fa", mother = "mo", children = "girl", sex = 2)
+```
+
+**Alternative C**  
+Here is another possibility. We start by creating the father as a singleton, and then add the daughter:
+```{r}
+trio4 = singleton("fa")
+trio4 = addDaughter(trio4, parent = "fa", id = "girl")
+trio4 = relabel(trio4, old = "NN_1", new = "mo")
+```
+
+Note that `addDaughter()` automatically created the mother as "NN_1", so we needed to relabel her.  
+
+### Example 2: An inbred child {-}
+This time we will create this inbred family:
+
+```{r echo=FALSE}
+x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
+x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
+plot(x1, margin = c(1,1,1,1))
+```
+
+**Alternative A**  
+One approach is to first create individuals 1-6 as half sibships, with 1 child on the left side, and 2 children on the right. After this, we use `addChildren()` to add the inbred child.
+```{r}
+x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
+x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
+```
+
+**Alternative B**  
+We could also view the half siblings 4 and 5 as half cousins of degree 0. The `halfCousinPed()` function accepts an option `child = TRUE` adding an inbred child. The labels will be different with this approach, so you should plot the pedigree after each command to see who-is-who. Also, we must relabel in the end.
+
+```{r}
+x2 = halfCousinPed(0, child = T)
+x2 = addChildren(x2, father = 1, mother = 4, nch = 1)
+x2 = relabel(x2, old = c(4,3,7,6), new = c(3,4,6,7))
+```
+
+**A note about the order of pedigree members**  
+
+Although both `x1` and `x2` reproduce exactly the plot shown above, they are not identical objects: 
+```{r}
+identical(x1, x2)
+```
+
+The reason is the *order* in which the individuals are stored. For `x1` the ordering is the natural sequence `1,2,3,4,5,6,7`, but for `x2` our construction process has produced a slightly different order:
+```{r}
+x2
+```
+
+The internal ordering is usually of little importance in applications.[^2] However, if you get annoyed by "wrong" orderings such as for `x2` above, you can use `reorderPed()` to permute the pedigree any way you like. In fact, the default action of this function is to permute into the natural order of the labels, which is exactly what we need to make `x2` identical to `x1`:
+
+[^2]: There is an important exception to this: Certain algorithms in pedigree analysis work "top-down", in the sense that parents must be treated before their children. For this reason, many implementations require, for simplicity, that the individuals are stored in this fashion, i.e. that parents always precede their children. `pedtools` offers a special reordering function to ensure this, `parents_before_children()`, which you will find utilised in the source code of packages like `ribd` and `ibdsim2`.
+
+```{r}
+x2 = reorderPed(x2)
+identical(x1, x2)
+```
+
+### Example 3: A family tree
+For our final example we consider the family tree of a single person going back 3 generations:
+
+```{r echo = FALSE, fig.width = 2.5, fig.width = 4}
+y1 = linearPed(3, sex = 1) # male line 
+y2 = linearPed(2, sex = 2) # female line
+
+y2 = relabel(y2, c(11:14, 6)) # relabel to match only for ID = 6
+
+y = mergePed(y1, y2)
+plot(y, id=NULL, margins=c(0,1,1,1), symbolsize=0.9)
+```
+
+We _could_ do this by starting with the bottom trio, followed by a series of calls to `addParents()`. Instead we will use it as a showcase for the `mergePed()` function. This powerful function is based on a simple idea: Given two pedigrees, "glue together" members with matching ID labels, and check that the result is a valid pedigree. 
+
+When creating the parts that are to be merged, it is usually best to keep the overlap minimal. In our code below we chose the mother to be the single point of contact. To understand the relabelling, plot `y1` and `y2` after each command.
+
+```{r eval=FALSE}
+y1 = linearPed(3, sex = 1) # male line 
+y2 = linearPed(2, sex = 2) # female line
+
+y2 = relabel(y2, c(11:14, 6)) # relabel to match at ID = 6
+
+y = mergePed(y1, y2)
+plot(y)
+```
+
+## Pedigree subsets
+Pedtools offers a range of utility functions for identifying subsets of pedigree members. These come in two flavours: 1) members with certain _global_ property, and 2) members with a certain relationship to a given individual.
+
+**Pedigree members with a certain property**  
+Each of the following functions returns a vector specifying the members with the given property. 
+
+* `founders()`
+* `nonfounders()`
+* `leaves()`
+* `males()`
+* `females()`
+* `typedMembers()`
+* `untypedMembers()`
+
+By default, the output of these functions is a character vector containing ID labels. However, adding the option `internal = TRUE` will give you an integer vector instead, reporting the internal indices of the members. This is frequently used in the source code of `pedtools`, but is usually not intended for end users of the package.
+
+**Relatives of a given individual**  
+The functions below take as input a `ped` object and the label of a single member. They return a vector of all members with the given relation to that individual.
+
+* `father()`
+* `mother()`
+* `parents()`
+* `grandparents()`
+* `children()`
+* `spouses()`
+* `siblings()`
+* `cousins()`
+* `nephews_nieces()`
+* `ancestors()`
+* `descendants()`
+* `unrelated()`
+
+# Markers
+
+The other main theme of the `pedtools` package (_pedigrees_ being the first) are marker genotypes. 
+
+## Creating marker objects
+Marker objects created with the `marker()` function. For example, the following command makes an empty marker  associated with the `trio` pedigree:
+```{r}
+marker(trio)
+```
+As shown in the output, the marker is indeed empty: All pedigree members have missing genotypes, and there is no assigned name or chromosome/position. Furthermore, the last lines show that there is only one allele (named "1"), with frequency 1. For a more interesting example, let us make a SNP named "snp1", with alleles "A" and "B". The father is homozygous "A/A", while the mother is heterozygous. We store it in a variable `m1` for later use.
+```{r}
+m1 = marker(trio, fa = "A", mo = c("A","B"), name = "snp1")
+```
+This illustrates several points. Firstly, individual genotypes are specified using the ID labels. For homozygous genotypes it suffices to write the allele once. Furthermore, the different alleles occurring in the genotypes is interpreted as the complete set of alleles for the marker. Finally, these are assigned equal frequencies. Of course, this behaviour can be overridden, by declaring alleles and frequencies explicitly:
+```{r}
+marker(trio, fa = "A", mo = c("A","B"), alleles = c("A","B","C"), afreq = c(.2,.3,.5))
+```
+The markers chromosome can be declared using the `chrom` argument, and similarly its position by `posMb` (megabases) and/or `posCm` (centiMorgan). Markers with unknown chromosome are treated as autosomal. To define an X-linked marker, put `chrom=23`. the fact that males are hemizygous on X (i.e. they have only one allele) is reflected in the printout of such markers:
+
+```{r}
+m2 = marker(trio, fa = "A", mo = c("A","B"), chrom = 23, name = "snpX")
+```
+
+A side note: It may come as a surprise that you don't need quotes around the ID labels (which are characters!) in the above commands. This is because `marker()` uses _non-standard evaluation (NSE)_, a peculiarity of the R language which often leads to less typing and more readable code.[^1] Unfortunately, this doesn't work with numerical ID labels. Thus to assign a genotype to someone labelled "1" you need quotes, as in `marker(trio, "1"="A")`.
+
+[^1]: You may have come across NSE before, for instance when using `subset()` on a data.frame. To learn more about NSE, I highly recommend this book chapter by Hadley Wickham:  
+<http://adv-r.had.co.nz/Computing-on-the-language.html>
+
+
+## Plotting pedigrees with marker data
+Including marker data in a pedigree plot is straightforward:
+
+```{r, eval=FALSE}
+plot(trio, marker = m1)
+```
+
+```{r, echo=FALSE, fig.dim=c(2,2)}
+plot(trio, marker = m1, margins = c(1,1,1,1))
+```
+
+The appearance of the genotypes can be tweaked in various ways, as documented in `?plot.ped`. Here's an example:
+```{r, eval=FALSE}
+plot(trio, marker = m1, sep = "", skip.empty.genotypes = T)
+```
+
+```{r, echo=FALSE, fig.dim=c(2,2)}
+plot(trio, marker = m1, sep = "", skip.empty.genotypes = T, margins = c(1,1,1,1))
+```
+
+## Markers attached to `ped` objects
+Although a `ped` object is needed in the creation of a `marker`, the two are independent of each other once the marker is created. In many applications it is useful to _attach_ markers to their `ped` object. In particular for bigger projects with many markers, this makes it easier to manipulate the dataset as a unit. 
+
+To attach a marker `m` (which could be a list of several markers) to a pedigree `x`, there are two options:
+
+* `setMarkers(x, m)`
+* `addMarkers(x, m)`
+
+The difference between these is that `setMarkers()` replaces all existing markers, while `addMarkers()` appends `m` to the existing ones. In our `trio` example the two are equivalent since there are no existing markers.
+```{r}
+trio = setMarkers(trio, list(m1, m2))
+trio
+```
+
+**Selecting and removing attached markers**  
+Four closely related functions functions are useful for manipulating markers attached to a `ped` object:
+
+* `selectMarkers()`, returns a `ped` object where only the indicated markers are retained
+* `removeMarkers()`, returns a `ped` object where the indicated markers are removed
+* `getMarkers()`, returns a list of the indicated markers
+* `whichMarkers()`, returns the indices of the indicated markers
+
+All of these have exactly the same arguments, described in more detail in `?marker_select`. Let us do a couple of examples here. Recall that by now, our `trio` has two attached markers; the first is called "snp1", and the other is on the X chromosome (`chrom = 23`).
+```{r}
+whichMarkers(trio, chrom = 23)
+selectMarkers(trio, markers = "snp1")
+```
+
+## Accessing and modifying individual markers
+Internally, a marker object is stored as a matrix with two columns (one for each allele) and one row for each pedigree member. The matrix is numeric (for computational convenience) while the allele labels and other meta information are added as _attributes_. The most important of these are:
+
+* `alleles` : The allele labels, stored as a character vector.
+* `afreq` : The allele frequencies, in the same order as the alleles. An error is issued if the frequencies do not sum to 1 after rounding to 3 decimals.
+* `name` : The marker name, which can be any character string not consisting solely of digits.
+* `chrom` : The chromosome name. This can be given as an integer, but is always converted to character. The special values "23" and "X" are recognized as the human X chromosome, which affects the way genotypes are printed.
+* `posMb` : Chromosomal position given in megabases.
+* `posCm` : Chromosomal position given in centiMorgan.
+
+In addition to those listed above, there are two more attributes: `pedmembers` and `sex`. They store the ID labels and genders of the pedigree associated with the marker, and are only used to empower the printing method of marker objects.
+
+**Marker accessor functions**  
+For each marker attribute listed above, there is a corresponding function with the same name for retrieving its content. These functions take as input either a `marker` object, or a `ped` object together with the name (or index) of an attached marker. This may sound a bit confusing, but a few examples will make it clear! 
+
+Recall that our marker "snp1" exists in two copies: One is stored in the variable `m1`, while the other is attached to `trio`. In both cases we can extract the allele frequencies with the function `afreq()`.
+
+```{r}
+afreq(m1)
+afreq(trio, marker = "snp1")
+```
+
+We can also _modify_ the frequencies using this syntax. To avoid confusion about the allele order, the frequencies must be named with the allele labels (just as in the output of `afreq()` above). 
+
+```{r}
+afreq(trio, marker = "snp1") = c(A = 0.9, B = 0.1)
+```
+
+In addition to the functions getting and setting marker attributes, there is one more important marker accessor, namely `genotype()`. This returns the genotype of a specified individual, and can also be used to modify genotypes. As the others, it can be applied to marker objects directly, or to pedigrees with attached markers. Here we show a few examples of the latter type:
+
+```{r}
+genotype(trio, "snpX", id = "girl")
+genotype(trio, "snpX", id = "girl") = "A"
+trio
+```
+
+## Getting/setting/modifying many markers simultaneously
+Several functions in `pedtools` are indented for modifying many (or all) markers at the same time. Their purpose and typical use cases are summarised in the table below. The argument `x` always denotes a `ped` object.
+```{r getset, echo = FALSE}
+getters.df = rbind(
+  c("`getAlleles(x)`", 
+    "extract all alleles as a matrix.", 
+    "do summary stats on the marker alleles"),
+  c("`getFrequencyDatabase(x)`", 
+    "extract allele frequencies as a data.frame in *allelic ladder* format.", 
+    "transfer to other objects, or write the database to a file"),
+  c("`getMarkers(x)`", 
+    "extract list of marker objects. Each marker is a `N * 2` allele matrix (`N = pedsize(x)`) with locus annotations as attributes", 
+    "do computations")
+)
+
+setters.df = rbind(
+  c("`setAlleles(x, ...)`", 
+    "replace the genotypes of `x` without changing the locus attributes.", 
+    "erase all genotypes"),
+  c("`setFrequencyDatabase(x, db)`", 
+    "replace all allele frequencies without changing the genotype data. The input is a data.frame in *allelic ladder* format. Conceptually equivalent to `setMarkers(x, alleleMatrix = getAlleles(x), locusAnnotations = db)`.", 
+    "change the frequency database"),
+  c("`setMarkers(x, ...)`", 
+    "attach marker objects with or without genotype data. Locus attributes are indicated as a list; genotypes as a matrix or data.frame.", 
+    "prepare joint manipulation of a pedigree and marker data")
+)
+
+conversions.df = rbind(
+  c("`as.data.frame(x)`", 
+    "convert `x` to a data.frame, with pedigree columns in standard format followed by genotype columns. One column per marker, with genotype format `a/b` and missing alleles indicated as `-`.", 
+    "pretty-print ped objects"),
+  c("`as.matrix(x)`", 
+    "convert `x` to a *numerical* matrix, with additional info attached as attributes.", 
+    "modify a pedigree with marker data")
+)
+
+other.df = rbind(
+  c("`transferMarkers(from, to)`", 
+    "transfer genotypes and attributes between pedigree objects (or lists of such).", 
+    "transfer simulated marker data")
+)
+
+getset.df = rbind(getters.df, setters.df, conversions.df, other.df)
+tbl.getset = kable(getset.df, 
+            col.names = c("Use ...", "When you want to ...", "For example to ..."))
+tbl.getset = column_spec(tbl.getset, 1, width = "5cm")
+tbl.getset = column_spec(tbl.getset, 2, width = "8cm")
+tbl.getset = pack_rows(tbl.getset, "Get", 1, 3, indent = F)
+tbl.getset = pack_rows(tbl.getset, "Set", 4, 6, indent = F)
+tbl.getset = pack_rows(tbl.getset, "Convert", 7, 8, indent = F)
+tbl.getset = pack_rows(tbl.getset, "Transfer", 9, 9, indent = F)
+tbl.getset
+```
+
