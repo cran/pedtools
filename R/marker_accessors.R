@@ -147,6 +147,12 @@ mutmod.ped = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
+mutmod.list = function(x, marker, ...) {
+  mutmod(x[[1]], marker = marker)
+}
+
+#' @rdname marker_getset
+#' @export
 `mutmod<-` = function(x, ..., value) {
   UseMethod("mutmod<-")
 }
@@ -158,11 +164,21 @@ mutmod.ped = function(x, marker, ...) {
     stop2("Package `pedmut` must be installed in order to include mutation models")
 
   if(is.null(value))
-    attr(x, 'mutmod') = NULL
-  else {
-    als = alleles(x)
-    attr(x, 'mutmod') = pedmut::mutationModel(model = value, alleles = als)
+    mdl = NULL
+  else if(inherits(value, "mutationModel"))
+    mdl = value
+  else if(is.list(value)) {
+    value$alleles = alleles(x)
+    value$afreq = afreq(x)
+    mdl = do.call(pedmut::mutationModel, value)
   }
+  else
+    stop2("Mutation model replacement must be either:\n",
+          "  * NULL\n",
+          "  * a `mutationModel` object\n",
+          "  * a list of arguments to be passed onto `pedmut::mutationModel()`")
+  attr(x, 'mutmod') = mdl
+
   x
 }
 
@@ -171,11 +187,20 @@ mutmod.ped = function(x, marker, ...) {
 `mutmod<-.ped` = function(x, marker, ..., value) {
   if(missing(marker) || length(marker) == 0)
     stop2("Argument `marker` cannot be empty")
-  if(length(marker) > 1)
-    stop2("Mutation model replacement can only be done for a single marker")
 
   idx = whichMarkers(x, markers = marker)
-  mutmod(x$MARKERS[[idx]]) = value
+  for(i in idx)
+    mutmod(x$MARKERS[[i]]) = value
+
+  x
+}
+
+#' @rdname marker_getset
+#' @export
+`mutmod<-.list` = function(x, marker, ..., value) {
+  for(i in seq_along(x))
+    mutmod(x[[i]], marker) = value
+
   x
 }
 
@@ -306,66 +331,17 @@ name.marker = function(x, ...) {
 #' @export
 name.ped = function(x, markers, ...) {
   mlist = getMarkers(x, markers = markers)
-  vapply(mlist, name, character(1))
+  vapply(mlist, name.marker, character(1))
 }
 
 #' @rdname marker_getset
 #' @export
-chrom = function(x, ...) {
-  UseMethod("chrom")
+name.list = function(x, markers, ...) {
+  comp_wise = lapply(x, name.ped, markers = markers)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `name()` differs between pedigree components")
+  comp_wise[[1]]
 }
-
-#' @rdname marker_getset
-#' @export
-chrom.marker = function(x, ...) {
-  attr(x, 'chrom')
-}
-
-#' @rdname marker_getset
-#' @export
-chrom.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, chrom, character(1))
-}
-
-#' @rdname marker_getset
-#' @export
-posMb = function(x, ...) {
-  UseMethod("posMb")
-}
-
-#' @rdname marker_getset
-#' @export
-posMb.marker = function(x, ...) {
-  as.numeric(attr(x, 'posMb'))
-}
-
-#' @rdname marker_getset
-#' @export
-posMb.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, posMb, numeric(1))
-}
-
-#' @rdname marker_getset
-#' @export
-posCm = function(x, ...) {
-  UseMethod("posCm")
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.marker = function(x, ...) {
-  as.numeric(attr(x, 'posCm'))
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, posCm, numeric(1))
-}
-
 
 ### name setter
 #' @rdname marker_getset
@@ -410,6 +386,41 @@ posCm.ped = function(x, markers, ...) {
   x
 }
 
+#' @rdname marker_getset
+#' @export
+`name<-.list` = function(x, markers, ..., value) {
+  lapply(x, function(cmp) `name<-.ped`(cmp, markers = markers, value = value))
+}
+
+
+#' @rdname marker_getset
+#' @export
+chrom = function(x, ...) {
+  UseMethod("chrom")
+}
+
+#' @rdname marker_getset
+#' @export
+chrom.marker = function(x, ...) {
+  attr(x, 'chrom')
+}
+
+#' @rdname marker_getset
+#' @export
+chrom.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers = markers)
+  vapply(mlist, chrom.marker, character(1))
+}
+
+#' @rdname marker_getset
+#' @export
+chrom.list = function(x, markers, ...) {
+  comp_wise = lapply(x, chrom.ped, markers = markers)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `chrom()` differs between pedigree components")
+  comp_wise[[1]]
+}
+
 ### chrom setter
 #' @rdname marker_getset
 #' @export
@@ -449,6 +460,53 @@ posCm.ped = function(x, markers, ...) {
   })
   x
 }
+
+#' @rdname marker_getset
+#' @export
+`chrom<-.list` = function(x, markers, ..., value) {
+  lapply(x, function(cmp) `chrom<-.ped`(cmp, markers = markers, value = value))
+}
+
+#' @rdname marker_getset
+#' @export
+posMb = function(x, ...) {
+  UseMethod("posMb")
+}
+
+#' @rdname marker_getset
+#' @export
+posMb.marker = function(x, ...) {
+  as.numeric(attr(x, 'posMb'))
+}
+
+#' @rdname marker_getset
+#' @export
+posMb.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers = markers)
+  vapply(mlist, posMb, numeric(1))
+}
+
+#' @rdname marker_getset
+#' @export
+posCm = function(x, ...) {
+  UseMethod("posCm")
+}
+
+#' @rdname marker_getset
+#' @export
+posCm.marker = function(x, ...) {
+  as.numeric(attr(x, 'posCm'))
+}
+
+#' @rdname marker_getset
+#' @export
+posCm.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers = markers)
+  vapply(mlist, posCm, numeric(1))
+}
+
+
+
 
 ### posCm setter
 

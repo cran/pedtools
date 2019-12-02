@@ -13,7 +13,7 @@
 
 <meta name="author" content="Magnus Dehli Vigeland" />
 
-<meta name="date" content="2019-10-09" />
+<meta name="date" content="2019-12-02" />
 
 <title>Introduction to the pedtools package</title>
 
@@ -30,9 +30,9 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -42,14 +42,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -58,9 +60,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -313,7 +315,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Introduction to the pedtools package</h1>
 <h4 class="author">Magnus Dehli Vigeland</h4>
-<h4 class="date">2019-10-09</h4>
+<h4 class="date">2019-12-02</h4>
 
 
 <div id="TOC">
@@ -335,14 +337,14 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </ul>
 </div>
 
-<p>The purpose of this vignette is to show how to work with pedigrees and marker data in <code>pedtools</code>. To obtain the latest version of the package I recommend installing it from GitHub as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"> <span class="co"># First install devtools if needed</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(devtools)) <span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</a>
-<a class="sourceLine" id="cb1-3" title="3"></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co"># Install pedtools from github</span></a>
-<a class="sourceLine" id="cb1-5" title="5">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;magnusdv/pedtools&quot;</span>)</a></code></pre></div>
+<p>The purpose of this vignette is to show how to work with pedigrees and marker data in <code>pedtools</code>.</p>
+<p>The following command installs the current CRAN version of the package:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;pedtools&quot;</span>)</span></code></pre></div>
+<p>Alternatively, you may want the latest development version from GitHub:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># install.packages(&quot;devtools&quot;) # install devtools if needed</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;magnusdv/pedtools&quot;</span>)</span></code></pre></div>
 <p>Now you should be able to load <code>pedtools</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(pedtools)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(pedtools)</span></code></pre></div>
 <div id="pedigrees" class="section level1">
 <h1><span class="header-section-number">1</span> Pedigrees</h1>
 <p>In <code>pedtools</code> and all related packages, pedigrees are stored as <code>ped</code> objects. We start by explaining briefly what these objects look like, and their basic constructor. If you are reading this vignette simply to learn how to create a particular pedigree, you may want to skip ahead to section 1.3 where we describe practical shortcuts to common pedigree structures.</p>
@@ -358,60 +360,61 @@ The most direct way to create a pedigree in <code>pedtools</code> is with the <c
 </ul>
 <p>In other words, the j’th pedigree member has label <code>id[j]</code>, father <code>fid[j]</code>, mother <code>mid[j]</code>, and gender given by <code>sex[j]</code>.</p>
 <p>For example, the following creates a family <em>trio</em>, i.e. father, mother and child:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">ped</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">fid =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">mid =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>), <span class="dt">sex =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt;  id fid mid sex</span></a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;   1   *   *   1</span></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt;   2   *   *   2</span></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt;   3   1   2   2</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">ped</span>(<span class="dt">id =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">fid =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">mid =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>), <span class="dt">sex =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt;  id fid mid sex</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt;   1   *   *   1</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt;   2   *   *   2</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt;   3   1   2   2</span></span></code></pre></div>
 <p>In this example the child (<code>id=3</code>) is female, since the associated entry in <code>sex</code> is 2. Note that missing parents are printed as <code>*</code>. Individuals without parents are called <em>founders</em> of the pedigree, while the <em>nonfounders</em> have both parents specified. It is not allowed to have exactly one parent.</p>
 <p>Instead of numerical labels as above, we could have used character strings. Let us create the trio again, with more informative labels, and store it in a variable named <code>trio</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">trio =<span class="st"> </span><span class="kw">ped</span>(<span class="dt">id =</span> <span class="kw">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>), <span class="dt">fid =</span> <span class="kw">c</span>(<span class="st">&quot;&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;fa&quot;</span>), <span class="dt">mid =</span> <span class="kw">c</span>(<span class="st">&quot;&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;mo&quot;</span>), <span class="dt">sex =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb4-2" title="2">trio</a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt;    id fid mid sex</span></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;    fa   *   *   1</span></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt;    mo   *   *   2</span></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt;  girl  fa  mo   2</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>trio =<span class="st"> </span><span class="kw">ped</span>(<span class="dt">id =</span> <span class="kw">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>), <span class="dt">fid =</span> <span class="kw">c</span>(<span class="st">&quot;&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;fa&quot;</span>), <span class="dt">mid =</span> <span class="kw">c</span>(<span class="st">&quot;&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;mo&quot;</span>), <span class="dt">sex =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb5-2"><a href="#cb5-2"></a>trio</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt;    id fid mid sex</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt;    fa   *   *   1</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt;    mo   *   *   2</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt;  girl  fa  mo   2</span></span></code></pre></div>
 <p>The special strings <code>&quot;0&quot;</code>, <code>&quot;&quot;</code> and <code>NA</code> are all interpreted as a missing parent.</p>
 <p><strong>The internal structure of <code>ped</code> objects</strong><br />
 From the way it is printed, the object <code>trio</code> appears to be a data frame, but this is not exactly true. Rather it is an object of class <code>ped</code>, which is basically a list. We can see the actual content of <code>trio</code> by unclassing it:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">unclass</span>(trio)</a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; $ID</span></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; [1] &quot;fa&quot;   &quot;mo&quot;   &quot;girl&quot;</span></a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; $FIDX</span></a>
-<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; [1] 0 0 1</span></a>
-<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-8" title="8"><span class="co">#&gt; $MIDX</span></a>
-<a class="sourceLine" id="cb5-9" title="9"><span class="co">#&gt; [1] 0 0 2</span></a>
-<a class="sourceLine" id="cb5-10" title="10"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-11" title="11"><span class="co">#&gt; $SEX</span></a>
-<a class="sourceLine" id="cb5-12" title="12"><span class="co">#&gt; [1] 1 2 2</span></a>
-<a class="sourceLine" id="cb5-13" title="13"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-14" title="14"><span class="co">#&gt; $FAMID</span></a>
-<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt; [1] &quot;&quot;</span></a>
-<a class="sourceLine" id="cb5-16" title="16"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-17" title="17"><span class="co">#&gt; $UNBROKEN_LOOPS</span></a>
-<a class="sourceLine" id="cb5-18" title="18"><span class="co">#&gt; [1] FALSE</span></a>
-<a class="sourceLine" id="cb5-19" title="19"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-20" title="20"><span class="co">#&gt; $LOOP_BREAKERS</span></a>
-<a class="sourceLine" id="cb5-21" title="21"><span class="co">#&gt; NULL</span></a>
-<a class="sourceLine" id="cb5-22" title="22"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-23" title="23"><span class="co">#&gt; $FOUNDER_INBREEDING</span></a>
-<a class="sourceLine" id="cb5-24" title="24"><span class="co">#&gt; NULL</span></a>
-<a class="sourceLine" id="cb5-25" title="25"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-26" title="26"><span class="co">#&gt; $MARKERS</span></a>
-<a class="sourceLine" id="cb5-27" title="27"><span class="co">#&gt; NULL</span></a></code></pre></div>
-<p>In most cases it is not recommended for regular users to interact directly with the internal slots of a <code>ped</code>, since this can have unfortunate consequences unless you know exactly what you are doing. Instead, one should use accessor functions like <code>relabel()</code>, <code>parents()</code> and <code>getSex()</code>. The most important accessors are described within this vignette, while others are documented in the help page <code>?ped_utils</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">unclass</span>(trio)</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co">#&gt; $ID</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt; [1] &quot;fa&quot;   &quot;mo&quot;   &quot;girl&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; </span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; $FIDX</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; [1] 0 0 1</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; </span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; $MIDX</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; [1] 0 0 2</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; </span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; $SEX</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; [1] 1 2 2</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; </span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt; $FAMID</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; [1] &quot;&quot;</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#&gt; </span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#&gt; $UNBROKEN_LOOPS</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#&gt; </span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="co">#&gt; $LOOP_BREAKERS</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="co">#&gt; NULL</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a><span class="co">#&gt; </span></span>
+<span id="cb6-23"><a href="#cb6-23"></a><span class="co">#&gt; $FOUNDER_INBREEDING</span></span>
+<span id="cb6-24"><a href="#cb6-24"></a><span class="co">#&gt; NULL</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a><span class="co">#&gt; </span></span>
+<span id="cb6-26"><a href="#cb6-26"></a><span class="co">#&gt; $MARKERS</span></span>
+<span id="cb6-27"><a href="#cb6-27"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+<p>In most cases it is not recommended for regular users to interact directly with the internal slots of a <code>ped</code>, since this can have unfortunate consequences unless you know exactly what you are doing. Instead, one should use accessor functions like <code>labels()</code>, <code>getMarkers()</code> and <code>founderInbreeding()</code>. The most important accessors are described within this vignette, while others are documented in the help page <code>?ped_utils</code>.</p>
 </div>
 <div id="basic-pedigree-plots" class="section level2">
 <h2><span class="header-section-number">1.2</span> Basic pedigree plots</h2>
 <p>To plot a pedigree, simply use <code>plot()</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">plot</span>(trio)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">plot</span>(trio)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAADoAAGYAOpAAZrY6AAA6kNtmAABmADpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///8NKk6TAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADAUlEQVR4nO2cC1PqMBSEQxWqKPVRC/r//6gNvRcVm6RNcrI5zu6MjlDYzde8O2PMh3IZdAFSRQC0CIAWAdAiAFoEQIsAaBEALQKg9ScBjE8Fi7YochZg5ecl9L3cXoRKAYz3ZegSHuBXirsSqgRYU6gaAeYzHMkVAqwoqeNtLMCq1q4KYP4KAXIrx6RFgBQRIOQhLmkAz7Ucn6+uCREgdK06gNomMgKELtQHsGrrogkAtB+ImbkXt3XX+2iAuS08bFMfuXa6/hruqUTs4u97ib0LpFoBLsWOerQYuVhc6r/8ywvypNf30P2DBn8CoP0JgPYnANqfAGh/b0BvzE7SP4s8Aac2ufhogL2ofx65A45bY5rXj25cESaAxAAct/ft2HptAWzyYHxNOVQD3e3YFzaHiGIE/Z06bsfA3t69fvwZRopTexsRYAFOdwdrGF8FcQC7y6/9+4O9+4PzHi7oA0NKG4oD2H/9mu6e+x6GAMahtHkuXgO/ANwDSgDgyytS6BoYxl507kaxSgZI7APW5tQmTMjJAImjkO0Dm0MXP46mA8TPA1nE1Sg6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAN0Acf9+uTJD0Npc/pBMETM27ldZc0r5FgsSsxWqhIKuigAcpiWzZDyLhkl4KgHwWJZNE7AkQAlLr2PhuPyOBEA7EqCAo/pRiADZ0vJ7KlkL6QdQvx/QvyPTvyeesVX2VOLaV99zoZ9HrGl8Mnc2jzycblWGoHcREQAtAqBFALQIgBYBvLqca5TlxLRZFaoBAjglBNAZs3ncHKaD0h5N86IMoDufD/cPoL1501YD05Fe3X+AnbomdD5azB7sNQHs1QH02gHU18DUB3q9AFejkEIAOw80T82rXgCrqSdIS64PZDmyNyyZGrCnC6YcdLtC3A+gRQC0CIAWAdAiAFoEQIsAaKkH+AQ7KM57aNZRYQAAAABJRU5ErkJggg==" /><!-- --></p>
-<p>Several options are available for controlling the appearance of individual pedigree members and the plot as a whole. A complete overview can be found in the documentation <code>?plot.ped</code>, but a quick example should get you started:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">plot</span>(trio, <span class="dt">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">shaded =</span> <span class="st">&quot;girl&quot;</span>, </a>
-<a class="sourceLine" id="cb7-2" title="2">     <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">title =</span> <span class="st">&quot;Trio 1&quot;</span>)</a></code></pre></div>
+<p>Under the hood, <code>pedtools::plot()</code> is an elaborate wrapper of the excellent plotting functionality of the <code>kinship2</code> package. Most of the possibilities provided by kinship2 are available from pedtools, and several features are added. An overview can be found in the documentation <code>?plot.ped</code>, but a quick example should get you started:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">plot</span>(trio, <span class="dt">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">shaded =</span> <span class="st">&quot;girl&quot;</span>, </span>
+<span id="cb8-2"><a href="#cb8-2"></a>     <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">title =</span> <span class="st">&quot;Trio 1&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYA/wA6AAA6AGY6ZrY6kJA6kNtmAABmADpmOgBmOjpmkLZmkNtmtrZmtv+QOgCQZgCQkGaQtpCQ2/+2ZgC2Zjq2tma225C229u22/+2/7a2///bkDrbkGbbtpDb29vb/9vb////AAD/tmb/25D//7b//9v///8XqFVOAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" /><!-- --></p>
+<p>See Section 2.2 for how to add, and control the appearence of, marker genotypes to pedgree plots.</p>
 </div>
 <div id="builtin" class="section level2">
 <h2><span class="header-section-number">1.3</span> Built-in pedigree structures</h2>
@@ -457,18 +460,18 @@ The following functions modify various attributes of a <code>ped</code> object. 
 <p>As our first example we will recreate the <code>trio</code> pedigree without using the <code>ped()</code> constructor. To give a hint of the flexibility, we show 3 alternative ways to code this.</p>
 <p><strong>Alternative A</strong><br />
 The obvious starting point is <code>nuclearPed()</code>, with <code>nch=1</code> to indicate 1 child. By default, this creates a trio with numeric labels (father=1; mother=2; child=3) and a male child. Hence we fix the gender with <code>swapSex()</code>, and edit the labels with <code>relabel()</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">trio2 =<span class="st"> </span><span class="kw">nuclearPed</span>(<span class="dt">nch =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb8-2" title="2">trio2 =<span class="st"> </span><span class="kw">swapSex</span>(trio2, <span class="dt">id =</span> <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb8-3" title="3">trio2 =<span class="st"> </span><span class="kw">relabel</span>(trio2, <span class="dt">new =</span> <span class="kw">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>trio2 =<span class="st"> </span><span class="kw">nuclearPed</span>(<span class="dt">nch =</span> <span class="dv">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>trio2 =<span class="st"> </span><span class="kw">swapSex</span>(trio2, <span class="dt">id =</span> <span class="dv">3</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>trio2 =<span class="st"> </span><span class="kw">relabel</span>(trio2, <span class="dt">new =</span> <span class="kw">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>))</span></code></pre></div>
 <p><strong>Alternative B (quickest and best)</strong><br />
 The previous approach can be condensed into a one-liner, since <code>nuclearPed()</code> allows an alternative syntax in which child genders and labels are specified directly:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">trio3 =<span class="st"> </span><span class="kw">nuclearPed</span>(<span class="dt">father =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">mother =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">children =</span> <span class="st">&quot;girl&quot;</span>, <span class="dt">sex =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>trio3 =<span class="st"> </span><span class="kw">nuclearPed</span>(<span class="dt">father =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">mother =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">children =</span> <span class="st">&quot;girl&quot;</span>, <span class="dt">sex =</span> <span class="dv">2</span>)</span></code></pre></div>
 <p><strong>Alternative C</strong><br />
 Here is another possibility. We start by creating the father as a singleton, and then add the daughter:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">trio4 =<span class="st"> </span><span class="kw">singleton</span>(<span class="st">&quot;fa&quot;</span>)</a>
-<a class="sourceLine" id="cb10-2" title="2">trio4 =<span class="st"> </span><span class="kw">addDaughter</span>(trio4, <span class="dt">parent =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>)</a>
-<a class="sourceLine" id="cb10-3" title="3"><span class="co">#&gt; Mother: Creating new individual with ID = NN_1</span></a>
-<a class="sourceLine" id="cb10-4" title="4">trio4 =<span class="st"> </span><span class="kw">relabel</span>(trio4, <span class="dt">old =</span> <span class="st">&quot;NN_1&quot;</span>, <span class="dt">new =</span> <span class="st">&quot;mo&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>trio4 =<span class="st"> </span><span class="kw">singleton</span>(<span class="st">&quot;fa&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2"></a>trio4 =<span class="st"> </span><span class="kw">addDaughter</span>(trio4, <span class="dt">parent =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt; Mother: Creating new individual with ID = NN_1</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>trio4 =<span class="st"> </span><span class="kw">relabel</span>(trio4, <span class="dt">old =</span> <span class="st">&quot;NN_1&quot;</span>, <span class="dt">new =</span> <span class="st">&quot;mo&quot;</span>)</span></code></pre></div>
 <p>Note that <code>addDaughter()</code> automatically created the mother as “NN_1”, so we needed to relabel her.</p>
 </div>
 <div id="example-2-an-inbred-child" class="section level3 unnumbered">
@@ -477,31 +480,31 @@ Here is another possibility. We start by creating the father as a singleton, and
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAS1BMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6AGY6Ojo6kNtmAABmtv+QOgCQZgCQ2/+2ZgC2/7a2///bkDrb////tmb/25D//7b//9v////qHGfVAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAF/ElEQVR4nO2d7XoaNxQGN0nd1tQtLQXM/V9pwSR50uDd0dcRWjPzyzHSeaVBu+yCg6aTLDLdewCjoyBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEKAgYFnQ9I22mYvERJVXWCz+w8/FCVmZTZd0kwnM9vu5YsuBFz+YldJmAnPdbn/fbhF1EdRqAjOd3v113NjbhzSbQI6g0MF3ySgonlVoPYLaTSBvKYaOvmFEwwkoqKDU0rVRdkBukRYJLSeQKSh6/PEBufUVVFBLQdBeQdB+sX4LFgcUHHD/FVTZIjpAQdBCQdAiWFBC+bEFRV8oKmi5Skr5AQSNfbP6CIKq3k4ZQVD0+0G5CyuzVQdBNRNI65P78p/Tqoegigkk9rm5Xk/9UGAQQeUTSE6bFv5VVjGlRTNBxRNIT/uunG4wMwfSS1DhBHLSEu6+Myv+ULXgVj8x4CYqo0dN2r0q9g4ITlNQ94q9A4LTFNS54F0i4sK6DL6noVUK6mmocVSvkTf+U8alpIGrDRHVNGfVZ8+imNeX83X6c5taMxx++6ekW2rcbpo+/VUYwCmvL+fiu+mXFrVmOG4+lwpKydudq++rDC2GHJ7++BpSXWqG/TSVC+LE4+b58jSnPsNFGafUZ6DMz/O+QlBaZrigbdIUSs+ZVYKSUndxh9gb+6SzdPFrSp0gzt1nvMoUBiQt0HsJSrhkfH358m9FfXg8bf1UXJTUCkp5jmuOMai+i/bTQBCmX1+MQ4rvpqTSNRe1DQTN51/VxL1QHp6i108bQfMj2J5PP68vNWfpxcntrp8J0CF8f0ELhs7jrzjAmtzy9X0LdIawQdQXHsJP3DCq6w7iJ+w9tNqqw/g5BY3lIwkKGUxlzaH8hAynruRgfsb7HFRBob0DUBCgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQ8nKAmX3XS7T9fte49QICCqusrKHQECgrtPUCAgqrrKyh0BAoK7T1AgIKq6ysodAQKCu09QICCqusrKHQECgrtPUCAgqrrKyh0BAoK7T1AgIKq6ysodAQKum1f9SlcSVZI0fQJZAsqfCyb78Nt7Ch3AqMK+l+tloo+hqDbb/JtVzrzsSEFvVOo2SL6CILeraMgKhNbffax9QhqVH79gmarKIiKRNdXEBVREBRZu6AmAWsXtFhj9YKi/y539YKqeie0UNBHFxR8jD3Aq1hCmoLKmygI2ihouc0j3KwmpT3y+0Fpae+3UtBiqwd5Tzox7bZZKz0fRNDP6+VxPhdLT5tmfq4mXFDpnXhuWk7ZHHIn0DYdR9c1rQkKAhQEKAhQEKAgQEGAggAFAQoC6oa8zdx3KSvtuLlc/ddsngYcnhLKVwnaT5GCDr9W7d6I7M+DP27IUI2g81McKajNpjazXLf8wQ0cawTtvvwZKWgXeHSdkhdohaBzQug5aPv7VLn93iL7z39vEuqXC7os0UhBx82l+DbM0O6ygSnvoFkuaHcef+gKeiPuRHTdPBPrFwt6O4TjBVVtv7fI9fSM9YsFfd2cLW93swJBYa/117WD9ce9UGywP+Eix01S/XEFnbaX82fcSfrtJMr7Hw4sqH5/QmCfchnhzSqgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgICB6yKXfXz8M4YLuGd4CBQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAvxsHljDGO+KggAFAQoCFAQoCFAQoCBAQYCCgG6C9iWbJQ1A3xXEey4OR19BuOXieHQVdHiK2+spiq6CtutbQF0FHTfrW0BdBe0/xW69G0JPQbnbtQ1BR0GrPMJ6CorbETSSjoJWeQrqKWiFV4knb1YRBQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCgP8AEBrQu6KsajUAAAAASUVORK5CYII=" /><!-- --></p>
 <p><strong>Alternative A</strong><br />
 One approach is to first create individuals 1-6 as half sibships, with 1 child on the left side, and 2 children on the right. After this, we use <code>addChildren()</code> to add the inbred child.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">x1 =<span class="st"> </span><span class="kw">halfSibPed</span>(<span class="dt">nch1 =</span> <span class="dv">1</span>, <span class="dt">nch2 =</span> <span class="dv">2</span>, <span class="dt">sex1 =</span> <span class="dv">1</span>, <span class="dt">sex2 =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb11-2" title="2">x1 =<span class="st"> </span><span class="kw">addChildren</span>(x1, <span class="dt">father =</span> <span class="dv">4</span>, <span class="dt">mother =</span> <span class="dv">5</span>, <span class="dt">nch =</span> <span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>x1 =<span class="st"> </span><span class="kw">halfSibPed</span>(<span class="dt">nch1 =</span> <span class="dv">1</span>, <span class="dt">nch2 =</span> <span class="dv">2</span>, <span class="dt">sex1 =</span> <span class="dv">1</span>, <span class="dt">sex2 =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">1</span>)</span>
+<span id="cb12-2"><a href="#cb12-2"></a>x1 =<span class="st"> </span><span class="kw">addChildren</span>(x1, <span class="dt">father =</span> <span class="dv">4</span>, <span class="dt">mother =</span> <span class="dv">5</span>, <span class="dt">nch =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p><strong>Alternative B</strong><br />
 We could also view the half siblings 4 and 5 as half cousins of degree 0. The <code>halfCousinPed()</code> function accepts an option <code>child = TRUE</code> adding an inbred child. The labels will be different with this approach, so you should plot the pedigree after each command to see who-is-who. Also, we must relabel in the end.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">x2 =<span class="st"> </span><span class="kw">halfCousinPed</span>(<span class="dv">0</span>, <span class="dt">child =</span> T)</a>
-<a class="sourceLine" id="cb12-2" title="2">x2 =<span class="st"> </span><span class="kw">addChildren</span>(x2, <span class="dt">father =</span> <span class="dv">1</span>, <span class="dt">mother =</span> <span class="dv">4</span>, <span class="dt">nch =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb12-3" title="3">x2 =<span class="st"> </span><span class="kw">relabel</span>(x2, <span class="dt">old =</span> <span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">7</span>,<span class="dv">6</span>), <span class="dt">new =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">7</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>x2 =<span class="st"> </span><span class="kw">halfCousinPed</span>(<span class="dv">0</span>, <span class="dt">child =</span> T)</span>
+<span id="cb13-2"><a href="#cb13-2"></a>x2 =<span class="st"> </span><span class="kw">addChildren</span>(x2, <span class="dt">father =</span> <span class="dv">1</span>, <span class="dt">mother =</span> <span class="dv">4</span>, <span class="dt">nch =</span> <span class="dv">1</span>)</span>
+<span id="cb13-3"><a href="#cb13-3"></a>x2 =<span class="st"> </span><span class="kw">relabel</span>(x2, <span class="dt">old =</span> <span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">7</span>,<span class="dv">6</span>), <span class="dt">new =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">7</span>))</span></code></pre></div>
 <p><strong>A note about the order of pedigree members</strong></p>
 <p>Although both <code>x1</code> and <code>x2</code> reproduce exactly the plot shown above, they are not identical objects:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">identical</span>(x1, x2)</a>
-<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt; [1] FALSE</span></a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">identical</span>(x1, x2)</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
 <p>The reason is the <em>order</em> in which the individuals are stored. For <code>x1</code> the ordering is the natural sequence <code>1,2,3,4,5,6,7</code>, but for <code>x2</code> our construction process has produced a slightly different order:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">x2</a>
-<a class="sourceLine" id="cb14-2" title="2"><span class="co">#&gt;  id fid mid sex</span></a>
-<a class="sourceLine" id="cb14-3" title="3"><span class="co">#&gt;   1   *   *   1</span></a>
-<a class="sourceLine" id="cb14-4" title="4"><span class="co">#&gt;   2   *   *   2</span></a>
-<a class="sourceLine" id="cb14-5" title="5"><span class="co">#&gt;   4   1   2   1</span></a>
-<a class="sourceLine" id="cb14-6" title="6"><span class="co">#&gt;   3   *   *   2</span></a>
-<a class="sourceLine" id="cb14-7" title="7"><span class="co">#&gt;   5   1   3   2</span></a>
-<a class="sourceLine" id="cb14-8" title="8"><span class="co">#&gt;   7   4   5   1</span></a>
-<a class="sourceLine" id="cb14-9" title="9"><span class="co">#&gt;   6   1   3   1</span></a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>x2</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="co">#&gt;  id fid mid sex</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co">#&gt;   1   *   *   1</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt;   2   *   *   2</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="co">#&gt;   4   1   2   1</span></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt;   3   *   *   2</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt;   5   1   3   2</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt;   7   4   5   1</span></span>
+<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt;   6   1   3   1</span></span></code></pre></div>
 <p>The internal ordering is usually of little importance in applications.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> However, if you get annoyed by “wrong” orderings such as for <code>x2</code> above, you can use <code>reorderPed()</code> to permute the pedigree any way you like. In fact, the default action of this function is to permute into the natural order of the labels, which is exactly what we need to make <code>x2</code> identical to <code>x1</code>:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">x2 =<span class="st"> </span><span class="kw">reorderPed</span>(x2)</a>
-<a class="sourceLine" id="cb15-2" title="2"><span class="kw">identical</span>(x1, x2)</a>
-<a class="sourceLine" id="cb15-3" title="3"><span class="co">#&gt; [1] TRUE</span></a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>x2 =<span class="st"> </span><span class="kw">reorderPed</span>(x2)</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="kw">identical</span>(x1, x2)</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div id="example-3-a-family-tree" class="section level3">
 <h3><span class="header-section-number">1.4.1</span> Example 3: A family tree</h3>
@@ -509,13 +512,13 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The <c
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAAEgCAMAAACKBVRjAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAF90lEQVR4nO2d0VLjMBAE7f//6asjPACxjWWt1DNi+ulSRuuZ7ZCqSyjY9oCy0QH+OhEAEwEwEQATATARABMBMBEAEwEwEQATATARABMBMBEAEwEwEQATATARAHMkYDul8141Y8pB+x4KaPnihjhH/1QA7TtNwHbxCAbtO0vAz6NKBtC+kwS8nxR6GUL7zhFweFDGANoXFCBjAO07RUDDdx8B2neGgLNjqwpo6ksKUDGA9o2ACMCJABgjAQ9pTjoXtG/Vd8DVLn0FPDkEvQRFwMN5EfCHBYjsf5qAof8Ru1zmim9FPLgWASesL+D+rRHKBbT0nSPg6LLM/gcIaOg7ScD7dfdPxFqfcaM/Eft1ndvlQ5QRAm73nSbg+1NAaf9jBNztO0/Ax1sr++cbLDe+eh5jBNzseyig+V2m209ptd1/8KTvzcK/963ah+Bex6K2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KC2uAhYZI4NaouLgEXm2KCwuEe/aaplbt8Y+XyvYSPOdiX79jcY+yY1X7g1tSxfd5YhBbfLhz2jhgztNqBW8O1ox5NMPd/xwIqzpTuTElCar/t4fcHDg7XT6if2GZAScHKueJxMvu7D6gXV83Ufri54dkxFQHW+7sOzCq46b9xZkYLq88adFSmoPm/c2fM3Ya4pDqmeb9zZi6FX95N4xj7JHgGF8yKg8VD1vAhoPFQ9LwLazlwxS4DVf8Qu76fwVsSDaxHQeq8IaLr6OGK5gOJ83afrBRxdfp6wXkBtvu7jAwS8X5/9kWTrM8TtI8lf77ddPmxihIDKfN0Dhgigfyzl92dIWb5797uM0vqu1b373RgzLN+dgFX57t6vFMW/JfmV6fnm70NZAZCN2IaqAiQXs4ui189KqEjYIrQUcGnANegoIJOgS5B4JYJD0BugFdD3xwWgK1D4DuQTYHsQ2P6uIWAnlqGxfhkBk78NFF57PpEJss97Uupsf9cSMGc1UutXEzD8xUHotecTtTz7yKeo3PZ3SQGjFqW4flEBI5aluX5ZAfW5/kzRIiIAJgJgIgAmAmAiACYCYCIAJgJgIgAmAmAiACYCYCIAJgJgIgAmAmAiACYCYCIAJgJgIgAmAmAiACYCYCIAJgJgIgAmAmAiACYCAB79hqvbowsCjkAp12mWzpCv7Zf9krFalCKNEfBt60p1XyglGiJgu3zIoxRohIC3o2ovQ0pxBgg4OKnUeNeKUy/g8KBSZa005QJOzil1lgoTATDVAs6OKXWWCjNLgEdpgAiAiQCY84U9pPlGABZZLkJe5Y+ARiIAJgJgIgBmlgClzlJhqgXkrYhGygWcXFXqLBVmkgClylpp6gUcXM4nYucMEPB2XanvB0qBRgj48QVKdV8oJRoi4OvPZKm9/PxHKdKTn4y7lb/ybz9WIxmqAff89gXc89sXcM9vX8A9v30B9/z2Bdzz2xdwz29fwD2/fQH3/PYF3PPbF3DPb1/APb99Aff89gXc89sXcM9vX8A9v30B9/z2Bdzz2xdwz29fwD2/fQH3/PYF3PPbF3DPb1/APb99Aff89gXc89sXcM9vX8A9v30B9/z2Bdzz2xdwz29fwD2/fQH3/PYF3PPbF3DPb1/APb99Aff89gXc89sXcM9vX8A9v30B9/z2Bdzz2xdwz29fwD2/fQH3/PYF3PPbF3DPb1/APb99Aff8lgUG/s3J+SyVeakywkQATATARABMBMBEAEwEwEQATATARABMBMBEAEwEwEQATATARABMBMBEAEwEwEQATATARABMBMBEAEwEwOQn40IdEQATATARABMBMBEAEwEwEQATATARABMBMBEAEwEwEQATATD/AOpoqc/gdRfgAAAAAElFTkSuQmCC" /><!-- --></p>
 <p>We <em>could</em> do this by starting with the bottom trio, followed by a series of calls to <code>addParents()</code>. Instead we will use it as a showcase for the <code>mergePed()</code> function. This powerful function is based on a simple idea: Given two pedigrees, “glue together” members with matching ID labels, and check that the result is a valid pedigree.</p>
 <p>When creating the parts that are to be merged, it is usually best to keep the overlap minimal. In our code below we chose the mother to be the single point of contact. To understand the relabelling, plot <code>y1</code> and <code>y2</code> after each command.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">y1 =<span class="st"> </span><span class="kw">linearPed</span>(<span class="dv">3</span>, <span class="dt">sex =</span> <span class="dv">1</span>) <span class="co"># male line </span></a>
-<a class="sourceLine" id="cb16-2" title="2">y2 =<span class="st"> </span><span class="kw">linearPed</span>(<span class="dv">2</span>, <span class="dt">sex =</span> <span class="dv">2</span>) <span class="co"># female line</span></a>
-<a class="sourceLine" id="cb16-3" title="3"></a>
-<a class="sourceLine" id="cb16-4" title="4">y2 =<span class="st"> </span><span class="kw">relabel</span>(y2, <span class="kw">c</span>(<span class="dv">11</span><span class="op">:</span><span class="dv">14</span>, <span class="dv">6</span>)) <span class="co"># relabel to match at ID = 6</span></a>
-<a class="sourceLine" id="cb16-5" title="5"></a>
-<a class="sourceLine" id="cb16-6" title="6">y =<span class="st"> </span><span class="kw">mergePed</span>(y1, y2)</a>
-<a class="sourceLine" id="cb16-7" title="7"><span class="kw">plot</span>(y)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>y1 =<span class="st"> </span><span class="kw">linearPed</span>(<span class="dv">3</span>, <span class="dt">sex =</span> <span class="dv">1</span>) <span class="co"># male line </span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>y2 =<span class="st"> </span><span class="kw">linearPed</span>(<span class="dv">2</span>, <span class="dt">sex =</span> <span class="dv">2</span>) <span class="co"># female line</span></span>
+<span id="cb17-3"><a href="#cb17-3"></a></span>
+<span id="cb17-4"><a href="#cb17-4"></a>y2 =<span class="st"> </span><span class="kw">relabel</span>(y2, <span class="kw">c</span>(<span class="dv">11</span><span class="op">:</span><span class="dv">14</span>, <span class="dv">6</span>)) <span class="co"># relabel to match at ID = 6</span></span>
+<span id="cb17-5"><a href="#cb17-5"></a></span>
+<span id="cb17-6"><a href="#cb17-6"></a>y =<span class="st"> </span><span class="kw">mergePed</span>(y1, y2)</span>
+<span id="cb17-7"><a href="#cb17-7"></a><span class="kw">plot</span>(y)</span></code></pre></div>
 </div>
 </div>
 <div id="pedigree-subsets" class="section level2">
@@ -557,42 +560,42 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <div id="creating-marker-objects" class="section level2">
 <h2><span class="header-section-number">2.1</span> Creating marker objects</h2>
 <p>Marker objects created with the <code>marker()</code> function. For example, the following command makes an empty marker associated with the <code>trio</code> pedigree:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">marker</span>(trio)</a>
-<a class="sourceLine" id="cb17-2" title="2"><span class="co">#&gt;       &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb17-3" title="3"><span class="co">#&gt;    fa  -/-</span></a>
-<a class="sourceLine" id="cb17-4" title="4"><span class="co">#&gt;    mo  -/-</span></a>
-<a class="sourceLine" id="cb17-5" title="5"><span class="co">#&gt;  girl  -/-</span></a>
-<a class="sourceLine" id="cb17-6" title="6"><span class="co">#&gt; ----------- </span></a>
-<a class="sourceLine" id="cb17-7" title="7"><span class="co">#&gt; Chrom NA: NA (Mb), NA (cM)</span></a>
-<a class="sourceLine" id="cb17-8" title="8"><span class="co">#&gt; Mutation model: No </span></a>
-<a class="sourceLine" id="cb17-9" title="9"><span class="co">#&gt; Allele frequencies:</span></a>
-<a class="sourceLine" id="cb17-10" title="10"><span class="co">#&gt;    1   2</span></a>
-<a class="sourceLine" id="cb17-11" title="11"><span class="co">#&gt;  0.5 0.5</span></a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw">marker</span>(trio)</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="co">#&gt;       &lt;NA&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="co">#&gt;    fa  -/-</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="co">#&gt;    mo  -/-</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a><span class="co">#&gt;  girl  -/-</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="co">#&gt; ----------- </span></span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="co">#&gt; Chrom NA: NA (Mb), NA (cM)</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a><span class="co">#&gt; Mutation model: No </span></span>
+<span id="cb18-9"><a href="#cb18-9"></a><span class="co">#&gt; Allele frequencies:</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a><span class="co">#&gt;    1   2</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
 <p>As shown in the output, the marker is indeed empty: All pedigree members have missing genotypes, and there is no assigned name or chromosome/position. Furthermore, the last lines show that there is only one allele (named “1”), with frequency 1. For a more interesting example, let us make a SNP named “snp1”, with alleles “A” and “B”. The father is homozygous “A/A”, while the mother is heterozygous. We store it in a variable <code>m1</code> for later use.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1">m1 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">name =</span> <span class="st">&quot;snp1&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>m1 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">name =</span> <span class="st">&quot;snp1&quot;</span>)</span></code></pre></div>
 <p>This illustrates several points. Firstly, individual genotypes are specified using the ID labels. For homozygous genotypes it suffices to write the allele once. Furthermore, the different alleles occurring in the genotypes is interpreted as the complete set of alleles for the marker. Finally, these are assigned equal frequencies. Of course, this behaviour can be overridden, by declaring alleles and frequencies explicitly:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">alleles =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;C&quot;</span>), <span class="dt">afreq =</span> <span class="kw">c</span>(.<span class="dv">2</span>,.<span class="dv">3</span>,.<span class="dv">5</span>))</a>
-<a class="sourceLine" id="cb19-2" title="2"><span class="co">#&gt;       &lt;NA&gt;</span></a>
-<a class="sourceLine" id="cb19-3" title="3"><span class="co">#&gt;    fa  A/A</span></a>
-<a class="sourceLine" id="cb19-4" title="4"><span class="co">#&gt;    mo  A/B</span></a>
-<a class="sourceLine" id="cb19-5" title="5"><span class="co">#&gt;  girl  -/-</span></a>
-<a class="sourceLine" id="cb19-6" title="6"><span class="co">#&gt; ----------- </span></a>
-<a class="sourceLine" id="cb19-7" title="7"><span class="co">#&gt; Chrom NA: NA (Mb), NA (cM)</span></a>
-<a class="sourceLine" id="cb19-8" title="8"><span class="co">#&gt; Mutation model: No </span></a>
-<a class="sourceLine" id="cb19-9" title="9"><span class="co">#&gt; Allele frequencies:</span></a>
-<a class="sourceLine" id="cb19-10" title="10"><span class="co">#&gt;    A   B   C</span></a>
-<a class="sourceLine" id="cb19-11" title="11"><span class="co">#&gt;  0.2 0.3 0.5</span></a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">alleles =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;C&quot;</span>), <span class="dt">afreq =</span> <span class="kw">c</span>(.<span class="dv">2</span>,.<span class="dv">3</span>,.<span class="dv">5</span>))</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="co">#&gt;       &lt;NA&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="co">#&gt;    fa  A/A</span></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="co">#&gt;    mo  A/B</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a><span class="co">#&gt;  girl  -/-</span></span>
+<span id="cb20-6"><a href="#cb20-6"></a><span class="co">#&gt; ----------- </span></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="co">#&gt; Chrom NA: NA (Mb), NA (cM)</span></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="co">#&gt; Mutation model: No </span></span>
+<span id="cb20-9"><a href="#cb20-9"></a><span class="co">#&gt; Allele frequencies:</span></span>
+<span id="cb20-10"><a href="#cb20-10"></a><span class="co">#&gt;    A   B   C</span></span>
+<span id="cb20-11"><a href="#cb20-11"></a><span class="co">#&gt;  0.2 0.3 0.5</span></span></code></pre></div>
 <p>The markers chromosome can be declared using the <code>chrom</code> argument, and similarly its position by <code>posMb</code> (megabases) and/or <code>posCm</code> (centiMorgan). Markers with unknown chromosome are treated as autosomal. To define an X-linked marker, put <code>chrom=23</code>. the fact that males are hemizygous on X (i.e. they have only one allele) is reflected in the printout of such markers:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">m2 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">chrom =</span> <span class="dv">23</span>, <span class="dt">name =</span> <span class="st">&quot;snpX&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>m2 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">chrom =</span> <span class="dv">23</span>, <span class="dt">name =</span> <span class="st">&quot;snpX&quot;</span>)</span></code></pre></div>
 <p>A side note: It may come as a surprise that you don’t need quotes around the ID labels (which are characters!) in the above commands. This is because <code>marker()</code> uses <em>non-standard evaluation (NSE)</em>, a peculiarity of the R language which often leads to less typing and more readable code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Unfortunately, this doesn’t work with numerical ID labels. Thus to assign a genotype to someone labelled “1” you need quotes, as in <code>marker(trio, &quot;1&quot;=&quot;A&quot;)</code>.</p>
 </div>
 <div id="plotting-pedigrees-with-marker-data" class="section level2">
 <h2><span class="header-section-number">2.2</span> Plotting pedigrees with marker data</h2>
 <p>Including marker data in a pedigree plot is straightforward:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1)</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6Ojo6OpA6kNtmAABmADpmZjpmtrZmtv+QOgCQOjqQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///87oUNWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEEUlEQVR4nO2cjXLTMBCElZAACeBSC6hx0rz/YyJZ8W8kxzr7fFbZndKphub2PklnS+5Y6pa4lHQCcwUAaQFAWgCQFgCkBQBpAUBaAJAWAKT1IQFUUCvnNsXWCxDzy3xq3cYQNgvQTzo8DFsFeLBKDMDjFDDfJoDXyO++SYCIzgYAi1IHiPIHAIMYAVYSH0DoP8KiDBoAADDvI/MXblsFELmR/Z8AEQvPlABkltPEm/d2NjTU1cfwc2J7YvLyabCpjzLYBEAXIfqxSvQqKy7+9A9PsOVeIbOvwAEgHB8A0vEBIB0fANLxPzJAodSJM/5CChpczwukLwuQscZfSiGDy1Gp/dtNm7XgLBAawOX442xmsE3CupcqPJ3HR0AfTC3sclIST+KP6nI0poXtwcL8Kw3F9XyINLAA12+5DTZnCKgAp+Zb9v5ie78M9OPTGijnzSEqQNZ+cz0Y6sdxAHMp3f8WGYEHgNBFZRSgjUOW7AiUpoKqEqJrAYAZNWBDXM+zbsgLAMy4Ctka2OV6znV0CQDafWAhYTUqbQAAaQMASBsAgGig6xvH5evfbnOp+E/VTUBXz9ijlhKXz9/tMsioPPSa0SIC9BLQn2wnBjZWfoOiWUTrrNeMFhGgl4ADCDxl8Bq8vxzMV/XTz7zbjBcNoJ9ADeDtQ6+BXbq6EatKoG3GiwbQT+A+hfxd6DWwn3AjVpVA24wXDaCfgCtiVWFMMqh20zdtq0hnvWa8SACDBNwIlMo7BD6D4v7HwcyVQNskiAQwSMABBLrQY3AvH7sHsjOw0ySIAjBIoAYopgLUu09TRXYGdpqEZCgAgwSaEfAWgceg/kUzE9sZWE/MWFEABgk0NTDxMto+v9C7L3m3SSljAsAggfoqFPtUYiFhNSptAABpAwBIGwBA2gAA0gYAkDYAgLQBAKQNACBtAABpAwBIG6QNQH7vI8aDL3KTOSsDW2g10uLz4Yu7UkcxhuWaRjxhvVFXtOKJmhCAP2jyAKt6sQRNBiAYc1UzjpgAkI4JAOmYAFgpZvL3gY8KkNBaKPnVqDdsUhsaT9y0dmSPgVPbE996Xc75XIXzqdOME00iTDiDryEASAsA0gKAtAAgLQBIixegeXFnoXNCPFppBAAQFBOAVmr3usvd8SCvav8nMQBdnYhyBzhX71QlBeDewdA1wCm5KVQdqGHf5XEAWXIAReoAyY+Aq4EiXYDBVShBAHsf2P/av6ULYFVSX2OPEl8NLHRQ3TPxjEBJfn03WtgPSAsA0uIGcEebMIoboCQeqDFZ3ACa+2LKDFAdq8AqZgD2EuAGYC8BbgD2EmAG4C8BPgB7PsrJlkAxclDiAuIdAf4SYAbgLwFegBVKAIs5cQFAWgCQFgCkBQBpAUBaAJDWPz5IfkH3HekiAAAAAElFTkSuQmCC" /><!-- --></p>
 <p>The appearance of the genotypes can be tweaked in various ways, as documented in <code>?plot.ped</code>. Here’s an example:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">skip.empty.genotypes =</span> T)</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">skip.empty.genotypes =</span> T)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6kNtmAABmADpmZjpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///9DYrSiAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADtUlEQVR4nO2cC3PaMBCEhQuFtiQ4La4h/P//WcsPLMAy6OTzWunuJBllgm/16WGdnJHNJXEZdAViRQC0CIAWAdAiAFoEQIsAaBEALQKg9SUBjFcz1+0V20GAkA/rqXcbQ1gswG2l/d2wVIAHq8QABpw85ssEGDQadl8kQEBjE0BFqQME+RNAQYoAM0kPwPcHvySdRgACxF0Sn7gtFQCykP2fAAGJZ0oAmHRauHgvZ0MjzT7ur4PticXp092mPshgEQAuQvBjleAsKyz+6xe/YKudIatn4AQAxycAOj4B0PEJgI7/lQEKY7aa8SeS1+C8m6D6WIC9avyp5DM4bYzJjpe8ygWjQGQAp82vXTWCbSWse2n8w3m8B/J1NRdWB1ElnsQf1WlTmRa2BYvqu6wozrt1oIEFOP842GAxXSAF2F5/7D/fbOuXnnZ8OgfKuDEkBdj3P5oW9LXjOEB1K81+Q3rgAcB3UxkF6OOIhe2BsppB9RSSawKAiDlgQ5x3UQvyBAARdyE7B1aHPOY+OgWAbB2YSMxG0QYEQBsQAG1AALFB3i8decRaLAfoXPP6Cbt3MfXuyL7/tInQXTFcYoCra/7t72VkW+UzKPo0uojJqMUAV9cGwPuMwWPw+bauvu6LAkkBetcOwNOGHgObvLa95hQFkgL0ru0Q8jWhx8Be1faaUxRICtC7NpPY1BgvG9T76UtuZ5FTlEgI4Lg2PVCaoP1A0f57cH9TlEgI4Lg2AN4mHDRop4/dBTlFkWQArmsLUIQAdPvPahY5RVFVZACua9cDnkkwaNB9uBqJTlFUFRmA69rNgYDbaP8EI+/HvnAaiwCcCmRHYSoxlZiNog0IgDYgANqAAGgDAqANCIA2IADagABoAwKgDQiANiAA2iBtAPG5jxAPvcjXmqsyqIU2I7/p+ejFnamhFMNqDSOdsINRZ7TSiZoQwHDQ5AFm9VIJmgyAN+asZhoxCYCOSQB0TALMFDP5deCrAiSUCyWfjQ6GTWpDMxA3rR3ZY+DU9sSXmybXfK6i+dQp4o0mASaawecQAdAiAFoEQIsAaBEALV2A69Gdid4TMqCZeoAAXikB5Mas3leH5vUg7yb7kxhAXr8RpQXY1SeqkgJoTmDkHcA2uSFUv1DDnuRpAPbJARSpAyTfA80cKNIFuLsLJQhg14HsIzumC2BVyg+yB0hvDkz0orpn0umBMuIAb6C4H0CLAGgRAC0CoEUAtAiAFgHQIgBaBECLAGgRAC0CoEUAtAiAFgHQ+gcIadt1Csvt6wAAAABJRU5ErkJggg==" /><!-- --></p>
 </div>
 <div id="markers-attached-to-ped-objects" class="section level2">
@@ -604,14 +607,14 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <li><code>addMarkers(x, m)</code></li>
 </ul>
 <p>The difference between these is that <code>setMarkers()</code> replaces all existing markers, while <code>addMarkers()</code> appends <code>m</code> to the existing ones. In our <code>trio</code> example the two are equivalent since there are no existing markers.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">trio =<span class="st"> </span><span class="kw">setMarkers</span>(trio, <span class="kw">list</span>(m1, m2))</a>
-<a class="sourceLine" id="cb23-2" title="2">trio</a>
-<a class="sourceLine" id="cb23-3" title="3"><span class="co">#&gt;    id fid mid sex snp1 snpX</span></a>
-<a class="sourceLine" id="cb23-4" title="4"><span class="co">#&gt;    fa   *   *   1  A/A    A</span></a>
-<a class="sourceLine" id="cb23-5" title="5"><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></a>
-<a class="sourceLine" id="cb23-6" title="6"><span class="co">#&gt;  girl  fa  mo   2  -/-  -/-</span></a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>trio =<span class="st"> </span><span class="kw">setMarkers</span>(trio, <span class="kw">list</span>(m1, m2))</span>
+<span id="cb24-2"><a href="#cb24-2"></a>trio</span>
+<span id="cb24-3"><a href="#cb24-3"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  -/-</span></span></code></pre></div>
 <p><strong>Selecting and removing attached markers</strong><br />
-Four closely related functions functions are useful for manipulating markers attached to a <code>ped</code> object:</p>
+Four closely related functions functions are useful for manipulating markers attached to a pedigree:</p>
 <ul>
 <li><code>selectMarkers()</code>, returns a <code>ped</code> object where only the indicated markers are retained</li>
 <li><code>removeMarkers()</code>, returns a <code>ped</code> object where the indicated markers are removed</li>
@@ -619,13 +622,13 @@ Four closely related functions functions are useful for manipulating markers att
 <li><code>whichMarkers()</code>, returns the indices of the indicated markers</li>
 </ul>
 <p>All of these have exactly the same arguments, described in more detail in <code>?marker_select</code>. Let us do a couple of examples here. Recall that by now, our <code>trio</code> has two attached markers; the first is called “snp1”, and the other is on the X chromosome (<code>chrom = 23</code>).</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" title="1"><span class="kw">whichMarkers</span>(trio, <span class="dt">chrom =</span> <span class="dv">23</span>)</a>
-<a class="sourceLine" id="cb24-2" title="2"><span class="co">#&gt; [1] 2</span></a>
-<a class="sourceLine" id="cb24-3" title="3"><span class="kw">selectMarkers</span>(trio, <span class="dt">markers =</span> <span class="st">&quot;snp1&quot;</span>)</a>
-<a class="sourceLine" id="cb24-4" title="4"><span class="co">#&gt;    id fid mid sex snp1</span></a>
-<a class="sourceLine" id="cb24-5" title="5"><span class="co">#&gt;    fa   *   *   1  A/A</span></a>
-<a class="sourceLine" id="cb24-6" title="6"><span class="co">#&gt;    mo   *   *   2  A/B</span></a>
-<a class="sourceLine" id="cb24-7" title="7"><span class="co">#&gt;  girl  fa  mo   2  -/-</span></a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="kw">whichMarkers</span>(trio, <span class="dt">chrom =</span> <span class="dv">23</span>)</span>
+<span id="cb25-2"><a href="#cb25-2"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="kw">selectMarkers</span>(trio, <span class="dt">markers =</span> <span class="st">&quot;snp1&quot;</span>)</span>
+<span id="cb25-4"><a href="#cb25-4"></a><span class="co">#&gt;    id fid mid sex snp1</span></span>
+<span id="cb25-5"><a href="#cb25-5"></a><span class="co">#&gt;    fa   *   *   1  A/A</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a><span class="co">#&gt;    mo   *   *   2  A/B</span></span>
+<span id="cb25-7"><a href="#cb25-7"></a><span class="co">#&gt;  girl  fa  mo   2  -/-</span></span></code></pre></div>
 </div>
 <div id="accessing-and-modifying-individual-markers" class="section level2">
 <h2><span class="header-section-number">2.4</span> Accessing and modifying individual markers</h2>
@@ -642,23 +645,23 @@ Four closely related functions functions are useful for manipulating markers att
 <p><strong>Marker accessor functions</strong><br />
 For each marker attribute listed above, there is a corresponding function with the same name for retrieving its content. These functions take as input either a <code>marker</code> object, or a <code>ped</code> object together with the name (or index) of an attached marker. This may sound a bit confusing, but a few examples will make it clear!</p>
 <p>Recall that our marker “snp1” exists in two copies: One is stored in the variable <code>m1</code>, while the other is attached to <code>trio</code>. In both cases we can extract the allele frequencies with the function <code>afreq()</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1"><span class="kw">afreq</span>(m1)</a>
-<a class="sourceLine" id="cb25-2" title="2"><span class="co">#&gt;   A   B </span></a>
-<a class="sourceLine" id="cb25-3" title="3"><span class="co">#&gt; 0.5 0.5</span></a>
-<a class="sourceLine" id="cb25-4" title="4"><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>)</a>
-<a class="sourceLine" id="cb25-5" title="5"><span class="co">#&gt;   A   B </span></a>
-<a class="sourceLine" id="cb25-6" title="6"><span class="co">#&gt; 0.5 0.5</span></a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="kw">afreq</span>(m1)</span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="co">#&gt;   A   B </span></span>
+<span id="cb26-3"><a href="#cb26-3"></a><span class="co">#&gt; 0.5 0.5</span></span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>)</span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="co">#&gt;   A   B </span></span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="co">#&gt; 0.5 0.5</span></span></code></pre></div>
 <p>We can also <em>modify</em> the frequencies using this syntax. To avoid confusion about the allele order, the frequencies must be named with the allele labels (just as in the output of <code>afreq()</code> above).</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>) =<span class="st"> </span><span class="kw">c</span>(<span class="dt">A =</span> <span class="fl">0.9</span>, <span class="dt">B =</span> <span class="fl">0.1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>) =<span class="st"> </span><span class="kw">c</span>(<span class="dt">A =</span> <span class="fl">0.9</span>, <span class="dt">B =</span> <span class="fl">0.1</span>)</span></code></pre></div>
 <p>In addition to the functions getting and setting marker attributes, there is one more important marker accessor, namely <code>genotype()</code>. This returns the genotype of a specified individual, and can also be used to modify genotypes. As the others, it can be applied to marker objects directly, or to pedigrees with attached markers. Here we show a few examples of the latter type:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>)</a>
-<a class="sourceLine" id="cb27-2" title="2"><span class="co">#&gt; [1] NA NA</span></a>
-<a class="sourceLine" id="cb27-3" title="3"><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>) =<span class="st"> &quot;A&quot;</span></a>
-<a class="sourceLine" id="cb27-4" title="4">trio</a>
-<a class="sourceLine" id="cb27-5" title="5"><span class="co">#&gt;    id fid mid sex snp1 snpX</span></a>
-<a class="sourceLine" id="cb27-6" title="6"><span class="co">#&gt;    fa   *   *   1  A/A    A</span></a>
-<a class="sourceLine" id="cb27-7" title="7"><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></a>
-<a class="sourceLine" id="cb27-8" title="8"><span class="co">#&gt;  girl  fa  mo   2  -/-  A/A</span></a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="co">#&gt; [1] NA NA</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>) =<span class="st"> &quot;A&quot;</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a>trio</span>
+<span id="cb28-5"><a href="#cb28-5"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
+<span id="cb28-7"><a href="#cb28-7"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
+<span id="cb28-8"><a href="#cb28-8"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  A/A</span></span></code></pre></div>
 </div>
 <div id="gettingsettingmodifying-many-markers-simultaneously" class="section level2">
 <h2><span class="header-section-number">2.5</span> Getting/setting/modifying many markers simultaneously</h2>
@@ -804,9 +807,9 @@ transfer simulated marker data
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>There is an important exception to this: Certain algorithms in pedigree analysis work “top-down”, in the sense that parents must be treated before their children. For this reason, many implementations require, for simplicity, that the individuals are stored in this fashion, i.e. that parents always precede their children. <code>pedtools</code> offers a special reordering function to ensure this, <code>parents_before_children()</code>, which you will find utilised in the source code of packages like <code>ribd</code> and <code>ibdsim2</code>.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>There is an important exception to this: Certain algorithms in pedigree analysis work “top-down”, in the sense that parents must be treated before their children. For this reason, many implementations require, for simplicity, that the individuals are stored in this fashion, i.e. that parents always precede their children. <code>pedtools</code> offers a special reordering function to ensure this, <code>parents_before_children()</code>, which you will find utilised in the source code of packages like <code>ribd</code> and <code>ibdsim2</code>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>You may have come across NSE before, for instance when using <code>subset()</code> on a data.frame. To learn more about NSE, I highly recommend this book chapter by Hadley Wickham:<br />
-<a href="http://adv-r.had.co.nz/Computing-on-the-language.html" class="uri">http://adv-r.had.co.nz/Computing-on-the-language.html</a><a href="#fnref2" class="footnote-back">↩</a></p></li>
+<a href="http://adv-r.had.co.nz/Computing-on-the-language.html" class="uri">http://adv-r.had.co.nz/Computing-on-the-language.html</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 

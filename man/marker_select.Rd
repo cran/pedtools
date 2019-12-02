@@ -21,10 +21,11 @@ whichMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
   toPos = NULL)
 }
 \arguments{
-\item{x}{A \code{ped} object}
+\item{x}{A \code{ped} object, or a list of such}
 
 \item{markers}{Either a character vector (with marker names), a numeric
-vector (with marker indices), or NULL}
+vector (with marker indices), a logical (of the same length as the number
+of markers attached to \code{x}), or NULL}
 
 \item{chroms}{A vector of chromosome names, or NULL}
 
@@ -35,14 +36,20 @@ vector (with marker indices), or NULL}
 \value{
 The return values of these functions are:
 \itemize{
-\item \code{selectMarkers()} : a \code{ped} object where only the indicated markers are kept
-\item \code{removeMarkers()} : a \code{ped} object where the indicated markers are removed
-\item \code{getMarkers()} : a list of \code{marker} objects
-\item \code{whichMarkers()} : an integer vector with indices of the indicated markers
+\item \code{selectMarkers()}: an object identical to \code{x}, but where only the
+indicated markers are kept
+\item \code{removeMarkers()}: an object identical to \code{x}, but where the indicated
+markers are removed
+\item \code{getMarkers()}: a list of \code{marker} objects. Note: If \code{x} is a list of
+pedigrees, the marker objects attached to the first component will be
+returned.
+\item \code{whichMarkers()}: an integer vector with indices of the indicated
+markers. If \code{x} is a list of pedigrees an error is raised unless
+\code{whichMarkers()} gives the same result for all components.
 }
 }
 \description{
-Functions for manipulating markers attached to a \code{ped} object.
+Functions for manipulating markers attached to \code{ped} objects.
 }
 \seealso{
 \code{\link[=setMarkers]{setMarkers()}}

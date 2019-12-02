@@ -181,7 +181,7 @@ as.data.frame.ped = function(x, ..., markers) {
     geno = do.call(cbind, lapply(mlist, format))
 
     # Headers of genotype columns: name if present, otherwise <idx>
-    nms = vapply(mlist, name, character(1))
+    nms = vapply(mlist, name.marker, character(1))
     if(any(na_name <- is.na(nms)))
       nms[na_name] = sprintf("<%d>", markers[na_name])
     colnames(geno) = nms
@@ -254,7 +254,7 @@ questionMaleHetX = function(x, df) {
     else
       midx = match(mname, xnames)
 
-    if(!is.na(midx) && isXmarker(x$MARKERS[[midx]])) {
+    if(!is.na(midx) && isXmarker(x, midx)) {
       maleHet = df[["sex"]] == 1 & grepl("/", df[[i]])
       df = commentAndRealign(df, i, maleHet, "?")
     }
@@ -439,12 +439,17 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
     stop2("`marker_col` must be numeric, not ", typeof(marker_col))
 
   # If no markers, return p
-  if(length(marker_col) == 0)
-    return(p)
+  if(length(marker_col) == 0) {
+    AM = NULL
+  }
+  else { # Otherwise, convert marker-cols to matrix
+    AM = as.matrix(x)[, marker_col, drop = F]
+    rownames(AM) = id
+  }
 
-  # Otherwise, convert marker-cols to matrix
-  AM = as.matrix(x)[, marker_col, drop = F]
-  rownames(AM) = id
+  # Return if neither alleles or locus data are given
+  if(is.null(AM) && is.null(locusAttributes))
+    return(p)
 
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {

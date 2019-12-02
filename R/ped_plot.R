@@ -8,18 +8,18 @@
 #' [kinship2::plot.pedigree()].
 #'
 #' @param x a [ped()] object.
-#' @param marker either NULL, a vector of positive integers, a [`marker`]
-#'   object, or a list of such. If NULL, no genotypes are plotted.  If a vector
-#'   of integers is given, the corresponding marker objects are extracted from
-#'   `x$MARKERS`. The genotypes are written below each individual in the
-#'   pedigree, in the format determined by `sep` and `missing`. See also
-#'   `skip.empty.genotypes` below.
+#' @param marker either a vector of names or indices referring to markers
+#'   attached to `x`, a `marker` object, or a list of such. The genotypes for
+#'   the chosen markers are written below each individual in the pedigree, in
+#'   the format determined by `sep` and `missing`. See also
+#'   `skip.empty.genotypes` below. If NULL (the default), no genotypes are
+#'   plotted.
 #' @param sep a character of length 1 separating alleles for diploid markers.
 #' @param missing the symbol (integer or character) for missing alleles.
 #' @param skip.empty.genotypes a logical. If TRUE, and `marker` is non-NULL,
 #'   empty genotypes (which by default looks like '-/-') are not printed.
 #' @param id.labels a vector with labels for each pedigree member. This defaults
-#'   to `labels(x)`. Several syntaxes are possible:
+#'   to `labels(x)`. Alternative forms:
 #'
 #'   * If `id.labels` is NULL or the empty character "", then no labels are
 #'   drawn.
@@ -30,7 +30,6 @@
 #'   * If `id.labels` is a subset of `labels(x)`, then only this subset will be
 #'   labelled. If the vector is named, then the (non-empty) names are used
 #'   instead of the ID label. See Examples.
-#'
 #'
 #' @param title the plot title. If NULL or '', no title is added to the plot.
 #' @param col a vector of colours for the pedigree members, recycled if
@@ -100,6 +99,9 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   nInd = pedsize(x)
 
   # Labels
+  if(is.function(id.labels))
+    id.labels = id.labels(labels(x))
+
   nms = names(id.labels)
   if (is.null(id.labels) || identical(id.labels, ""))
     id.labels = rep("", nInd)
@@ -124,23 +126,26 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   text = id.labels
 
   # Add stars to labels
+  if(is.function(starred))
+    starred = starred(x)
   starred = internalID(x, starred)
   text[starred] = paste0(text[starred], "*")
 
   # Marker genotypes
-  if (!is.null(marker)) {
+  if (length(marker) > 0) { # excludes NULL and empty vectors/lists
     if (is.marker(marker))
       mlist = list(marker)
     else if (is.markerList(marker))
       mlist = marker
-    else if (is.numeric(marker) || is.character(marker))
+    else if (is.numeric(marker) || is.character(marker) || is.logical(marker))
       mlist = getMarkers(x, markers = marker)
     else
       stop2("Argument `marker` must be either:\n",
            "  * a n object of class `marker`\n",
            "  * a list of `marker` objects\n",
            "  * a character vector (names of attached markers)\n",
-           "  * an integer vector (indices of attached markers)")
+           "  * an integer vector (indices of attached markers)",
+           "  * a logical vector of length `nMarkers(x)`")
     checkConsistency(x, mlist)
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
@@ -168,6 +173,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   }
 
   # Shading
+  if(is.function(shaded))
+    shaded = shaded(x)
   if (!is.null(shaded)) {
     density = 25
     angle = 45
@@ -206,8 +213,9 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   if(length(id.labels) > 1)
     stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
-  if(is.null(marker))
-    x$MARKERS = NULL
+  if(length(marker) == 0) {
+    marker = x$MARKERS = NULL
+  }
 
   # Founder inbreeding (this must be extracted before addParents())
   if(!is.null(fouInb) && hasInbredFounders(x))
@@ -237,9 +245,12 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   }
 
   # Tweak id.labels if necessary. After addParents, internal index is 3!
+  if(is.function(id.labels))
+    id.labels = id.labels(labels(x))
+
   if(length(id.labels) == 0 || id.labels == "")
     id = NULL
-  else if(id.labels == "num")
+  else if(identical(id.labels, "num"))
     id = c(`1` = labels(x))
   else if(is.null(names(id.labels))) {
     id = labels(x)
@@ -248,6 +259,11 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   else if(!is.null(names(id.labels))) {
     id = id.labels
   }
+
+  if(is.function(shaded))
+    shaded = shaded(x)
+  if(is.function(starred))
+    starred = starred(x)
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
