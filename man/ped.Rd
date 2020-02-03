@@ -5,8 +5,16 @@
 \alias{singleton}
 \title{Pedigree construction}
 \usage{
-ped(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
-  verbose = FALSE)
+ped(
+  id,
+  fid,
+  mid,
+  sex,
+  famid = "",
+  reorder = TRUE,
+  validate = TRUE,
+  verbose = FALSE
+)
 
 singleton(id, sex = 1, famid = "")
 }
@@ -34,8 +42,6 @@ parents precede their children.}
 the pedigree.}
 
 \item{verbose}{a logical.}
-
-\item{...}{further arguments}
 }
 \value{
 A \code{ped} object, which is essentially a list with the following
