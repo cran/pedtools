@@ -28,7 +28,8 @@
 #'
 #' @export
 relabel = function(x, new, old = labels(x)) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(is.list(old))
+    old = unlist(old, use.names = FALSE)
 
   if(length(new) != length(old))
     stop2("Arguments `new` and `old` must have the same length")
@@ -36,10 +37,34 @@ relabel = function(x, new, old = labels(x)) {
   if(anyDuplicated.default(old) > 0)
     stop2("Duplicated entry in argument `old`: ", unique(old[duplicated(old)]))
 
-  # Relabel
+  if(is.pedList(x)) {
+    res = lapply(x, function(comp) {
+      idx = old %in% labels(comp)
+      if(!any(idx))
+        comp
+      else
+        relabel(comp, new[idx], old[idx])
+    })
+    return(res)
+  }
+  else if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
+  # Build new ID vector
   id = labels.ped(x)
   old_int = internalID(x, old)
   id[old_int] = new
+
+  # Loop breakers
+  if(!is.null(lb <- x$LOOP_BREAKERS)) {
+    # Are any of the copies already changed by user?
+    j = lb[, 'copy'] %in% old_int
+
+    copy = lb[!j, 'copy']
+    orig = lb[!j, 'orig']
+    id[copy] = paste0("=", id[orig])
+  }
+
   x$ID = id
 
   # Duplicated IDs after relabelling?
@@ -131,23 +156,6 @@ getSex = function(x, ids, named = FALSE) {
   res
 }
 
-getSex_OLD = function(x, ids = labels(x)) {
-  if(is.pedList(x)) {
-    comps = getComponent(x, ids, checkUnique = T)
-    res = vapply(seq_along(ids), function(i) {
-      if(is.na(co <- comps[i]))
-        stop2("Unknown ID label: ", ids[i])
-      getSex(x[[comps[i]]], ids[i])
-    }, FUN.VALUE = 1L)
-
-    return(res)
-  }
-
-  if(!is.ped(x))
-    stop2("Input is not a `ped` object or a list of such")
-
-  x$SEX[internalID(x, ids)]
-}
 
 #' @rdname getSex
 #' @export

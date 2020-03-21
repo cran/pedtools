@@ -12,7 +12,7 @@
 
 <meta name="author" content="Magnus Dehli Vigeland" />
 
-<meta name="date" content="2020-02-03" />
+<meta name="date" content="2020-03-21" />
 
 <title>Introduction to the pedtools package</title>
 
@@ -312,7 +312,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to the pedtools package</h1>
 <h4 class="author">Magnus Dehli Vigeland</h4>
-<h4 class="date">2020-02-03</h4>
+<h4 class="date">2020-03-21</h4>
 
 
 <div id="TOC">
@@ -411,7 +411,7 @@ From the way it is printed, the object <code>trio</code> appears to be a data fr
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">plot</span>(trio, <span class="dt">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">shaded =</span> <span class="st">&quot;girl&quot;</span>, </span>
 <span id="cb8-2"><a href="#cb8-2"></a>     <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">title =</span> <span class="st">&quot;Trio 1&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYA/wA6AAA6AGY6ZrY6kJA6kNtmAABmADpmOgBmOjpmkLZmkNtmtrZmtv+QOgCQZgCQkGaQtpCQ2/+2ZgC2Zjq2tma225C229u22/+2/7a2///bkDrbkGbbtpDb29vb/9vb////AAD/tmb/25D//7b//9v///8XqFVOAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" /><!-- --></p>
-<p>See Section 2.2 for how to add, and control the appearence of, marker genotypes to pedgree plots.</p>
+<p>See Section 2.2 for how to add, and control the appearance of, marker genotypes to pedigree plots.</p>
 </div>
 <div id="builtin" class="section level2">
 <h2><span class="header-section-number">1.3</span> Built-in pedigree structures</h2>
