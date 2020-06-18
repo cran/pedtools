@@ -14,6 +14,7 @@ marker(
   posMb = NA,
   posCm = NA,
   name = NA,
+  NAstrings = c(0, "", NA, "-"),
   mutmod = NULL,
   rate = NULL,
   validate = TRUE
@@ -31,8 +32,8 @@ non-NULL, then \code{...} must be empty.}
 
 \item{alleles}{a character (or coercible to character) containing allele
 names. If not given, and \code{afreq} is named, \code{names(afreq)} is used. The
-default action is to take the sorted vector of distinct alleles occurring in
-\code{allelematrix} or \code{...}.}
+default action is to take the sorted vector of distinct alleles occurring
+in \code{allelematrix} or \code{...}.}
 
 \item{afreq}{a numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
@@ -49,6 +50,9 @@ in megabases. Default: NA.}
 marker. Default: NA.}
 
 \item{name}{a character string: the name of the marker. Default: NA.}
+
+\item{NAstrings}{A character vector containing strings to be treated as
+missing alleles. Default: \code{c("", "0", NA, "-")}.}
 
 \item{mutmod, rate}{mutation model parameters. These are passed directly to
 \code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}; see there for details. Note: \code{mutmod}
@@ -77,10 +81,23 @@ Creating a marker object associated with a pedigree
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "child")
 
-# A rare SNP marker for which the child is heterozygous
-m = marker(x, child = 1:2, alleles = 1:2, afreq = c(0.01, 0.99))
+# An empty SNP with alleles "A" and "B"
+marker(x, alleles = c("A", "B"))
 
-# Sometimes it is useful to attach the marker to the pedigree
+# Alleles/frequencies can be given jointly or separately
+stopifnot(identical(
+  marker(x, afreq = c(A = 0.01, B = 0.99)),
+  marker(x, alleles = c("A", "B"), afreq = c(0.01, 0.99)),
+  ))
+
+# Genotypes can be assigned using different formats
+marker(x, fa = c(1,2), mo = "1/2")
+
+# For homozygous genotypes, three formats are possible
+marker(x, fa = 1, mo = c(1,1), child = "1/1")
+
+# Attaching a marker to the pedigree
+m = marker(x) # By default a SNP with alleles 1,2
 x = setMarkers(x, m)
 
 # A marker with a "proportional" mutation model,

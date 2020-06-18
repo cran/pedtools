@@ -12,24 +12,27 @@
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
 #'   the format determined by `sep` and `missing`. See also
-#'   `skip.empty.genotypes` below. If NULL (the default), no genotypes are
+#'   `skipEmptyGenotypes` below. If NULL (the default), no genotypes are
 #'   plotted.
 #' @param sep a character of length 1 separating alleles for diploid markers.
 #' @param missing the symbol (integer or character) for missing alleles.
-#' @param skip.empty.genotypes a logical. If TRUE, and `marker` is non-NULL,
+#' @param skipEmptyGenotypes a logical. If TRUE, and `marker` is non-NULL,
 #'   empty genotypes (which by default looks like '-/-') are not printed.
-#' @param id.labels a vector with labels for each pedigree member. This defaults
-#'   to `labels(x)`. Alternative forms:
+#' @param labs a vector or function controlling the individual labels included
+#'   in the plot. Alternative forms:
 #'
-#'   * If `id.labels` is NULL or the empty character "", then no labels are
-#'   drawn.
+#'   * If `labs` is a vector with nonempty intersection with `labels(x)`, these
+#'   individuals will be labelled. If the vector is named, then the (non-empty)
+#'   names are used instead of the ID label. (See Examples.)
 #'
-#'   * If `id.labels` is the word "num", then all individuals are numerically
+#'   * If `labs` is NULL, or has nonempty intersection with `labels(x)`, then no
+#'   labels are drawn.
+#'
+#'   * If `labs` is the word "num", then all individuals are numerically
 #'   labelled following the internal ordering.
 #'
-#'   * If `id.labels` is a subset of `labels(x)`, then only this subset will be
-#'   labelled. If the vector is named, then the (non-empty) names are used
-#'   instead of the ID label. See Examples.
+#'   * If `labs` is a function, it will be replaced with `labs(x)` and handled
+#'   as above. (See Examples.)
 #'
 #' @param title the plot title. If NULL or '', no title is added to the plot.
 #' @param col a vector of colours for the pedigree members, recycled if
@@ -52,6 +55,8 @@
 #'   additional annotation.
 #' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
+#' @param skip.empty.genotypes Deprecated; use `skipEmptyGenotype` instead.
+#' @param id.labels Deprecated; use `labs` instead
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
 #' @author Magnus Dehli Vigeland
@@ -60,11 +65,11 @@
 #' @examples
 #'
 #' x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-#' m = marker(x, fa = 1, boy = 1:2, name = "SNP")
+#' m = marker(x, fa = "1/1", boy = "1/2", name = "SNP")
 #'
 #' plot(x, marker = m)
 #'
-#' # Alternative syntax if the marker is attached to x
+#' # Markers attached to `x` may be called by name
 #' x = setMarkers(x, m)
 #' plot(x, marker = "SNP")
 #'
@@ -72,14 +77,17 @@
 #' plot(x, marker = "SNP", shaded = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
 #'
-#' # Labelling only some members
-#' plot(x, id.labels = c("fa", "boy"))
+#' # Label only some members
+#' plot(x, labs = c("fa", "boy"))
 #'
-#' # Labelling only some members, and renaming the father
-#' plot(x, id.labels = c(FATHER = "fa", "boy"))
+#' # Label only some members; rename the father
+#' plot(x, labs = c(FATHER = "fa", "boy"))
+#'
+#' # Label males only
+#' plot(x, labs = males)
 #'
 #' # Colours
-#' plot(x, col = list(red = "fa", green = "boy"))
+#' plot(x, col = list(red = "fa", green = "boy"), shaded = "boy")
 #'
 #' # Founder inbreeding is shown by default
 #' founderInbreeding(x, "mo") = 0.1
@@ -90,10 +98,22 @@
 #'
 #' @importFrom graphics text
 #' @export
-plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                    id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
+plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = FALSE,
+                    labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
-                    keep.par = F, ...) {
+                    keep.par = FALSE, skip.empty.genotypes = NULL, id.labels = NULL, ...) {
+
+  if(!is.null(id.labels)) {
+    message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
+    if(length(id.labels) == pedsize(x) && is.null(names(id.labels))) # special case
+      labs = setNames(labels(x), id.labels)
+    else labs = id.labels
+  }
+
+  if(!is.null(skip.empty.genotypes)) {
+    message("The `skip.empty.genotypes` argument has been renamed to `skipEmptyGenotypes`, and will be removed in a future version")
+    skipEmptyGenotypes = skip.empty.genotypes
+  }
 
   if(hasSelfing(x))
     stop2("Plotting of pedigrees with selfing is not yet supported")
@@ -101,36 +121,31 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   nInd = pedsize(x)
 
   # Labels
-  if(is.function(id.labels))
-    id.labels = id.labels(labels(x))
+  if(is.function(labs))
+    labs = labs(x)
 
-  nms = names(id.labels)
-  if (is.null(id.labels) || identical(id.labels, ""))
-    id.labels = rep("", nInd)
-  else if(identical(id.labels, "num"))
-    id.labels = as.character(1:nInd)
-  else if(length(id.labels) < nInd && is.null(nms)) {
-    labs = rep("", nInd)
-    labs[internalID(x, id.labels)] = id.labels
-    id.labels = labs
-  }
-  else if(!is.null(nms)) {
-    labs = rep("", nInd)
-    int_ids = internalID(x, id.labels)
-    labs[int_ids] = id.labels
-    # Replace with names where non-trivial
-    hasName = (nms != "") & (!is.na(nms))
-    labs[int_ids[hasName]] = nms[hasName]
-    id.labels = labs
-  }
-  id.labels[is.na(id.labels)] = ""
+  if(identical(labs, "num"))
+    labs = setNames(labels(x), 1:nInd)
 
-  text = id.labels
+  text = rep("", nInd) # Initialise
+
+  mtch = match(labels(x), labs, nomatch = 0L)
+  showIdx = mtch > 0
+  showLabs = labs[mtch]
+
+  if(!is.null(nms <- names(labs))) { # use names(labs) if present
+    newnames = nms[mtch]
+    goodIdx = newnames != "" & !is.na(newnames)
+    showLabs[goodIdx] = newnames[goodIdx]
+  }
+
+  text[showIdx] = showLabs
 
   # Add stars to labels
   if(is.function(starred))
     starred = starred(x)
-  starred = internalID(x, starred)
+  starred = internalID(x, starred, errorIfUnknown = FALSE)
+  starred = starred[!is.na(starred)]
   text[starred] = paste0(text[starred], "*")
 
   # Marker genotypes
@@ -152,7 +167,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
-    if (skip.empty.genotypes)
+    if (skipEmptyGenotypes)
       geno[rowSums(do.call(cbind, mlist)) == 0] = ""
 
     text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
@@ -196,14 +211,14 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 
   # Add founder inbreeding coefficients
   if(!is.null(fouInb) && hasInbredFounders(x)) {
-    finb = founderInbreeding(x, chromType = fouInb, named = T)
+    finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
     finb = finb[finb > 0]
     idx = internalID(x, names(finb))
     finb.txt = sprintf("f = %.4g", finb)
-    cex = match.call(expand.dots = F)$`...`$cex # NULL is ok!
+    cex = match.call(expand.dots = FALSE)$`...`$cex # NULL is ok!
 
     text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
-         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
+         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
   }
 
   invisible(pdat)
@@ -211,14 +226,16 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 
 #' @rdname plot.ped
 #' @export
-plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                          id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
-                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0, ...) {
-  if(length(id.labels) > 1)
-    stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
+plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = FALSE,
+                          labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0,
+                          id.labels = NULL, ...) {
 
-  if(length(marker) == 0) {
-    marker = x$MARKERS = NULL
+  if(!is.null(id.labels)) {
+    message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
+    if(length(id.labels) == pedsize(x) && is.null(names(id.labels))) # special case
+      labs = setNames(labels(x), id.labels)
+    else labs = id.labels
   }
 
   # Founder inbreeding (this must be extracted before addParents())
@@ -227,52 +244,44 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   else
     finb = NULL
 
-  y = suppressMessages(addParents(x, labels(x)[1], verbose = FALSE))
+  # Tweak labels if necessary. After addParents, internal index is 3!
+  if(is.function(labs))
+    labs = labs(x)
 
-    # Marker genotypes
-  if (!is.null(marker)) {
-    if (is.marker(marker))
-      mlist = list(marker)
-    else if (is.markerList(marker))
-      mlist = marker
-    else if (is.numeric(marker) || is.character(marker))
-      mlist = getMarkers(x, markers = marker)
-    else
-      stop2("Argument `marker` must be either:\n",
-           "  * an object of class `marker`\n",
-           "  * a list of `marker` objects\n",
-           "  * a character vector (names of attached markers)\n",
-           "  * an integer vector (indices of attached markers)")
-    checkConsistency(x, mlist)
-
-    y = transferMarkers(setMarkers(x, mlist), y)
-  }
-
-  # Tweak id.labels if necessary. After addParents, internal index is 3!
-  if(is.function(id.labels))
-    id.labels = id.labels(labels(x))
-
-  if(length(id.labels) == 0 || id.labels == "")
-    id = NULL
-  else if(identical(id.labels, "num"))
-    id = c(`1` = labels(x))
-  else if(is.null(names(id.labels))) {
-    id = labels(x)
-    names(id) = id.labels
-  }
-  else if(!is.null(names(id.labels))) {
-    id = id.labels
-  }
+  if(identical(labs, "num"))
+    labs = c(`1` = labels(x))
 
   if(is.function(shaded))
     shaded = shaded(x)
+
   if(is.function(starred))
     starred = starred(x)
 
+  # Markers: Must be attached to `x` before addParents
+  if (length(marker) == 0)
+    mlist = NULL
+  else if (is.marker(marker))
+    mlist = list(marker)
+  else if (is.markerList(marker))
+    mlist = marker
+  else if (is.numeric(marker) || is.character(marker))
+    mlist = getMarkers(x, markers = marker)
+  else
+    stop2("Argument `marker` must be either:\n",
+         "  * an object of class `marker`\n",
+         "  * a list of `marker` objects\n",
+         "  * a character vector (names of attached markers)\n",
+         "  * an integer vector (indices of attached markers)")
+  x = setMarkers(x, mlist)
+
+  # Add parents!
+  y = suppressMessages(addParents(x, labels(x)[1], father = "__FA__", mother = "__MO__",
+                                  verbose = FALSE))
+
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
-               skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
+               skipEmptyGenotypes = skipEmptyGenotypes, labs = labs,
                title = title, col = col, shaded = shaded, deceased = deceased,
-               starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = T, ...)
+               starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 
   usr = par("usr")
   rect(usr[1] - 0.1, pdat$y[3] - yadj, usr[2] + 0.1, usr[4], border = NA, col = "white")
@@ -283,11 +292,11 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   # Add founder inbreeding coefficients
   if(!is.null(finb)) {
     finb.txt = sprintf("f = %.4g", finb)
-    cex = match.call(expand.dots = F)$`...`$cex # NULL is ok!
+    cex = match.call(expand.dots = FALSE)$`...`$cex # NULL is ok!
     idx = 3 # the "child"
 
     text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
-         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
+         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
   }
 
   invisible(pdat)
@@ -311,7 +320,7 @@ as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
 #' @rdname plot.ped
 #' @export
 plot.pedList = function(x, ...) {
-  plotPedList(x, frames = F, ...)
+  plotPedList(x, frames = FALSE, ...)
 }
 
 #' Plot a collection of pedigrees.
@@ -342,9 +351,8 @@ plot.pedList = function(x, ...) {
 #' @param fmar A single number in the interval \eqn{[0,0.5)} controlling the
 #'   position of the frames.
 #' @param newdev A logical, indicating if a new plot window should be opened.
-#' @param dev.height,dev.width The dimensions of the new device (only relevant
-#'   if `newdev` is TRUE). If these are NA suitable values are guessed from the
-#'   pedigree sizes.
+#' @param dev.height,dev.width The dimensions of the new plot window. If these
+#'   are NA suitable values are guessed from the pedigree sizes.
 #' @param \dots Further arguments passed on to each call to [plot.ped()].
 #'
 #' @author Magnus Dehli Vigeland
@@ -362,7 +370,7 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = widths)
 #'
 #' # In most cases the guessed dimensions are ok but not perfect.
-#' # Resize plot window manually, and then plot again with `newdev = F` (default)
+#' # Resize plot window manually and re-plot with `newdev = FALSE` (default)
 #' # plotPedList(peds, widths = widths)
 #'
 #' ## Remove frames
@@ -373,13 +381,13 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = widths, frames = frames,
 #'             frametitles = c('First', 'Second'))
 #'
-#' # To give *the same* parameter to all plots, it can just be added at the end:
+#' # Parameters common to all plots can be added in the main call:
 #' margins = c(2, 4, 2, 4)
 #' title = 'Same title'
-#' id.labels = ''
+#' labs = ''
 #' symbolsize = 1.5
 #' plotPedList(peds, widths = widths, frames = frames, margins = margins,
-#'             title = title, id.labels = id.labels, symbolsize = symbolsize,
+#'             title = title, labs = labs, symbolsize = symbolsize,
 #'             newdev = TRUE)
 #'
 #' # COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS
@@ -396,7 +404,7 @@ plot.pedList = function(x, ...) {
 #' genotype(m2, leaves(x2)) = "A"
 #' marg2 = c(3, 4, 2, 4)
 #' plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2", symbolsize = 1.2,
-#'              skip.empty.genotypes = TRUE, id = NULL)
+#'              skipEmptyGenotypes = TRUE, id = NULL)
 #'
 #' x3 = singleton("Mr. X")
 #' marg3 = c(10, 0, 0, 0)
@@ -414,16 +422,19 @@ plot.pedList = function(x, ...) {
 #' # Different example:
 #' plotPedList(list(halfCousinPed(4), cousinPed(7)),
 #'             title = c('Many generations', 'Very many generations'),
-#'             newdev = TRUE, dev.height = 9, dev.width = 9)
+#'             dev.height = 9, dev.width = 9)
 #'
 #'
 #' @importFrom grDevices dev.new dev.size
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot
 #' @export
-plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NULL, fmar = NA,
-                       newdev = F, dev.height = NA, dev.width = NA, ...) {
+plotPedList = function(plot.arg.list, widths = NA, frames = TRUE,
+                       frametitles = names(plot.arg.list), fmar = NA,
+                       dev.height = NA, dev.width = NA,
+                       newdev = !is.na(dev.height) || !is.na(dev.width),
+                       ...) {
 
-  plot.list.flattened = list()
+  plotlist.flattened = list()
   if (deduceFrames <- isTRUE(frames)) {
     frames = list()
     k = 0
@@ -432,27 +443,27 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
     if (is.ped(p))
       p = list(p)  # will now be included in next line
     if (is.pedList(p)) {
-      plot.list.flattened = c(plot.list.flattened, lapply(p, list))
+      plotlist.flattened = c(plotlist.flattened, lapply(p, list))
     }
     else {
         # if list of ped with plot arguments
         if (!is.ped(p[[1]]))
           stop2("First element must be a `ped` object", p[[1]])
         p = list(p)
-        plot.list.flattened = append(plot.list.flattened, p)
+        plotlist.flattened = append(plotlist.flattened, p)
       }
     if (deduceFrames) {
       group = (k + 1):(k <- k + length(p))
       frames = append(frames, list(group))
     }
   }
-  plot.arg.list = plot.list.flattened
-  N = length(plot.arg.list)
+
+  N = length(plotlist.flattened)
   if (identical(widths, NA))
-    widths = vapply(plot.arg.list, function(p) ifelse(is.singleton(p[[1]]), 1, 2.5), 1)
+    widths = vapply(plotlist.flattened, function(p) ifelse(is.singleton(p[[1]]), 1, 2.5), 1)
   else
     widths = rep_len(widths, N)
-  maxGen = max(vapply(plot.arg.list, function(arglist) .generations(arglist[[1]]), 1))
+  maxGen = max(vapply(plotlist.flattened, function(arglist) .generations(arglist[[1]]), 1))
 
   if (hasframetitles <- !is.null(frametitles))
     if(length(frametitles) != length(frames))
@@ -466,7 +477,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
   defaultmargins = if (N > 2)
     c(0, 4, 0, 4) else c(0, 2, 0, 2)
 
-  plot.arg.list = lapply(plot.arg.list, function(arglist) {
+  plotlist.flattened = lapply(plotlist.flattened, function(arglist) {
     names(arglist)[1] = "x"
     g = .generations(arglist$x)
     addMargin = 2 * (maxGen - g + 1)
@@ -480,8 +491,8 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
   })
 
   # title: this must be treated specially (in outer margins)
-  titles = sapply(plot.arg.list, "[[", "title")
-  plot.arg.list = lapply(plot.arg.list, function(arglist) {
+  titles = sapply(plotlist.flattened, "[[", "title")
+  plotlist.flattened = lapply(plotlist.flattened, function(arglist) {
     arglist$title = ""
     arglist
   })
@@ -512,7 +523,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
   on.exit(par(opar))
 
   layout(rbind(1:N), widths = widths)
-  for (arglist in plot.arg.list)
+  for (arglist in plotlist.flattened)
     do.call(plot, arglist)
 
   # leftmost coordinate of each plot region (converted to value in [0,1]).

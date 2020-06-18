@@ -21,7 +21,9 @@
 \alias{cousins}
 \alias{nephews_nieces}
 \alias{ancestors}
+\alias{commonAncestors}
 \alias{descendants}
+\alias{commonDescendants}
 \title{Pedigree subgroups}
 \usage{
 founders(x, internal = FALSE)
@@ -60,29 +62,40 @@ cousins(x, id, degree = 1, removal = 0, half = NA, internal = FALSE)
 
 nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
 
-ancestors(x, id, internal = FALSE)
+ancestors(x, id, inclusive = FALSE, internal = FALSE)
 
-descendants(x, id, internal = FALSE)
+commonAncestors(x, ids, inclusive = FALSE, internal = FALSE)
+
+descendants(x, id, inclusive = FALSE, internal = FALSE)
+
+commonDescendants(x, ids, inclusive = FALSE, internal = FALSE)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
 
-\item{internal}{A logical indicating whether 'id' refers to the internal
-order.}
+\item{internal}{A logical indicating whether \code{id} (or \code{ids}) refers to the
+internal order.}
 
-\item{id}{A single ID label (coercible to character).}
+\item{id, ids}{A character (or coercible to such) with one or several ID
+labels.}
 
 \item{degree, removal}{Non-negative integers.}
 
 \item{half}{a logical or NA. If TRUE (resp FALSE), only half (resp. full)
 siblings/cousins/nephews/nieces are returned. If NA, both categories are
 included.}
+
+\item{inclusive}{A logical indicating whether an individual should be counted
+among his or her own ancestors/descendants}
 }
 \value{
-For \code{ancestors(x,id)}, a vector containing the IDs of all ancestors
-of the individual \code{id}.  For \code{descendants(x,id)}, a vector containing the
-IDs of all descendants (i.e. children, grandchildren, a.s.o.) of
-individual \code{id}.
+The functions \code{ancestors(x, id)} and \code{descendants(x, id)} return a
+vector containing the IDs of all ancestors (resp. descendants) of the
+individual \code{id} within the pedigree \code{x}. If \code{inclusive = TRUE}, \code{id} is
+included in the output.
+
+For \code{commonAncestors(x, ids)} and \code{commonDescendants(x, ids)}, a vector
+containing the IDs of common ancestors to all of \code{ids}.
 
 The functions \code{founders}, \code{nonfounders}, \code{males}, \code{females}, \code{leaves} each
 return a vector containing the IDs of all pedigree members with the wanted
@@ -95,7 +108,8 @@ The functions \code{father}, \code{mother}, \code{cousins}, \code{grandparents},
 members having the specified relationship with \code{id}.
 }
 \description{
-A collection of utility functions for identifying pedigree members with certain properties.
+A collection of utility functions for identifying pedigree members with
+certain properties.
 }
 \examples{
 

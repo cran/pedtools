@@ -7,12 +7,12 @@
 plotPedList(
   plot.arg.list,
   widths = NA,
-  frames = T,
-  frametitles = NULL,
+  frames = TRUE,
+  frametitles = names(plot.arg.list),
   fmar = NA,
-  newdev = F,
   dev.height = NA,
   dev.width = NA,
+  newdev = !is.na(dev.height) || !is.na(dev.width),
   ...
 )
 }
@@ -37,11 +37,10 @@ non-NULL, titles for individuals subplots are ignored.}
 \item{fmar}{A single number in the interval \eqn{[0,0.5)} controlling the
 position of the frames.}
 
-\item{newdev}{A logical, indicating if a new plot window should be opened.}
+\item{dev.height, dev.width}{The dimensions of the new plot window. If these
+are NA suitable values are guessed from the pedigree sizes.}
 
-\item{dev.height, dev.width}{The dimensions of the new device (only relevant
-if \code{newdev} is TRUE). If these are NA suitable values are guessed from the
-pedigree sizes.}
+\item{newdev}{A logical, indicating if a new plot window should be opened.}
 
 \item{\dots}{Further arguments passed on to each call to \code{\link[=plot.ped]{plot.ped()}}.}
 }
@@ -68,7 +67,7 @@ widths = c(2, 3, 1, 2)
 plotPedList(peds, widths = widths)
 
 # In most cases the guessed dimensions are ok but not perfect.
-# Resize plot window manually, and then plot again with `newdev = F` (default)
+# Resize plot window manually and re-plot with `newdev = FALSE` (default)
 # plotPedList(peds, widths = widths)
 
 ## Remove frames
@@ -79,13 +78,13 @@ frames = list(1, 2:3)
 plotPedList(peds, widths = widths, frames = frames,
             frametitles = c('First', 'Second'))
 
-# To give *the same* parameter to all plots, it can just be added at the end:
+# Parameters common to all plots can be added in the main call:
 margins = c(2, 4, 2, 4)
 title = 'Same title'
-id.labels = ''
+labs = ''
 symbolsize = 1.5
 plotPedList(peds, widths = widths, frames = frames, margins = margins,
-            title = title, id.labels = id.labels, symbolsize = symbolsize,
+            title = title, labs = labs, symbolsize = symbolsize,
             newdev = TRUE)
 
 # COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS
@@ -102,7 +101,7 @@ m2 = marker(x2, alleles = "A")
 genotype(m2, leaves(x2)) = "A"
 marg2 = c(3, 4, 2, 4)
 plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2", symbolsize = 1.2,
-             skip.empty.genotypes = TRUE, id = NULL)
+             skipEmptyGenotypes = TRUE, id = NULL)
 
 x3 = singleton("Mr. X")
 marg3 = c(10, 0, 0, 0)
@@ -120,7 +119,7 @@ plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
 # Different example:
 plotPedList(list(halfCousinPed(4), cousinPed(7)),
             title = c('Many generations', 'Very many generations'),
-            newdev = TRUE, dev.height = 9, dev.width = 9)
+            dev.height = 9, dev.width = 9)
 
 
 }

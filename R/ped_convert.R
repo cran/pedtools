@@ -85,7 +85,7 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
   if (is.null(attrs))
     attrs = attributes(x)
   p = ped(id = x[,1], fid = x[,2], mid = x[,3], sex = x[,4],
-          famid = attrs$FAMID, validate = validate, reorder = F)
+          famid = attrs$FAMID, validate = validate, reorder = FALSE)
 
   if(is.pedList(p))
     stop2("Cannot restore to `ped` object: Disconnected input")
@@ -122,7 +122,7 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
     pedlabs = labels(p)
 
     mlist = lapply(seq_len((nc-4)/2), function(k) {
-      m = x[, c(3 + 2*k, 4 + 2*k), drop = F]
+      m = x[, c(3 + 2*k, 4 + 2*k), drop = FALSE]
       attr = markerattr[[k]]
       attr$dim = dim(m)
       attr$pedmembers = pedlabs
@@ -145,7 +145,7 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
 #' [as.matrix.ped()]. This reflects the fact that these functions have different
 #' purposes.
 #'
-#' Conversion to data.frame is primarily intended for pretty printing. It uses
+#' Conversion to a data frame is primarily intended for pretty printing. It uses
 #' correct labels for pedigree members and marker alleles, and pastes alleles to
 #' form nice-looking genotypes.
 #'
@@ -302,7 +302,7 @@ as.ped = function(x, ...) {
 #' @param marker_col Index vector indicating columns with marker alleles. If NA,
 #'   all columns to the right of all pedigree columns are used. If `sep`
 #'   (see below) is non-NULL, each column is interpreted as a genotype column
-#'   and split into separate alleles with `strsplit(..., split = sep, fixed = T)`.
+#'   and split into separate alleles with `strsplit(..., split = sep, fixed = TRUE)`.
 #' @param locusAttributes Passed on to [setMarkers()] (see explanation there).
 #' @param missing Passed on to [setMarkers()] (see explanation there).
 #' @param sep Passed on to [setMarkers()] (see explanation there).
@@ -328,19 +328,6 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
                              mid_col = NA, sex_col = NA, marker_col = NA,
                              locusAttributes = NULL, missing = 0,
                              sep = NULL, validate = TRUE, ...) {
-
-  # Check for deprecated arguments
-  dots = list(...)
-  for(arg in names(dots)) {
-    if(!is.na(pmatch(arg, "locus_annotations"))) {
-      warning("Argument `locus_annotations` is deprecated; use `locusAttributes` instead")
-      locusAttributes = dots[[arg]]
-    }
-    if(!is.na(pmatch(arg, "allele_sep"))) {
-      warning("Argument `allele_sep` is deprecated; use `sep` instead")
-      sep = dots[[arg]]
-    }
-  }
 
   # Identify `famid` column and check for multiple pedigrees
   colnames = tolower(names(x))
@@ -443,7 +430,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
     AM = NULL
   }
   else { # Otherwise, convert marker-cols to matrix
-    AM = as.matrix(x)[, marker_col, drop = F]
+    AM = as.matrix(x)[, marker_col, drop = FALSE]
     rownames(AM) = id
   }
 
@@ -454,7 +441,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {
     p = lapply(p, function(comp) {
-      setMarkers(comp, alleleMatrix = AM[labels(comp), , drop = F],
+      setMarkers(comp, alleleMatrix = AM[labels(comp), , drop = FALSE],
                  locusAttributes = locusAttributes,
                  missing = missing, sep = sep)
     })

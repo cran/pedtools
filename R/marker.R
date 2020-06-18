@@ -11,8 +11,8 @@
 #'   non-NULL, then `...` must be empty.
 #' @param alleles a character (or coercible to character) containing allele
 #'   names. If not given, and `afreq` is named, `names(afreq)` is used. The
-#'   default action is to take the sorted vector of distinct alleles occurring in
-#'   `allelematrix` or `...`.
+#'   default action is to take the sorted vector of distinct alleles occurring
+#'   in `allelematrix` or `...`.
 #' @param afreq a numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
 #'   don't sum to 1 after rounding to 3 decimals. If the vector is named, and
@@ -25,6 +25,8 @@
 #' @param posCm a nonnegative real number: the centiMorgan position of the
 #'   marker. Default: NA.
 #' @param name a character string: the name of the marker. Default: NA.
+#' @param NAstrings A character vector containing strings to be treated as
+#'   missing alleles. Default: `c("", "0", NA, "-")`.
 #' @param mutmod,rate mutation model parameters. These are passed directly to
 #'   [pedmut::mutationModel()]; see there for details. Note: `mutmod`
 #'   corresponds to the `model` parameter. Default: NULL (no mutation model).
@@ -55,10 +57,23 @@
 #' @examples
 #' x = nuclearPed(father = "fa", mother = "mo", children = "child")
 #'
-#' # A rare SNP marker for which the child is heterozygous
-#' m = marker(x, child = 1:2, alleles = 1:2, afreq = c(0.01, 0.99))
+#' # An empty SNP with alleles "A" and "B"
+#' marker(x, alleles = c("A", "B"))
 #'
-#' # Sometimes it is useful to attach the marker to the pedigree
+#' # Alleles/frequencies can be given jointly or separately
+#' stopifnot(identical(
+#'   marker(x, afreq = c(A = 0.01, B = 0.99)),
+#'   marker(x, alleles = c("A", "B"), afreq = c(0.01, 0.99)),
+#'   ))
+#'
+#' # Genotypes can be assigned using different formats
+#' marker(x, fa = c(1,2), mo = "1/2")
+#'
+#' # For homozygous genotypes, three formats are possible
+#' marker(x, fa = 1, mo = c(1,1), child = "1/1")
+#'
+#' # Attaching a marker to the pedigree
+#' m = marker(x) # By default a SNP with alleles 1,2
 #' x = setMarkers(x, m)
 #'
 #' # A marker with a "proportional" mutation model,
@@ -68,11 +83,9 @@
 #'
 #' @export
 marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
-                  chrom = NA, posMb = NA, posCm = NA, name = NA, mutmod = NULL,
-                  rate = NULL, validate = TRUE) {
-
-  # Symbols treated as NA
-  NA_allele_ = c(0, "", NA, "-")
+                  chrom = NA, posMb = NA, posCm = NA, name = NA,
+                  NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
+                  validate = TRUE) {
 
   # Some parameters cannot have length 0 or be ""
   if(length(chrom) == 0) chrom = NA
@@ -80,23 +93,40 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
   if(length(posCm) == 0) posCm = NA
   if(length(name) == 0 || identical(name, "")) name = NA
 
+  pedN = pedsize(x)
+
   if (is.null(allelematrix)) {
     # Initalize empty allele matrix
-    m = matrix(0, ncol = 2, nrow = pedsize(x))
+    m = matrix(0, ncol = 2, nrow = pedN)
 
     # Capture genotypes given in dots
     dots = eval(substitute(alist(...)))
-    if(length(dots) > 0 && is.null(names(dots)))
-      stop2("Genotype assignments in `...` must be named. See ?marker")
+    if((ld <- length(dots)) > pedN)
+      stop2("Too many genotype assignments")
 
-    ids_int = internalID(x, names(dots))
-
+    # Genotypes (may be empty)
     genos = lapply(dots, eval.parent)
 
-    for(i in seq_along(dots)) {
+    # Internal ID of each genotype
+    # (If no names, take pedigree members in sequence)
+    dotnames = names(dots)
+    if(is.null(dotnames))
+      ids_int = seq_len(ld)
+    else
+      ids_int = internalID(x, dotnames)
+
+    for(i in seq_len(ld)) {
       g = genos[[i]]
-      if(!is.vector(g) || !length(g) %in% 1:2)
+      lg = length(g)
+
+      if(!is.vector(g) || !lg %in% 1:2)
         stop2("Genotype must be a vector of length 1 or 2: ", deparse(g))
+
+      # Split compound genotypes, e.g., "a/b"
+      if(lg == 1 && is.character(g))
+        g = strsplit(g, "/")[[1]]
+
+      # Insert in `m`
       m[ids_int[i], ] = g
     }
   }
@@ -109,14 +139,14 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
     if(!is.null(afreq) && !is.null(names(afreq)))
        alleles = names(afreq)
     else {
-      alleles = .mysetdiff(m, NA_allele_)
+      alleles = .mysetdiff(m, NAstrings)
       if (length(alleles) == 0)
         alleles = 1:2 # NEW
     }
   }
-  else if(!all(m %in% c(NA_allele_, alleles))) {
+  else if(!all(m %in% c(NAstrings, alleles))) {
       mtxt = if(is.na(name)) "this marker: " else sprintf("marker `%s`: ", name)
-      stop2("Invalid allele for ", mtxt, setdiff(m, c(NA_allele_, alleles)))
+      stop2("Invalid allele for ", mtxt, setdiff(m, c(NAstrings, alleles)))
   }
 
   ### Frequencies
@@ -185,7 +215,7 @@ validateMarker = function(x) {
 
   ## alleles
   alleles = attrs$alleles
-  NA_allele_ = c(0, "", NA, "-")
+  NA_allele_ = c(0, "", NA)
   if(any(alleles %in% NA_allele_))
     stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
 

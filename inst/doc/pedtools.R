@@ -1,7 +1,8 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = "center"
 )
 library(kableExtra)
 
@@ -41,7 +42,7 @@ plot(trio, deceased = "fa", starred = "mo", shaded = "girl",
 
 ## -----------------------------------------------------------------------------
 trio2 = nuclearPed(nch = 1)
-trio2 = swapSex(trio2, id = 3)
+trio2 = swapSex(trio2, ids = 3)
 trio2 = relabel(trio2, new = c("fa", "mo", "girl"))
 
 ## -----------------------------------------------------------------------------
@@ -76,23 +77,32 @@ x2
 x2 = reorderPed(x2)
 identical(x1, x2)
 
-## ----echo = FALSE, fig.width = 2.5, fig.width = 4-----------------------------
-y1 = linearPed(3, sex = 1) # male line 
-y2 = linearPed(2, sex = 2) # female line
+## ----merge-example, echo = FALSE, message = F---------------------------------
+# Top part
+x = ancestralPed(g = 2) # bottom person is `7`
 
-y2 = relabel(y2, c(11:14, 6)) # relabel to match only for ID = 6
+# Bottom part
+y = halfCousinPed(degree = 1) 
+y = swapSex(y, 4)
+y = relabel(y, new = 7:15) # top person becomes `7`
 
-y = mergePed(y1, y2)
-plot(y, id=NULL, margins=c(0,1,1,1), symbolsize=0.9)
+# Merge
+z = mergePed(x, y)
 
-## ----eval=FALSE---------------------------------------------------------------
-#  y1 = linearPed(3, sex = 1) # male line
-#  y2 = linearPed(2, sex = 2) # female line
-#  
-#  y2 = relabel(y2, c(11:14, 6)) # relabel to match at ID = 6
-#  
-#  y = mergePed(y1, y2)
-#  plot(y)
+## ----merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7--------------
+plot(z, margins = c(1,1,1,1))
+
+## ---- label = "merge-example"-------------------------------------------------
+# Top part
+x = ancestralPed(g = 2) # bottom person is `7`
+
+# Bottom part
+y = halfCousinPed(degree = 1) 
+y = swapSex(y, 4)
+y = relabel(y, new = 7:15) # top person becomes `7`
+
+# Merge
+z = mergePed(x, y)
 
 ## -----------------------------------------------------------------------------
 marker(trio)

@@ -101,7 +101,7 @@ hasInbredFounders = function(x, chromType = "autosomal") {
   if(is.null(x$FOUNDER_INBREEDING))
     return(FALSE)
 
-  finb = founderInbreeding(x, named = T, chromType = chromType)
+  finb = founderInbreeding(x, named = TRUE, chromType = chromType)
 
   # If X: only females interesting (males are always 1)
   if(chromType == "x")
@@ -204,7 +204,7 @@ peelingOrder = function(x) {
     # Identify links to other remaining nucs
     if(length(nucs) > 1) {
       nucmembers = c(nuc$father, nuc$mother, nuc$children)
-      links = nucmembers[nucmembers %in% unlist(nucs[-i], use.names = F)]
+      links = nucmembers[nucmembers %in% unlist(nucs[-i], use.names = FALSE)]
     }
     else
       links = 0 # if nuc is the last
@@ -267,8 +267,8 @@ has_numlabs = function(x) {
 
 
 .generations = function(x) {
-  FOU = founders(x, internal = T)
-  max(lengths(unlist(.descentPaths(x, FOU, internal = T), recursive = F)))
+  FOU = founders(x, internal = TRUE)
+  max(lengths(unlist(.descentPaths(x, FOU, internal = TRUE), recursive = FALSE)))
 }
 
 # Utility function for generating numbered "NN" labels.
@@ -280,7 +280,7 @@ nextNN = function(labs) { # labs a character vector
   NNnum = suppressWarnings(as.numeric(sub("^NN[._-]?", "", labs[NNs])))
   if(all(is.na(NNnum)))
     return("NN_1")
-  nextNNnum = max(NNnum, na.rm = T) + 1
+  nextNNnum = max(NNnum, na.rm = TRUE) + 1
   return(sprintf("NN_%d", nextNNnum))
 }
 
@@ -307,31 +307,6 @@ nextNN = function(labs) { # labs a character vector
     res
   })
 }
-
-#KAN KASTES:
-.descentPaths2 = function(x, ids, internal = FALSE) {
-  if (!internal) ids = internalID(x, ids)
-
-  offs = lapply(1:pedsize(x), function(y) children(x, y, internal = TRUE))
-  lapply(ids, function(id) {
-    res = list(id)
-    while (TRUE) {
-      newoffs = offs[vapply(res, function(path) path[length(path)], 1)]
-      if (length(unlist(newoffs)) == 0)
-        break
-      nextstep = lapply(1:length(res), function(r)
-        if (length(newoffs[[r]]) == 0) res[r]
-        else lapply(newoffs[[r]], function(kid) c(res[[r]], kid)))
-      res = unlist(nextstep, recursive = FALSE)
-    }
-    if (!internal) {
-      labs = labels(x)
-      res = lapply(res, function(int_ids) labs[int_ids])
-    }
-    res
-  })
-}
-
 
 
 #' Pedigree component

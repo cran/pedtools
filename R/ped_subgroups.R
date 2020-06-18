@@ -1,20 +1,27 @@
 #' Pedigree subgroups
 #'
-#' A collection of utility functions for identifying pedigree members with certain properties.
+#' A collection of utility functions for identifying pedigree members with
+#' certain properties.
 #'
 #' @param x A [ped()] object.
-#' @param id A single ID label (coercible to character).
-#' @param internal A logical indicating whether 'id' refers to the internal
-#'   order.
+#' @param id,ids A character (or coercible to such) with one or several ID
+#'   labels.
+#' @param inclusive A logical indicating whether an individual should be counted
+#'   among his or her own ancestors/descendants
+#' @param internal A logical indicating whether `id` (or `ids`) refers to the
+#'   internal order.
 #' @param degree,removal Non-negative integers.
 #' @param half a logical or NA. If TRUE (resp FALSE), only half (resp. full)
 #'   siblings/cousins/nephews/nieces are returned. If NA, both categories are
 #'   included.
 #'
-#' @return For `ancestors(x,id)`, a vector containing the IDs of all ancestors
-#'   of the individual `id`.  For `descendants(x,id)`, a vector containing the
-#'   IDs of all descendants (i.e. children, grandchildren, a.s.o.) of
-#'   individual `id`.
+#' @return The functions `ancestors(x, id)` and `descendants(x, id)` return a
+#'   vector containing the IDs of all ancestors (resp. descendants) of the
+#'   individual `id` within the pedigree `x`. If `inclusive = TRUE`, `id` is
+#'   included in the output.
+#'
+#'   For `commonAncestors(x, ids)` and `commonDescendants(x, ids)`, a vector
+#'   containing the IDs of common ancestors to all of `ids`.
 #'
 #'   The functions `founders`, `nonfounders`, `males`, `females`, `leaves` each
 #'   return a vector containing the IDs of all pedigree members with the wanted
@@ -226,34 +233,50 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
-ancestors = function(x, id, internal = FALSE) {
+ancestors = function(x, id, inclusive = FALSE, internal = FALSE) {
   # climbs upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
   if (!internal)  id = internalID(x, id)
 
   FIDX = x$FIDX
   MIDX = x$MIDX
-  ancest = integer(0)
+  ancest = if(inclusive) id else integer(0)
 
   up1 = c(FIDX[id], MIDX[id])
   up1 = up1[up1 > 0]
   while (length(up1)) {
     ancest = c(ancest, up1)
     up1 = c(FIDX[up1], MIDX[up1])
-    up1 = up1[up1>0]
+    up1 = up1[up1 > 0]
   }
   ancest = .mysortInt(unique.default(ancest))
   if (internal) ancest else labels.ped(x)[ancest]
 }
 
+#' @rdname ped_subgroups
+#' @export
+commonAncestors = function(x, ids, inclusive = FALSE, internal = FALSE) {
+  if(length(ids) < 2)
+    stop2("Argument `ids` must have length at least 2")
+
+  anc = ancestors(x, ids[1], inclusive = inclusive, internal = internal)
+  for(id in ids[-1]) {
+    if(length(anc) == 0)
+      break
+    newanc = ancestors(x, id, inclusive = inclusive, internal = internal)
+    anc = .myintersect(anc, newanc)
+  }
+
+  anc
+}
 
 #' @rdname ped_subgroups
 #' @export
-descendants = function(x, id, internal = FALSE) {
+descendants = function(x, id, inclusive = FALSE, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
 
   FIDX = x$FIDX
   MIDX = x$MIDX
-  desc = integer()
+  desc = if(inclusive) id else integer()
 
   nextoffs = id
   while(length(nextoffs)) {
@@ -262,5 +285,22 @@ descendants = function(x, id, internal = FALSE) {
   }
   desc = .mysortInt(unique.default(desc))
   if (internal) desc else labels.ped(x)[desc]
+}
+
+#' @rdname ped_subgroups
+#' @export
+commonDescendants = function(x, ids, inclusive = FALSE, internal = FALSE) {
+  if(length(ids) < 2)
+    stop2("Argument `ids` must have length at least 2")
+
+  desc = descendants(x, ids[1], inclusive = inclusive, internal = internal)
+  for(id in ids[-1]) {
+    if(length(desc) == 0)
+      break
+    newdesc = descendants(x, id, inclusive = inclusive, internal = internal)
+    desc = .myintersect(desc, newdesc)
+  }
+
+  desc
 }
 
