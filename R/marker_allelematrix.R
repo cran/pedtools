@@ -28,10 +28,14 @@
 #' @seealso [transferMarkers()]
 #'
 #' @examples
+#' # Setup: Pedigree with two markers
 #' x = nuclearPed(1)
-#' m1 = marker(x, `2` = 1:2, alleles = 1:2, name = "m1")
-#' m2 = marker(x, `3` = 2, alleles = 1:2, name = "m2")
+#' m1 = marker(x, `2` = "1/2", alleles = 1:2, name = "m1")
+#' m2 = marker(x, `3` = "2/2", alleles = 1:2, name = "m2")
 #' x = setMarkers(x, list(m1, m2))
+#'
+#'
+#' # Extract allele matrix:
 #'
 #' mat1 = getAlleles(x)
 #' mat2 = getAlleles(x, ids = 2:3, markers = "m2")
@@ -47,6 +51,7 @@
 #' # Alternative: In-place modification with `genotype()`
 #' genotype(y, id = "1", marker = "m2") = 1:2
 #' stopifnot(identical(y,z))
+#'
 #'
 #' ### Manipulation of pedlist objects
 #' s = transferMarkers(x, singleton("s"))
@@ -72,9 +77,7 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
       stop2("Unknown ID label: ", setdiff(ids, unlist(labels(x))))
 
     # Check equality of marker counts and names
-    mNames = lapply(x, function(comp) name(comp, markers = seq_along(nMarkers(comp))))
-    if(length(unique(mNames)) > 1)
-      stop2("Components cannot have different number of markers, or different marker names. Please file an issue if this is important to you.")
+    name(x)
 
     # Extract alleles from each component
     amList = lapply(x, function(comp) {
@@ -93,11 +96,8 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   }
 
   # Main body: x is now is single `ped` object
-  if(is.null(ids))
-    ids = labels(x)
-
-  if(is.null(markers))
-    markers = seq_len(nMarkers(x))
+  ids = ids %||% labels(x)
+  markers = markers %||% seq_markers(x)
 
   # If no `ids` or no `markers`, return empty (but properly formed) matrix
   if(length(ids) == 0 || length(markers) == 0) {
@@ -165,16 +165,16 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
     am[ids_comp, ] = alleles[ids_comp, ]
 
     # Locus attributes
-    if(is.null(markers)) markers = seq_len(nMarkers(comp))
+    markers = markers %||% seq_markers(comp)
     loci = getLocusAttributes(comp, markers = markers)
 
     # Convert back to marker list and replace the old ones
-    mlistNew = allelematrix2markerlist(comp, am, locusAttributes = loci, missing = NA) # why NA?
+    mlistNew = allelematrix2markerlist(comp, am, locusAttributes = loci, missing = NA)
 
     midx = whichMarkers(comp, markers)
     comp$MARKERS[midx] = mlistNew
 
-    # Return modified ped oject
+    # Return modified ped
     comp
   }
 
@@ -226,8 +226,13 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     # Marker names: Use odd numbered columns; delete from last period
     # e.g. M1.1, M1.2, M2.1, M2.2, ... --> M1, M2, ...
-    if(hasMatrixNames)
+    if(hasMatrixNames) {
       nms = sub("\\.[^.]*$", "", nms[seq(1, length(nms), by = 2)])
+
+      # Converts numerical names to NA
+      if (isTRUE(any(suppressWarnings(nms == as.integer(nms)))))
+        hasMatrixNames = FALSE
+    }
   }
 
   # Settle the number of markers
@@ -337,21 +342,21 @@ split_genotype_cols = function(m, sep, missing) {
 
 # For internal use
 markerlist2allelematrix = function(mlist, missing = NA) {
-  # List of 2-col character matrices
-  alist = lapply(mlist, function(m) {
-    a = c(missing, alleles(m))[m + 1]
-    dim(a) = dim(m)
-    a
-  })
 
-  # Bind
-  amat = do.call(cbind, alist)
+  # List of vectors, each of length 2*pedsize
+  allelelist = lapply(mlist, function(m) c(missing, alleles.marker(m))[m + 1])
 
-  # Column namse
+  # Transform to matrix (faster than cbind)
+  amat = unlist(allelelist)
+  nMark = length(mlist)
+  nInd = length(amat)/(2*nMark)
+  dim(amat) = c(nInd, 2*nMark)
+
+  # Column names
   mnames = sapply(mlist, name)
   if(any(naname <- is.na(mnames)))
-    mnames[naname] = paste0("na", 1:sum(naname))
-  colnames(amat) = sprintf("%s.%d", rep(mnames, each = 2), 1:2)
+    mnames[naname] = as.character(which(naname))
+  colnames(amat) = paste0(rep(mnames, each = 2), c(".1", ".2"))
 
   # Return character matrix
   amat

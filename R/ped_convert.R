@@ -57,27 +57,22 @@
 #'
 #' @export
 as.matrix.ped = function(x, include.attrs = TRUE, ...) {
-  m = cbind(1:pedsize(x), x$FIDX, x$MIDX, x$SEX)
-  if(hasMarkers(x)) {
-    markermatr = do.call(cbind, x$MARKERS)
-    m = cbind(m, markermatr)
-  }
+  m = c(seq_along(x$ID), x$FIDX, x$MIDX, x$SEX, unlist(x$MARKERS))
+  attrs = list(dim = c(length(x$ID), 4 + 2*length(x$MARKERS)))
   if (include.attrs) {
-    attr(m, "FAMID") = famid(x)
-    attr(m, "LABELS") = labels(x)
-    attr(m, "UNBROKEN_LOOPS") = hasUnbrokenLoops(x)
-    attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
-    attr(m, "FOUNDER_INBREEDING") =
+    attrs$FAMID = famid(x)
+    attrs$LABELS = labels(x)
+    attrs$UNBROKEN_LOOPS = hasUnbrokenLoops(x)
+    attrs$LOOP_BREAKERS = x$LOOP_BREAKERS
+    attrs$FOUNDER_INBREEDING =
       if(is.null(x$FOUNDER_INBREEDING)) NULL
-      else list(autosomal = founderInbreeding(x, named = TRUE, chromType = "autosomal"),
-                x = founderInbreeding(x, named = TRUE, chromType = "x"))
-    if(hasMarkers(x)) {
-      attr(m, "markerattr") = lapply(x$MARKERS, attributes)
-    }
+    else list(autosomal = founderInbreeding(x, named = TRUE, chromType = "autosomal"),
+              x = founderInbreeding(x, named = TRUE, chromType = "x"))
+    attrs$markerattr = lapply(x$MARKERS, attributes)
   }
+  attributes(m) = attrs
   m
 }
-
 
 #' @rdname as.matrix.ped
 #' @export
@@ -158,13 +153,16 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
 #'
 #' @param x Object of class `ped`.
 #' @param ... Further parameters
-#' @param markers (Optional) Vector of marker indices. By default, all markers
+#' @param markers Vector of marker names or indices. By default, all markers
 #'   are included.
+#' @param sep A single string to be used as allele separator in marker genotypes.
+#' @param missing A single string to be used for missing alleles.
+#'
 #' @return A `data.frame` with `pedsize(x)` rows and `4 + nMarkers(x)` columns.
 #' @seealso [as.matrix.ped()]
 #'
 #' @export
-as.data.frame.ped = function(x, ..., markers) {
+as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
   lab = labels(x)
   fid = mid = rep("0", pedsize(x))
   fid[x$FIDX > 0] = lab[x$FIDX]
@@ -178,7 +176,8 @@ as.data.frame.ped = function(x, ..., markers) {
     else markers = whichMarkers(x, markers)
 
     mlist = getMarkers(x, markers)
-    geno = do.call(cbind, lapply(mlist, format))
+    geno = do.call(cbind,
+      lapply(mlist, function(m) format(m, sep = sep, missing = missing)))
 
     # Headers of genotype columns: name if present, otherwise <idx>
     nms = vapply(mlist, name.marker, character(1))
@@ -232,7 +231,7 @@ print.ped = function(x, ..., markers, verbose = TRUE) {
   print(datafr, row.names = FALSE, ...)
 
   if(showmess && verbose)
-    message("Only 5 (out of ", nm, ") markers are shown. See `?print.ped` for options.")
+    message("Only 5 (out of ", nm, ") markers are shown.")
 
   invisible(datafr)
 }
@@ -316,7 +315,7 @@ as.ped = function(x, ...) {
 #' # Disconnected example: Trio (1-3) + singleton (4)
 #' df2 = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
 #'                 M = c("1/2", "1/1", "2/2", "3/4"))
-#' as.ped(df2, sep = "/")
+#' as.ped(df2)
 #'
 #' # Two singletons
 #' df3 = data.frame(id = 1:2, fid = 0, mid = 0, sex = 1)
@@ -339,11 +338,11 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   }
   else {
     famid = x[[famid_col]]
-    unique_fams = sort.default(unique.default(famid))
+    unique_fams = unique.default(famid)
     multiple_fams = length(unique_fams) > 1
   }
 
-  # If multiple families, treat each component separatly by recursion
+  # If multiple families, treat each component separately by recursion
   # NB: a single ped may still be disconnected; this is handled in ped()
   if(multiple_fams) {
     pedlist = lapply(unique_fams, function(fam) {
@@ -437,6 +436,10 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   # Return if neither alleles or locus data are given
   if(is.null(AM) && is.null(locusAttributes))
     return(p)
+
+  # If `sep` is not given, but AM contains entries with "/", use this
+  if(is.null(sep) && any(grepl("/", AM, fixed = TRUE)))
+    sep = "/"
 
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {

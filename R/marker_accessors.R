@@ -85,8 +85,11 @@ genotype.ped = function(x, markers = NULL, id, ...) {
   if (anyNA(id_int))
     stop2("Unknown ID label: ", setdiff(id, pedlabels))
 
+  if(length(value) == 1)
+    value = strsplit(as.character(value), "/", fixed = TRUE)[[1]]
+
   if (!length(value) %in% 1:2)
-    stop2("Length of genotype vector must be 1 or 2")
+    stop2("Number of alleles must be 1 or 2: ", value)
 
   if(length(value) == 1)
     value = rep(value, 2)
@@ -184,9 +187,8 @@ mutmod.list = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
-`mutmod<-.ped` = function(x, marker, ..., value) {
-  if(missing(marker) || length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
+`mutmod<-.ped` = function(x, marker = NULL, ..., value) {
+  marker = marker %||% seq_markers(x)
 
   idx = whichMarkers(x, markers = marker)
   for(i in idx)
@@ -197,10 +199,11 @@ mutmod.list = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
-`mutmod<-.list` = function(x, marker, ..., value) {
+`mutmod<-.list` = function(x, marker = NULL, ..., value) {
+  marker = marker %||% seq_markers(x)
+
   for(i in seq_along(x))
     mutmod(x[[i]], marker) = value
-
   x
 }
 
@@ -261,6 +264,15 @@ afreq.ped = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
+afreq.list = function(x, marker, ...) {
+  comp_wise = lapply(x, afreq, marker = marker)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `afreq()` differs between pedigree components")
+  comp_wise[[1]]
+}
+
+#' @rdname marker_getset
+#' @export
 `afreq<-` = function(x, ..., value) {
   UseMethod("afreq<-")
 }
@@ -305,12 +317,20 @@ afreq.ped = function(x, marker, ...) {
   x
 }
 
+
+#' @rdname marker_getset
+#' @export
+`afreq<-.list` = function(x, marker, ..., value) {
+  for(i in seq_along(x))
+    afreq(x[[i]], marker) = value
+  x
+}
+
 ######################
 # simple accessors:
 # * name()
 # * chrom()
 # * posMb()
-# * posCm()
 ######################
 
 
@@ -329,14 +349,16 @@ name.marker = function(x, ...) {
 
 #' @rdname marker_getset
 #' @export
-name.ped = function(x, markers, ...) {
+name.ped = function(x, markers = NULL, ...) {
+  markers = markers %||% seq_markers(x)
+
   mlist = getMarkers(x, markers = markers)
   vapply(mlist, name.marker, character(1))
 }
 
 #' @rdname marker_getset
 #' @export
-name.list = function(x, markers, ...) {
+name.list = function(x, markers = NULL, ...) {
   comp_wise = lapply(x, name, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `name()` differs between pedigree components")
@@ -366,29 +388,33 @@ name.list = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`name<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
+`name<-.ped` = function(x, markers = NULL, ..., value) {
+  markers = markers %||% seq_markers(x)
+  if(length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
   if(length(value) != length(markers))
     stop2("Length of replacement vector must equal the number of markers")
   if(!is.character(value))
     stop2("Replacement must be a character vector")
-  if(anyDuplicated.default(value))
-    stop2("Replacement values must be unique")
 
   idx = whichMarkers(x, markers = markers)
 
+  # Set names
   x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
     m = x$MARKERS[[idx[i]]]
     name(m) = value[i]
     m
   })
+
+  # Check for duplicates
+  checkDupNames(x)
+
   x
 }
 
 #' @rdname marker_getset
 #' @export
-`name<-.list` = function(x, markers, ..., value) {
+`name<-.list` = function(x, markers = NULL, ..., value) {
   lapply(x, function(cmp) `name<-`(cmp, markers = markers, value = value))
 }
 
@@ -407,14 +433,16 @@ chrom.marker = function(x, ...) {
 
 #' @rdname marker_getset
 #' @export
-chrom.ped = function(x, markers, ...) {
+chrom.ped = function(x, markers = NULL, ...) {
+  markers = markers %||% seq_markers(x)
+
   mlist = getMarkers(x, markers = markers)
   vapply(mlist, chrom.marker, character(1))
 }
 
 #' @rdname marker_getset
 #' @export
-chrom.list = function(x, markers, ...) {
+chrom.list = function(x, markers = NULL, ...) {
   comp_wise = lapply(x, chrom, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `chrom()` differs between pedigree components")
@@ -442,8 +470,9 @@ chrom.list = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`chrom<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
+`chrom<-.ped` = function(x, markers = NULL, ..., value) {
+  markers = markers %||% seq_markers(x)
+  if(length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
   if(length(value) > length(markers))
     stop2("Replacement vector larger than the number of markers: ", value)
@@ -463,7 +492,7 @@ chrom.list = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`chrom<-.list` = function(x, markers, ..., value) {
+`chrom<-.list` = function(x, markers = NULL, ..., value) {
   lapply(x, function(cmp) `chrom<-`(cmp, markers = markers, value = value))
 }
 
@@ -481,77 +510,13 @@ posMb.marker = function(x, ...) {
 
 #' @rdname marker_getset
 #' @export
-posMb.ped = function(x, markers, ...) {
+posMb.ped = function(x, markers = NULL, ...) {
+  markers = markers %||% seq_markers(x)
+
   mlist = getMarkers(x, markers = markers)
   vapply(mlist, posMb, numeric(1))
 }
 
-#' @rdname marker_getset
-#' @export
-posCm = function(x, ...) {
-  UseMethod("posCm")
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.marker = function(x, ...) {
-  as.numeric(attr(x, 'posCm'))
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, posCm, numeric(1))
-}
-
-
-
-
-### posCm setter
-
-#' @rdname marker_getset
-#' @export
-`posCm<-` = function(x, ..., value) {
-  UseMethod("posCm<-")
-}
-
-#' @rdname marker_getset
-#' @export
-`posCm<-.marker` = function(x, ..., value) {
-  pos = suppressWarnings(as.numeric(value))
-
-  if((!is.na(value) && is.na(pos)) || length(pos) != 1)
-    stop2("`posCm` replacement must be a single number: ", value)
-  if(pos < 0)
-    stop2("`posCm` replacement must be nonnegative: ", value)
-
-  attr(x, 'posCm') = pos
-  x
-}
-
-#' @rdname marker_getset
-#' @export
-`posCm<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
-    stop2("Argument `markers` cannot be empty")
-
-  nm = length(markers)
-  nv = length(value)
-  if(nv > nm)
-    stop2("Replacement vector is longer than the number of markers")
-  else if(nv < nm)
-    value = rep(value, length.out = nm)
-
-  idx = whichMarkers(x, markers = markers)
-
-  x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
-    m = x$MARKERS[[idx[i]]]
-    posCm(m) = value[i]
-    m
-  })
-  x
-}
 
 ### posMb setter
 #' @rdname marker_getset
@@ -576,8 +541,10 @@ posCm.ped = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`posMb<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
+`posMb<-.ped` = function(x, markers = NULL, ..., value) {
+  markers = markers %||% seq_markers(x)
+
+  if(length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
 
   nm = length(markers)

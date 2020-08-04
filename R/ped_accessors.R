@@ -2,9 +2,11 @@
 #'
 #' Functions for getting or changing the ID labels of pedigree members.
 #'
-#' @param x A `ped` object.
+#' @param x A `ped` object or a list of such.
 #' @param new,old Character vectors (or coercible to character) of the same
 #'   length. ID labels in `old` are replaced by those in `new`.
+#' @param reorder A logical. If TRUE, [reorderPed()] is called on `x` after
+#'   relabelling. Default: FALSE.
 #'
 #' @return
 #'
@@ -20,16 +22,33 @@
 #'
 #' @examples
 #'
-#' x = nuclearPed(1)
+#' x = nuclearPed()
 #' x
 #' labels(x)
 #'
 #' relabel(x, new = "girl", old = 3)
 #'
+#' @importFrom kinship2 align.pedigree
 #' @export
-relabel = function(x, new, old = labels(x)) {
+relabel = function(x, new, old = labels(x), reorder = FALSE) {
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
+
+  if(identical(new, "asPlot")) {
+    if(is.pedList(x))
+      stop2("`asPlot` cannot be used with ped lists")
+    p = align.pedigree(as_kinship2_pedigree(x), packed = FALSE, align = FALSE)
+    oldIdx = unlist(lapply(seq_along(p$n), function(i) p$nid[i, 1:p$n[i]]))
+
+    if(anyDuplicated(oldIdx))
+      oldIdx = unique.default(oldIdx)
+      # stop2('option `new = "asPlot"` failed for this pedigree')
+
+    old = labels(x)[oldIdx]
+    new = seq_along(old)
+
+    reorder = TRUE
+  }
 
   if(length(new) != length(old))
     stop2("Arguments `new` and `old` must have the same length")
@@ -74,6 +93,9 @@ relabel = function(x, new, old = labels(x)) {
   # Replace `pedmembers` attribute of each marker
   if(hasMarkers(x))
     x$MARKERS = lapply(x$MARKERS, `attr<-`, 'pedmembers', id)
+
+  if(reorder)
+    x = reorderPed(x)
 
   x
 }
@@ -224,7 +246,7 @@ setSex = function(x, ids = NULL, sex) {
 
 #' @rdname getSex
 #' @export
-swapSex = function(x, ids, verbose = TRUE) { #TODO add tests with sex=0
+swapSex = function(x, ids, verbose = TRUE) {
   if(!is.ped(x))
     stop2("Input is not a `ped` object")
 

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Magnus Dehli Vigeland" />
 
-<meta name="date" content="2020-06-18" />
+<meta name="date" content="2020-08-04" />
 
 <title>Introduction to the pedtools package</title>
 
@@ -26,6 +26,22 @@ document.addEventListener('DOMContentLoaded', function(e) {
     if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
     a = h.attributes;
     while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
   }
 });
 </script>
@@ -324,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to the pedtools package</h1>
 <h4 class="author">Magnus Dehli Vigeland</h4>
-<h4 class="date">2020-06-18</h4>
+<h4 class="date">2020-08-04</h4>
 
 
 <div id="TOC">
@@ -420,11 +436,11 @@ From the way it is printed, the object <code>trio</code> appears to be a data fr
 <h2 number="1.2"><span class="header-section-number">1.2</span> Basic pedigree plots</h2>
 <p>To plot a pedigree, simply use <code>plot()</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">plot</span>(trio)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAADoAAGYAOpAAZrY6AAA6kNtmAABmADpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///8NKk6TAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADAUlEQVR4nO2cC1PqMBSEQxWqKPVRC/r//6gNvRcVm6RNcrI5zu6MjlDYzde8O2PMh3IZdAFSRQC0CIAWAdAiAFoEQIsAaBEALQKg9ScBjE8Fi7YochZg5ecl9L3cXoRKAYz3ZegSHuBXirsSqgRYU6gaAeYzHMkVAqwoqeNtLMCq1q4KYP4KAXIrx6RFgBQRIOQhLmkAz7Ucn6+uCREgdK06gNomMgKELtQHsGrrogkAtB+ImbkXt3XX+2iAuS08bFMfuXa6/hruqUTs4u97ib0LpFoBLsWOerQYuVhc6r/8ywvypNf30P2DBn8CoP0JgPYnANqfAGh/b0BvzE7SP4s8Aac2ufhogL2ofx65A45bY5rXj25cESaAxAAct/ft2HptAWzyYHxNOVQD3e3YFzaHiGIE/Z06bsfA3t69fvwZRopTexsRYAFOdwdrGF8FcQC7y6/9+4O9+4PzHi7oA0NKG4oD2H/9mu6e+x6GAMahtHkuXgO/ANwDSgDgyytS6BoYxl507kaxSgZI7APW5tQmTMjJAImjkO0Dm0MXP46mA8TPA1nE1Sg6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAN0Acf9+uTJD0Npc/pBMETM27ldZc0r5FgsSsxWqhIKuigAcpiWzZDyLhkl4KgHwWJZNE7AkQAlLr2PhuPyOBEA7EqCAo/pRiADZ0vJ7KlkL6QdQvx/QvyPTvyeesVX2VOLaV99zoZ9HrGl8Mnc2jzycblWGoHcREQAtAqBFALQIgBYBvLqca5TlxLRZFaoBAjglBNAZs3ncHKaD0h5N86IMoDufD/cPoL1501YD05Fe3X+AnbomdD5azB7sNQHs1QH02gHU18DUB3q9AFejkEIAOw80T82rXgCrqSdIS64PZDmyNyyZGrCnC6YcdLtC3A+gRQC0CIAWAdAiAFoEQIsAaKkH+AQ7KM57aNZRYQAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAACsAAFUAK4AAVaorAAArgNRVAABVACtVqqpVqv+AKwCAgFWA1P+qVQCqqlWq1ICq/6qq///UgCvU////qlX/1ID//6r//9T////pc/ZoAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADAUlEQVR4nO2cC1PqMBSEQxWqKPVRC/r//6gNvRcVm6RNcrI5zu6MjlDYzde8O2PMh3IZdAFSRQC0CIAWAdAiAFoEQIsAaBEALQKg9ScBjE8Fi7YochZg5ecl9L3cXoRKAYz3ZegSHuBXirsSqgRYU6gaAeYzHMkVAqwoqeNtLMCq1q4KYP4KAXIrx6RFgBQRIOQhLmkAz7Ucn6+uCREgdK06gNomMgKELtQHsGrrogkAtB+ImbkXt3XX+2iAuS08bFMfuXa6/hruqUTs4u97ib0LpFoBLsWOerQYuVhc6r/8ywvypNf30P2DBn8CoP0JgPYnANqfAGh/b0BvzE7SP4s8Aac2ufhogL2ofx65A45bY5rXj25cESaAxAAct/ft2HptAWzyYHxNOVQD3e3YFzaHiGIE/Z06bsfA3t69fvwZRopTexsRYAFOdwdrGF8FcQC7y6/9+4O9+4PzHi7oA0NKG4oD2H/9mu6e+x6GAMahtHkuXgO/ANwDSgDgyytS6BoYxl507kaxSgZI7APW5tQmTMjJAImjkO0Dm0MXP46mA8TPA1nE1Sg6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAN0Acf9+uTJD0Npc/pBMETM27ldZc0r5FgsSsxWqhIKuigAcpiWzZDyLhkl4KgHwWJZNE7AkQAlLr2PhuPyOBEA7EqCAo/pRiADZ0vJ7KlkL6QdQvx/QvyPTvyeesVX2VOLaV99zoZ9HrGl8Mnc2jzycblWGoHcREQAtAqBFALQIgBYBvLqca5TlxLRZFaoBAjglBNAZs3ncHKaD0h5N86IMoDufD/cPoL1501YD05Fe3X+AnbomdD5azB7sNQHs1QH02gHU18DUB3q9AFejkEIAOw80T82rXgCrqSdIS64PZDmyNyyZGrCnC6YcdLtC3A+gRQC0CIAWAdAiAFoEQIsAaKkH+AQ7KM57aNZRYQAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
 <p>Under the hood, <code>pedtools::plot()</code> is an elaborate wrapper of the excellent plotting functionality of the <code>kinship2</code> package. Most of the possibilities provided by kinship2 are available from pedtools, and several features are added. An overview can be found in the documentation <code>?plot.ped</code>, but a quick example should get you started:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">plot</span>(trio, <span class="dt">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">shaded =</span> <span class="st">&quot;girl&quot;</span>, </span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">plot</span>(trio, <span class="dt">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">hatched =</span> <span class="st">&quot;girl&quot;</span>, </span>
 <span id="cb8-2"><a href="#cb8-2"></a>     <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">title =</span> <span class="st">&quot;Trio 1&quot;</span>)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYA/wA6AAA6AGY6ZrY6kJA6kNtmAABmADpmOgBmOjpmkLZmkNtmtrZmtv+QOgCQZgCQkGaQtpCQ2/+2ZgC2Zjq2tma225C229u22/+2/7a2///bkDrbkGbbtpDb29vb/9vb////AAD/tmb/25D//7b//9v///8XqFVOAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAACsAAFUAAP8AKysAK1UAK4AAVaoA/wArAAArAFUrVaorgIArgNRVAABVACtVKwBVKytVgKpVgNRVqqpVqv+AKwCAVQCAgFWAqoCA1P+qVQCqVSuqqlWq1ICq1NSq1P+q/6qq///UgCvUgFXUqoDU1NTU/9TU////AAD/qlX/1ID//6r//9T///8z3HJUAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
 <p>See Section 2.2 for how to add, and control the appearance of, marker genotypes to pedigree plots.</p>
 </div>
 <div id="builtin" class="section level2" number="1.3">
@@ -446,9 +462,8 @@ The following pedigree structures serve as starting points for pedigree construc
 <li><code>cousinPed()</code>, cousins of specified degree/removal</li>
 <li><code>halfCousinPed()</code>, half cousins of specified degree/removal</li>
 <li><code>ancestralPed()</code>, a family tree containing the ancestors of a single person</li>
-<li><code>selfingPed()</code>, a series of consecutive self-matings</li>
 </ul>
-<p>There are also more specialized structures, including double cousins and breeding schemes like consecutive matings between full siblings. Look them up in <code>?ped_complex</code> if you are interested.</p>
+<p>There are also more specialized structures, including double cousins, selfing pedigrees, and consecutive matings between full siblings. Look them up in <code>?ped_complex</code> if you are interested.</p>
 <p><strong>Add/remove/extract individuals</strong><br />
 The functions below are used to modify an existing <code>ped</code> object by adding/removing individuals, or extracting a sub-pedigree. For details, see <code>?ped_modify</code>.</p>
 <ul>
@@ -464,7 +479,6 @@ The following functions modify various attributes of a <code>ped</code> object. 
 <li><code>setSex()</code></li>
 <li><code>swapSex()</code></li>
 <li><code>relabel()</code></li>
-<li><code>setFamid()</code></li>
 </ul>
 </div>
 <div id="examples-of-pedigree-construction" class="section level2" number="1.4">
@@ -491,7 +505,7 @@ Here is another possibility. We start by creating the father as a singleton, and
 <div id="example-2-an-inbred-child" class="section level3 unnumbered" number>
 <h3 class="unnumbered" number>Example 2: An inbred child</h3>
 <p>This time we will create this inbred family:</p>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 <p><strong>Alternative A</strong><br />
 One approach is to first create individuals 1-6 as half sibships, with 1 child on the left side, and 2 children on the right. After this, we use <code>addChildren()</code> to add the inbred child.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>x1 =<span class="st"> </span><span class="kw">halfSibPed</span>(<span class="dt">nch1 =</span> <span class="dv">1</span>, <span class="dt">nch2 =</span> <span class="dv">2</span>, <span class="dt">sex1 =</span> <span class="dv">1</span>, <span class="dt">sex2 =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">1</span>)</span>
@@ -499,8 +513,8 @@ One approach is to first create individuals 1-6 as half sibships, with 1 child o
 <p><strong>Alternative B</strong><br />
 We could also view the half siblings 4 and 5 as half cousins of degree 0. The <code>halfCousinPed()</code> function accepts an option <code>child = TRUE</code> adding an inbred child. The labels will be different with this approach, so you should plot the pedigree after each command to see who-is-who. Also, we must relabel in the end.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>x2 =<span class="st"> </span><span class="kw">halfCousinPed</span>(<span class="dv">0</span>, <span class="dt">child =</span> T)</span>
-<span id="cb13-2"><a href="#cb13-2"></a>x2 =<span class="st"> </span><span class="kw">addChildren</span>(x2, <span class="dt">father =</span> <span class="dv">1</span>, <span class="dt">mother =</span> <span class="dv">4</span>, <span class="dt">nch =</span> <span class="dv">1</span>)</span>
-<span id="cb13-3"><a href="#cb13-3"></a>x2 =<span class="st"> </span><span class="kw">relabel</span>(x2, <span class="dt">old =</span> <span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">7</span>,<span class="dv">6</span>), <span class="dt">new =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">7</span>))</span></code></pre></div>
+<span id="cb13-2"><a href="#cb13-2"></a>x2 =<span class="st"> </span><span class="kw">addChildren</span>(x2, <span class="dt">father =</span> <span class="dv">2</span>, <span class="dt">mother =</span> <span class="dv">3</span>, <span class="dt">nch =</span> <span class="dv">1</span>)</span>
+<span id="cb13-3"><a href="#cb13-3"></a>x2 =<span class="st"> </span><span class="kw">relabel</span>(x2, <span class="dt">old =</span> <span class="kw">c</span>(<span class="dv">7</span>,<span class="dv">6</span>), <span class="dt">new =</span> <span class="kw">c</span>(<span class="dv">6</span>,<span class="dv">7</span>))</span></code></pre></div>
 <p><strong>A note about the order of pedigree members</strong></p>
 <p>Although both <code>x1</code> and <code>x2</code> reproduce exactly the plot shown above, they are not identical objects:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">identical</span>(x1, x2)</span>
@@ -508,13 +522,13 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The <c
 <p>The reason is the <em>order</em> in which the individuals are stored. For <code>x1</code> the ordering is the natural sequence <code>1,2,3,4,5,6,7</code>, but for <code>x2</code> our construction process has produced a slightly different order:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>x2</span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="co">#&gt;  id fid mid sex</span></span>
-<span id="cb15-3"><a href="#cb15-3"></a><span class="co">#&gt;   1   *   *   1</span></span>
-<span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt;   2   *   *   2</span></span>
-<span id="cb15-5"><a href="#cb15-5"></a><span class="co">#&gt;   4   1   2   1</span></span>
-<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt;   3   *   *   2</span></span>
-<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt;   5   1   3   2</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="co">#&gt;   1   *   *   2</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt;   2   *   *   1</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="co">#&gt;   3   *   *   2</span></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt;   4   2   1   1</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt;   5   2   3   2</span></span>
 <span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt;   7   4   5   1</span></span>
-<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt;   6   1   3   1</span></span></code></pre></div>
+<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt;   6   2   3   1</span></span></code></pre></div>
 <p>The internal ordering is usually of little importance in applications.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> However, if you get annoyed by “wrong” orderings such as for <code>x2</code> above, you can use <code>reorderPed()</code> to permute the pedigree any way you like. In fact, the default action of this function is to permute into the natural order of the labels, which is exactly what we need to make <code>x2</code> identical to <code>x1</code>:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>x2 =<span class="st"> </span><span class="kw">reorderPed</span>(x2)</span>
 <span id="cb16-2"><a href="#cb16-2"></a><span class="kw">identical</span>(x1, x2)</span>
@@ -523,20 +537,21 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The <c
 <div id="example-3-a-complex-family-tree" class="section level3" number="1.4.1">
 <h3 number="1.4.1"><span class="header-section-number">1.4.1</span> Example 3: A complex family tree</h3>
 <p>For our final example we consider a complicated family tree extending both upwards and downwards from a single person.</p>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 <p>We will use this example to demonstrate the <code>mergePed()</code> function. When this function is given two pedigrees, it “glues together” members with matching ID labels, and checks that the result is a valid pedigree.</p>
 <p>The hardest part of using <code>mergePed()</code> is to get the labelling right; this will almost always involve the <code>relabel()</code> function. To keep track of the labels, you should plot after each new line of code. Here is how the pedigree was created:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># Top part</span></span>
-<span id="cb17-2"><a href="#cb17-2"></a>x =<span class="st"> </span><span class="kw">ancestralPed</span>(<span class="dt">g =</span> <span class="dv">2</span>) <span class="co"># bottom person is `7`</span></span>
-<span id="cb17-3"><a href="#cb17-3"></a></span>
-<span id="cb17-4"><a href="#cb17-4"></a><span class="co"># Bottom part</span></span>
-<span id="cb17-5"><a href="#cb17-5"></a>y =<span class="st"> </span><span class="kw">halfCousinPed</span>(<span class="dt">degree =</span> <span class="dv">1</span>) </span>
-<span id="cb17-6"><a href="#cb17-6"></a>y =<span class="st"> </span><span class="kw">swapSex</span>(y, <span class="dv">4</span>)</span>
-<span id="cb17-7"><a href="#cb17-7"></a><span class="co">#&gt; Changing sex of spouses as well: 3</span></span>
-<span id="cb17-8"><a href="#cb17-8"></a>y =<span class="st"> </span><span class="kw">relabel</span>(y, <span class="dt">new =</span> <span class="dv">7</span><span class="op">:</span><span class="dv">15</span>) <span class="co"># top person becomes `7`</span></span>
-<span id="cb17-9"><a href="#cb17-9"></a></span>
-<span id="cb17-10"><a href="#cb17-10"></a><span class="co"># Merge</span></span>
-<span id="cb17-11"><a href="#cb17-11"></a>z =<span class="st"> </span><span class="kw">mergePed</span>(x, y)</span></code></pre></div>
+<span id="cb17-2"><a href="#cb17-2"></a>x =<span class="st"> </span><span class="kw">ancestralPed</span>(<span class="dt">g =</span> <span class="dv">2</span>) <span class="co"># bottom person is `7`; relabel to `8`</span></span>
+<span id="cb17-3"><a href="#cb17-3"></a>x =<span class="st"> </span><span class="kw">relabel</span>(x, <span class="dt">old =</span> <span class="dv">7</span>, <span class="dt">new =</span> <span class="dv">8</span>)</span>
+<span id="cb17-4"><a href="#cb17-4"></a></span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="co"># Bottom part</span></span>
+<span id="cb17-6"><a href="#cb17-6"></a>y =<span class="st"> </span><span class="kw">halfCousinPed</span>(<span class="dt">degree =</span> <span class="dv">1</span>) </span>
+<span id="cb17-7"><a href="#cb17-7"></a>y =<span class="st"> </span><span class="kw">swapSex</span>(y, <span class="dv">4</span>)</span>
+<span id="cb17-8"><a href="#cb17-8"></a><span class="co">#&gt; Changing sex of spouses as well: 5</span></span>
+<span id="cb17-9"><a href="#cb17-9"></a>y =<span class="st"> </span><span class="kw">relabel</span>(y, <span class="dt">new =</span> <span class="dv">7</span><span class="op">:</span><span class="dv">15</span>) <span class="co"># top person becomes `8`</span></span>
+<span id="cb17-10"><a href="#cb17-10"></a></span>
+<span id="cb17-11"><a href="#cb17-11"></a><span class="co"># Merge</span></span>
+<span id="cb17-12"><a href="#cb17-12"></a>z =<span class="st"> </span><span class="kw">mergePed</span>(x, y)</span></code></pre></div>
 </div>
 </div>
 <div id="pedigree-subsets" class="section level2" number="1.5">
@@ -579,43 +594,53 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <h2 number="2.1"><span class="header-section-number">2.1</span> Creating marker objects</h2>
 <p>Marker objects created with the <code>marker()</code> function. For example, the following command makes an empty marker associated with the <code>trio</code> pedigree:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw">marker</span>(trio)</span>
-<span id="cb18-2"><a href="#cb18-2"></a><span class="co">#&gt;       &lt;NA&gt;</span></span>
-<span id="cb18-3"><a href="#cb18-3"></a><span class="co">#&gt;    fa  -/-</span></span>
-<span id="cb18-4"><a href="#cb18-4"></a><span class="co">#&gt;    mo  -/-</span></span>
-<span id="cb18-5"><a href="#cb18-5"></a><span class="co">#&gt;  girl  -/-</span></span>
-<span id="cb18-6"><a href="#cb18-6"></a><span class="co">#&gt; ----------- </span></span>
-<span id="cb18-7"><a href="#cb18-7"></a><span class="co">#&gt; Chrom NA: NA (Mb), NA (cM)</span></span>
-<span id="cb18-8"><a href="#cb18-8"></a><span class="co">#&gt; Mutation model: No </span></span>
-<span id="cb18-9"><a href="#cb18-9"></a><span class="co">#&gt; Allele frequencies:</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="co">#&gt;    fa   -/-</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="co">#&gt;    mo   -/-</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a><span class="co">#&gt;  girl   -/-</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a><span class="co">#&gt; * * * * * *  </span></span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="co">#&gt; Position: NA </span></span>
+<span id="cb18-8"><a href="#cb18-8"></a><span class="co">#&gt; Mutation: none </span></span>
+<span id="cb18-9"><a href="#cb18-9"></a><span class="co">#&gt; Frequencies:</span></span>
 <span id="cb18-10"><a href="#cb18-10"></a><span class="co">#&gt;    1   2</span></span>
 <span id="cb18-11"><a href="#cb18-11"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
-<p>As shown in the output, the marker is indeed empty: All pedigree members have missing genotypes, and there is no assigned name or chromosome/position. Furthermore, the last lines show that there is only one allele (named “1”), with frequency 1. For a more interesting example, let us make a SNP named “snp1”, with alleles “A” and “B”. The father is homozygous “A/A”, while the mother is heterozygous. We store it in a variable <code>m1</code> for later use.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>m1 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">name =</span> <span class="st">&quot;snp1&quot;</span>)</span></code></pre></div>
-<p>This illustrates several points. Firstly, individual genotypes are specified using the ID labels. For homozygous genotypes it suffices to write the allele once. Furthermore, the different alleles occurring in the genotypes is interpreted as the complete set of alleles for the marker. Finally, these are assigned equal frequencies. Of course, this behaviour can be overridden, by declaring alleles and frequencies explicitly:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">alleles =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>,<span class="st">&quot;C&quot;</span>), <span class="dt">afreq =</span> <span class="kw">c</span>(.<span class="dv">2</span>,.<span class="dv">3</span>,.<span class="dv">5</span>))</span>
-<span id="cb20-2"><a href="#cb20-2"></a><span class="co">#&gt;       &lt;NA&gt;</span></span>
-<span id="cb20-3"><a href="#cb20-3"></a><span class="co">#&gt;    fa  A/A</span></span>
-<span id="cb20-4"><a href="#cb20-4"></a><span class="co">#&gt;    mo  A/B</span></span>
-<span id="cb20-5"><a href="#cb20-5"></a><span class="co">#&gt;  girl  -/-</span></span>
-<span id="cb20-6"><a href="#cb20-6"></a><span class="co">#&gt; ----------- </span></span>
-<span id="cb20-7"><a href="#cb20-7"></a><span class="co">#&gt; Chrom NA: NA (Mb), NA (cM)</span></span>
-<span id="cb20-8"><a href="#cb20-8"></a><span class="co">#&gt; Mutation model: No </span></span>
-<span id="cb20-9"><a href="#cb20-9"></a><span class="co">#&gt; Allele frequencies:</span></span>
+<p>As shown in the output, the marker is indeed empty: All pedigree members have missing genotypes, and there is no assigned name or position. By default, markers are diallelic, with alleles 1 and 2, with equal frequencies. For a more interesting example, let us make a SNP named “snp1”, with alleles “A” and “B”. The father is homozygous “A/A”, while the mother is heterozygous. We store it in a variable <code>m1</code> for later use.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>m1 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="dt">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="dt">name =</span> <span class="st">&quot;snp1&quot;</span>)</span></code></pre></div>
+<p>This illustrates several points. Firstly, individual genotypes may be specified using the ID labels. The different alleles occurring in the genotypes is interpreted as the complete set of alleles for the marker. Finally, these are assigned equal frequencies. Of course, this behaviour can be overridden, by declaring alleles frequencies explicitly:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="dt">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="dt">afreq =</span> <span class="kw">c</span>(<span class="dt">A =</span> <span class="fl">.2</span>, <span class="dt">B =</span> <span class="fl">.3</span>, <span class="dt">C =</span> <span class="fl">.5</span>))</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="co">#&gt;    fa   A/A</span></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="co">#&gt;    mo   A/B</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a><span class="co">#&gt;  girl   -/-</span></span>
+<span id="cb20-6"><a href="#cb20-6"></a><span class="co">#&gt; * * * * * *  </span></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="co">#&gt; Position: NA </span></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="co">#&gt; Mutation: none </span></span>
+<span id="cb20-9"><a href="#cb20-9"></a><span class="co">#&gt; Frequencies:</span></span>
 <span id="cb20-10"><a href="#cb20-10"></a><span class="co">#&gt;    A   B   C</span></span>
 <span id="cb20-11"><a href="#cb20-11"></a><span class="co">#&gt;  0.2 0.3 0.5</span></span></code></pre></div>
-<p>The markers chromosome can be declared using the <code>chrom</code> argument, and similarly its position by <code>posMb</code> (megabases) and/or <code>posCm</code> (centiMorgan). Markers with unknown chromosome are treated as autosomal. To define an X-linked marker, put <code>chrom=23</code>. the fact that males are hemizygous on X (i.e. they have only one allele) is reflected in the printout of such markers:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>m2 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">mo =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,<span class="st">&quot;B&quot;</span>), <span class="dt">chrom =</span> <span class="dv">23</span>, <span class="dt">name =</span> <span class="st">&quot;snpX&quot;</span>)</span></code></pre></div>
-<p>A side note: It may come as a surprise that you don’t need quotes around the ID labels (which are characters!) in the above commands. This is because <code>marker()</code> uses <em>non-standard evaluation (NSE)</em>, a peculiarity of the R language which often leads to less typing and more readable code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Unfortunately, this doesn’t work with numerical ID labels. Thus to assign a genotype to someone labelled “1” you need quotes, as in <code>marker(trio, &quot;1&quot;=&quot;A&quot;)</code>.</p>
+<p>The markers chromosome can be declared using the <code>chrom</code> argument, and similarly its position by <code>posMb</code> (megabases). Markers with unknown chromosome are treated as autosomal. To define an X-linked marker, put <code>chrom = &quot;X&quot;</code>. the fact that males are hemizygous on X (i.e. they have only one allele) is reflected in the printout of such markers:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>m2 =<span class="st"> </span><span class="kw">marker</span>(trio, <span class="dt">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="dt">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="dt">chrom =</span> <span class="st">&quot;X&quot;</span>, <span class="dt">name =</span> <span class="st">&quot;snpX&quot;</span>)</span>
+<span id="cb21-2"><a href="#cb21-2"></a>m2</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="co">#&gt;    id  snpX</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="co">#&gt;    fa     A</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a><span class="co">#&gt;    mo   A/B</span></span>
+<span id="cb21-6"><a href="#cb21-6"></a><span class="co">#&gt;  girl   -/-</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a><span class="co">#&gt; * * * * * *  </span></span>
+<span id="cb21-8"><a href="#cb21-8"></a><span class="co">#&gt; Position: chr = X, Mb = NA </span></span>
+<span id="cb21-9"><a href="#cb21-9"></a><span class="co">#&gt; Mutation: none </span></span>
+<span id="cb21-10"><a href="#cb21-10"></a><span class="co">#&gt; Frequencies:</span></span>
+<span id="cb21-11"><a href="#cb21-11"></a><span class="co">#&gt;    A   B</span></span>
+<span id="cb21-12"><a href="#cb21-12"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
+<p>A side note: It may come as a surprise that you don’t need quotes around the ID labels (which are characters!) in the above commands. This is because <code>marker()</code> uses <em>non-standard evaluation (NSE)</em>, a peculiarity of the R language which often leads to less typing and more readable code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Unfortunately, this doesn’t work with numerical ID labels. Thus to assign a genotype to someone labelled “1” you need quotes, as in <code>marker(trio, &quot;1&quot; = &quot;A/A&quot;)</code>.</p>
 </div>
 <div id="plotting-pedigrees-with-marker-data" class="section level2" number="2.2">
 <h2 number="2.2"><span class="header-section-number">2.2</span> Plotting pedigrees with marker data</h2>
 <p>Including marker data in a pedigree plot is straightforward:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6Ojo6OpA6kNtmAABmADpmZjpmtrZmtv+QOgCQOjqQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///87oUNWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEEUlEQVR4nO2cjXLTMBCElZAACeBSC6hx0rz/YyJZ8W8kxzr7fFbZndKphub2PklnS+5Y6pa4lHQCcwUAaQFAWgCQFgCkBQBpAUBaAJAWAKT1IQFUUCvnNsXWCxDzy3xq3cYQNgvQTzo8DFsFeLBKDMDjFDDfJoDXyO++SYCIzgYAi1IHiPIHAIMYAVYSH0DoP8KiDBoAADDvI/MXblsFELmR/Z8AEQvPlABkltPEm/d2NjTU1cfwc2J7YvLyabCpjzLYBEAXIfqxSvQqKy7+9A9PsOVeIbOvwAEgHB8A0vEBIB0fANLxPzJAodSJM/5CChpczwukLwuQscZfSiGDy1Gp/dtNm7XgLBAawOX442xmsE3CupcqPJ3HR0AfTC3sclIST+KP6nI0poXtwcL8Kw3F9XyINLAA12+5DTZnCKgAp+Zb9v5ie78M9OPTGijnzSEqQNZ+cz0Y6sdxAHMp3f8WGYEHgNBFZRSgjUOW7AiUpoKqEqJrAYAZNWBDXM+zbsgLAMy4Ctka2OV6znV0CQDafWAhYTUqbQAAaQMASBsAgGig6xvH5evfbnOp+E/VTUBXz9ijlhKXz9/tMsioPPSa0SIC9BLQn2wnBjZWfoOiWUTrrNeMFhGgl4ADCDxl8Bq8vxzMV/XTz7zbjBcNoJ9ADeDtQ6+BXbq6EatKoG3GiwbQT+A+hfxd6DWwn3AjVpVA24wXDaCfgCtiVWFMMqh20zdtq0hnvWa8SACDBNwIlMo7BD6D4v7HwcyVQNskiAQwSMABBLrQY3AvH7sHsjOw0ySIAjBIoAYopgLUu09TRXYGdpqEZCgAgwSaEfAWgceg/kUzE9sZWE/MWFEABgk0NTDxMto+v9C7L3m3SSljAsAggfoqFPtUYiFhNSptAABpAwBIGwBA2gAA0gYAkDYAgLQBAKQNACBtAABpAwBIG6QNQH7vI8aDL3KTOSsDW2g10uLz4Yu7UkcxhuWaRjxhvVFXtOKJmhCAP2jyAKt6sQRNBiAYc1UzjpgAkI4JAOmYAFgpZvL3gY8KkNBaKPnVqDdsUhsaT9y0dmSPgVPbE996Xc75XIXzqdOME00iTDiDryEASAsA0gKAtAAgLQBIixegeXFnoXNCPFppBAAQFBOAVmr3usvd8SCvav8nMQBdnYhyBzhX71QlBeDewdA1wCm5KVQdqGHf5XEAWXIAReoAyY+Aq4EiXYDBVShBAHsf2P/av6ULYFVSX2OPEl8NLHRQ3TPxjEBJfn03WtgPSAsA0uIGcEebMIoboCQeqDFZ3ACa+2LKDFAdq8AqZgD2EuAGYC8BbgD2EmAG4C8BPgB7PsrJlkAxclDiAuIdAf4SYAbgLwFegBVKAIs5cQFAWgCQFgCkBQBpAUBaAJDWPz5IfkH3HekiAAAAAElFTkSuQmCC" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAACsAAFUAK4AAVaorAAArACsrKysrK4ArgNRVAABVACtVVStVqqpVqv+AKwCAKyuAgFWA1P+qVQCqqlWq1ICq/6qq///UgCvU////qlX/1ID//6r//9T////ODipTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAD2UlEQVR4nO2cjXKbMBCEZddua7cljdU2FDt+/8csAmN+LNnWwbEo3Z0kE03M7X2SDiQyYM6Jy6ATGCsCoEUAtAiAFgHQIgBaBECLAGgRAK0PCWCCmjm3Z2y9ADEf1lPrdg9hsQD9pMPDsFSAG6vEADxOAfNlAniN/O6LBIjobAKoKHWAKH8CKEgRYCbpAYT+EJZk0AhAgHGHjF+4LRUAciH7PwEiFp4pAWCW08KL93I2NNLVx/A42J5YvHwabOqjDBYB0EWIvq0SvcqKi//8wU/Yaq+Q1VfgBADHJwA6PgHQ8QmAjv+RAXJjdprxJ1LQ4LSfIH0sQKYafyqFDI5bY9ZvZ1uuBUeByACO2x/7cga7JJx7YcLT+f4I2E1ZC6uDKIkH8e/quC1Nc9eDefldlBSn/SbSwAGcvh1csDFDIAXYXX9k7y+u94tAPz6sgWLcHJICZO2PugdD/XgfoDyVrn9DRuAGIHRSuQvQxhELOwJFWUFVCck1AcCIGnAhTvtRF+QJAEachVwNrA52zHl0CgDZdWAicTWKNiAA2oAAaAMCCA1sc+E4fv3bbU4V/6G6CdjqHnvUUuL4+btbBpUqNr1mtIQAvQTsJ9eJgY2V3yC/LqJt1mtGSwjQS6AGCNxl8Bq8v2zKr+q3n4duM14ygH4CDYC3D70Gbulaj1hVAm0zXjKAfgKXKeTvQq+BO6IesaoE2ma8ZAD9BOoiNhXGUwbVbvpsXRXZrNeMlwhgkEA9AoXxDoHPIL/8czCrS6BtCiQCGCRQAwS60GNwKR+3B3IzsNMUSAIwSKAByJ8FaHafZRW5GdhpCpKRAAwSuI6Atwg8Bs0Hy5nYzsBmYsZKAjBI4FoDT55G2/sXdvXl0G1KylgAMEigOQvF3pWYSFyNog0IgDYgANqAAGgDAqANCIA2IADagABoAwKgDQiANiAA2iBtAPFzHzEeepGvmasyqIU2d1p6PnpxZ+ooxbBa00gnrDfqjFY6URMC8AdNHmBWL5WgyQAEY85qphGTAOiYBEDHJMBMMZO/DnxUgITWQsmvRr1hk9rQeOKmtSO7DZzanvjc63LN+yqad51GvNEkwkQz+BwiAFoEQIsAaBEALQKgpQtwfXBnoveEeDTTCBAgKCUAa8zqdXWoXw/yatZ/EgOw1RtRLgD76pmqpADqZzBsA7BLbgpVL9Rwz/LUAFlyAHnqAMmPQF0DeboAg7NQggDuOrD+tX5LF8CpkD7GHiW9GpjoRXWPpDMChfjx3WhxP4AWAdAiAFoEQIsAaBEALQKgRQC0CIAWAdAiAFoEQIsAaBEALQKg9Q+DYYCBO07kAwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
 <p>The appearance of the genotypes can be tweaked in various ways, as documented in <code>?plot.ped</code>. Here’s an example:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">skip.empty.genotypes =</span> T)</span></code></pre></div>
-<pre><code>#&gt; The `skip.empty.genotypes` argument has been renamed to `skipEmptyGenotypes`, and will be removed in a future version</code></pre>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6kNtmAABmADpmZjpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///9DYrSiAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADtUlEQVR4nO2cC3PaMBCEhQuFtiQ4La4h/P//WcsPLMAy6OTzWunuJBllgm/16WGdnJHNJXEZdAViRQC0CIAWAdAiAFoEQIsAaBEALQKg9SUBjFcz1+0V20GAkA/rqXcbQ1gswG2l/d2wVIAHq8QABpw85ssEGDQadl8kQEBjE0BFqQME+RNAQYoAM0kPwPcHvySdRgACxF0Sn7gtFQCykP2fAAGJZ0oAmHRauHgvZ0MjzT7ur4PticXp092mPshgEQAuQvBjleAsKyz+6xe/YKudIatn4AQAxycAOj4B0PEJgI7/lQEKY7aa8SeS1+C8m6D6WIC9avyp5DM4bYzJjpe8ygWjQGQAp82vXTWCbSWse2n8w3m8B/J1NRdWB1ElnsQf1WlTmRa2BYvqu6wozrt1oIEFOP842GAxXSAF2F5/7D/fbOuXnnZ8OgfKuDEkBdj3P5oW9LXjOEB1K81+Q3rgAcB3UxkF6OOIhe2BsppB9RSSawKAiDlgQ5x3UQvyBAARdyE7B1aHPOY+OgWAbB2YSMxG0QYEQBsQAG1AALFB3i8decRaLAfoXPP6Cbt3MfXuyL7/tInQXTFcYoCra/7t72VkW+UzKPo0uojJqMUAV9cGwPuMwWPw+bauvu6LAkkBetcOwNOGHgObvLa95hQFkgL0ru0Q8jWhx8Be1faaUxRICtC7NpPY1BgvG9T76UtuZ5FTlEgI4Lg2PVCaoP1A0f57cH9TlEgI4Lg2AN4mHDRop4/dBTlFkWQArmsLUIQAdPvPahY5RVFVZACua9cDnkkwaNB9uBqJTlFUFRmA69rNgYDbaP8EI+/HvnAaiwCcCmRHYSoxlZiNog0IgDYgANqAAGgDAqANCIA2IADagABoAwKgDQiANiAA2iBtAPG5jxAPvcjXmqsyqIU2I7/p+ejFnamhFMNqDSOdsINRZ7TSiZoQwHDQ5AFm9VIJmgyAN+asZhoxCYCOSQB0TALMFDP5deCrAiSUCyWfjQ6GTWpDMxA3rR3ZY+DU9sSXmybXfK6i+dQp4o0mASaawecQAdAiAFoEQIsAaBEALV2A69Gdid4TMqCZeoAAXikB5Mas3leH5vUg7yb7kxhAXr8RpQXY1SeqkgJoTmDkHcA2uSFUv1DDnuRpAPbJARSpAyTfA80cKNIFuLsLJQhg14HsIzumC2BVyg+yB0hvDkz0orpn0umBMuIAb6C4H0CLAGgRAC0CoEUAtAiAFgHQIgBaBECLAGgRAC0CoEUAtAiAFgHQ+gcIadt1Csvt6wAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1, <span class="dt">showEmpty =</span> T, <span class="dt">missing =</span> <span class="st">&quot;?&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAACsAAFUAK4AAVaorAAArACsrgNRVAABVACtVVStVqqpVqv+AKwCAgFWA1P+qVQCqqlWq1ICq/6qq///UgCvU////qlX/1ID//6r//9T////pJq/aAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEA0lEQVR4nO2cjXKbMBCEZdeu3daJSWuKHd7/PYv4EYqDsHXScVy6O2lGmca3+iQdnMggUyuXke5AqgAgLQBICwDSAoC0ACAtAEgLANICgLS+JIAJauG+PWM7CRDzy3wa3eYQVgvwsdPhaVgrwCcrZQATTgHzdQJMGk27rxIgYrABwCLtAFH+AGAQI8BC4gMI/UdYlEkDAADSPpJeuK0VQORG9n8CRBSemgBkymnizXs9Gxpq9XH/ObE9Mbl8utvURxmsAsBHiH6sEl1lxcV//sNP2HJXyOwVOACE4wNAOj4ApOMDQDr+VwYojTlwxs+koMHtmKH7sgAn1vi5FDK47o3ZXuqiqQWTQGgA1/2vY7OCbSese2XCy3l+BopdkwubM6kTD+LP6rpvTEs7gmXzr2oobsddpIEFuP0422ApU0AFOLhvp/cXO/pVYBwf5kCVtoaoAKfxWzeCoXGcB2gupdvfIjPwCSB0UZkFGOOQJTsDVZNBbQrRlQEgIQdsiNsx6YacASDhKmRzYHMuUq6jOQBo94FMQjUqbQAAaQMASBsAgGxQjLeOIuFeTAcYXIv2CXvwZhrckX3/aQuhu2a8yADOtfj2t57ZVoUMyrGMLlMqajKAc+0Ags8YAgbvL7vm675JEBVgdB0AAmMYMLDFaz9rXpMgKsDo2i+h0BAGDOyn+lnzmgRRAUbXLolNi/G0QbufrgubRV6TIiKA59rNQGWi9gNl/+fB04cmRUQAz7UDCA7hpEGfPnYX5DVJogH4rj1AGQMw7D+bLPKapK7QAHzXYQYCSTBpMPxysxK9JqkrNADfdciBiMvo+ASjGNc+MY1JAF4HthdiKZFLqEalDQAgbQAAaQMASBsAQNoAANIGAJA2AIC0AQCkDQAgbQAAaQPdAOT3PmI8+CK7nrMysIU2Mz/x+fDFXWigGMNyLSOesJNRF7TiiaoIYDqoeoBFvViCqgEIxlzUjCMmAKRjAkA6JgAWiqn+PvBVARTVQuqr0cmwqjY0E3F17cg+B9a2J64/DDnncxXOp04JJ5pEmHAGX0IAkBYApAUAaQFAWgCQFi+Ae3Un0zkhE1poBgAQFBNAYczmdXPujgd5Nds/ygCK9kSUHuDYvlGlCqB7A6MYAA7qllB7oIZ9k6cDOKkDKLUDqJ+BLgdKvQB3VyGFAPY+sH3bXvQCWFX0F9kjxJcDmQ6qeySeGagSXuCNFPYD0gKAtNgA3LlYcwdkZRAXgH2Z/LrfeQ0mMQG4s+HmD4nLICYAdzrf/DF9GcSaxG7g9c1AK7f0FeaA1XXvDlcIHYySQXwA7y99t12DRXwALnEZM7jmBFgig2uUEjPCDDwnAEgLANICgLQAIC0ASAsA0lIP8A/NNNZBHQKIFwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
 </div>
 <div id="markers-attached-to-ped-objects" class="section level2" number="2.3">
 <h2 number="2.3"><span class="header-section-number">2.3</span> Markers attached to <code>ped</code> objects</h2>
@@ -626,12 +651,12 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <li><code>addMarkers(x, m)</code></li>
 </ul>
 <p>The difference between these is that <code>setMarkers()</code> replaces all existing markers, while <code>addMarkers()</code> appends <code>m</code> to the existing ones. In our <code>trio</code> example the two are equivalent since there are no existing markers.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>trio =<span class="st"> </span><span class="kw">setMarkers</span>(trio, <span class="kw">list</span>(m1, m2))</span>
-<span id="cb25-2"><a href="#cb25-2"></a>trio</span>
-<span id="cb25-3"><a href="#cb25-3"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
-<span id="cb25-4"><a href="#cb25-4"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
-<span id="cb25-5"><a href="#cb25-5"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
-<span id="cb25-6"><a href="#cb25-6"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  -/-</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>trio =<span class="st"> </span><span class="kw">setMarkers</span>(trio, <span class="kw">list</span>(m1, m2))</span>
+<span id="cb24-2"><a href="#cb24-2"></a>trio</span>
+<span id="cb24-3"><a href="#cb24-3"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
+<span id="cb24-6"><a href="#cb24-6"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  -/-</span></span></code></pre></div>
 <p><strong>Selecting and removing attached markers</strong><br />
 Four closely related functions functions are useful for manipulating markers attached to a pedigree:</p>
 <ul>
@@ -640,14 +665,14 @@ Four closely related functions functions are useful for manipulating markers att
 <li><code>getMarkers()</code>, returns a list of the indicated markers</li>
 <li><code>whichMarkers()</code>, returns the indices of the indicated markers</li>
 </ul>
-<p>All of these have exactly the same arguments, described in more detail in <code>?marker_select</code>. Let us do a couple of examples here. Recall that by now, our <code>trio</code> has two attached markers; the first is called “snp1”, and the other is on the X chromosome (<code>chrom = 23</code>).</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="kw">whichMarkers</span>(trio, <span class="dt">chrom =</span> <span class="dv">23</span>)</span>
-<span id="cb26-2"><a href="#cb26-2"></a><span class="co">#&gt; [1] 2</span></span>
-<span id="cb26-3"><a href="#cb26-3"></a><span class="kw">selectMarkers</span>(trio, <span class="dt">markers =</span> <span class="st">&quot;snp1&quot;</span>)</span>
-<span id="cb26-4"><a href="#cb26-4"></a><span class="co">#&gt;    id fid mid sex snp1</span></span>
-<span id="cb26-5"><a href="#cb26-5"></a><span class="co">#&gt;    fa   *   *   1  A/A</span></span>
-<span id="cb26-6"><a href="#cb26-6"></a><span class="co">#&gt;    mo   *   *   2  A/B</span></span>
-<span id="cb26-7"><a href="#cb26-7"></a><span class="co">#&gt;  girl  fa  mo   2  -/-</span></span></code></pre></div>
+<p>All of these have exactly the same arguments, described in more detail in <code>?marker_select</code>. Let us do a couple of examples here. Recall that by now, our <code>trio</code> has two attached markers; the first is called “snp1”, and the other is on the X chromosome.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="kw">whichMarkers</span>(trio, <span class="dt">chrom =</span> <span class="st">&quot;X&quot;</span>)</span>
+<span id="cb25-2"><a href="#cb25-2"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="kw">selectMarkers</span>(trio, <span class="dt">markers =</span> <span class="st">&quot;snp1&quot;</span>)</span>
+<span id="cb25-4"><a href="#cb25-4"></a><span class="co">#&gt;    id fid mid sex snp1</span></span>
+<span id="cb25-5"><a href="#cb25-5"></a><span class="co">#&gt;    fa   *   *   1  A/A</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a><span class="co">#&gt;    mo   *   *   2  A/B</span></span>
+<span id="cb25-7"><a href="#cb25-7"></a><span class="co">#&gt;  girl  fa  mo   2  -/-</span></span></code></pre></div>
 </div>
 <div id="accessing-and-modifying-individual-markers" class="section level2" number="2.4">
 <h2 number="2.4"><span class="header-section-number">2.4</span> Accessing and modifying individual markers</h2>
@@ -658,29 +683,33 @@ Four closely related functions functions are useful for manipulating markers att
 <li><code>name</code> : The marker name, which can be any character string not consisting solely of digits.</li>
 <li><code>chrom</code> : The chromosome name. This can be given as an integer, but is always converted to character. The special values “23” and “X” are recognized as the human X chromosome, which affects the way genotypes are printed.</li>
 <li><code>posMb</code> : Chromosomal position given in megabases.</li>
-<li><code>posCm</code> : Chromosomal position given in centiMorgan.</li>
 </ul>
 <p>In addition to those listed above, there are two more attributes: <code>pedmembers</code> and <code>sex</code>. They store the ID labels and genders of the pedigree associated with the marker, and are only used to empower the printing method of marker objects.</p>
 <p><strong>Marker accessor functions</strong><br />
 For each marker attribute listed above, there is a corresponding function with the same name for retrieving its content. These functions take as input either a <code>marker</code> object, or a <code>ped</code> object together with the name (or index) of an attached marker. This may sound a bit confusing, but a few examples will make it clear!</p>
 <p>Recall that our marker “snp1” exists in two copies: One is stored in the variable <code>m1</code>, while the other is attached to <code>trio</code>. In both cases we can extract the allele frequencies with the function <code>afreq()</code>.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw">afreq</span>(m1)</span>
-<span id="cb27-2"><a href="#cb27-2"></a><span class="co">#&gt;   A   B </span></span>
-<span id="cb27-3"><a href="#cb27-3"></a><span class="co">#&gt; 0.5 0.5</span></span>
-<span id="cb27-4"><a href="#cb27-4"></a><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>)</span>
-<span id="cb27-5"><a href="#cb27-5"></a><span class="co">#&gt;   A   B </span></span>
-<span id="cb27-6"><a href="#cb27-6"></a><span class="co">#&gt; 0.5 0.5</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="kw">afreq</span>(m1)</span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="co">#&gt;   A   B </span></span>
+<span id="cb26-3"><a href="#cb26-3"></a><span class="co">#&gt; 0.5 0.5</span></span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>)</span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="co">#&gt;   A   B </span></span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="co">#&gt; 0.5 0.5</span></span></code></pre></div>
 <p>We can also <em>modify</em> the frequencies using this syntax. To avoid confusion about the allele order, the frequencies must be named with the allele labels (just as in the output of <code>afreq()</code> above).</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>) =<span class="st"> </span><span class="kw">c</span>(<span class="dt">A =</span> <span class="fl">0.9</span>, <span class="dt">B =</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw">afreq</span>(trio, <span class="dt">marker =</span> <span class="st">&quot;snp1&quot;</span>) =<span class="st"> </span><span class="kw">c</span>(<span class="dt">A =</span> <span class="fl">0.9</span>, <span class="dt">B =</span> <span class="fl">0.1</span>)</span></code></pre></div>
 <p>In addition to the functions getting and setting marker attributes, there is one more important marker accessor, namely <code>genotype()</code>. This returns the genotype of a specified individual, and can also be used to modify genotypes. As the others, it can be applied to marker objects directly, or to pedigrees with attached markers. Here we show a few examples of the latter type:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
-<span id="cb29-2"><a href="#cb29-2"></a><span class="co">#&gt; [1] NA NA</span></span>
-<span id="cb29-3"><a href="#cb29-3"></a><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>) =<span class="st"> &quot;A&quot;</span></span>
-<span id="cb29-4"><a href="#cb29-4"></a>trio</span>
-<span id="cb29-5"><a href="#cb29-5"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
-<span id="cb29-6"><a href="#cb29-6"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
-<span id="cb29-7"><a href="#cb29-7"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
-<span id="cb29-8"><a href="#cb29-8"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  A/A</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># Girl is not genotyped</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="co">#&gt; [1] NA NA</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a></span>
+<span id="cb28-5"><a href="#cb28-5"></a><span class="co"># Set genotype</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a><span class="kw">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;girl&quot;</span>) =<span class="st"> &quot;A/A&quot;</span></span>
+<span id="cb28-7"><a href="#cb28-7"></a></span>
+<span id="cb28-8"><a href="#cb28-8"></a><span class="co"># Inspect the result</span></span>
+<span id="cb28-9"><a href="#cb28-9"></a>trio</span>
+<span id="cb28-10"><a href="#cb28-10"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
+<span id="cb28-11"><a href="#cb28-11"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
+<span id="cb28-12"><a href="#cb28-12"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
+<span id="cb28-13"><a href="#cb28-13"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  A/A</span></span></code></pre></div>
 </div>
 <div id="gettingsettingmodifying-many-markers-simultaneously" class="section level2" number="2.5">
 <h2 number="2.5"><span class="header-section-number">2.5</span> Getting/setting/modifying many markers simultaneously</h2>
@@ -706,10 +735,10 @@ For example to …
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
+<td style="text-align:left;width: 4.5cm; ">
 <code>getAlleles(x)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 extract all alleles as a matrix.
 </td>
 <td style="text-align:left;">
@@ -717,10 +746,10 @@ do summary stats on the marker alleles
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
-<code>getFrequencyDatabase(x)</code>
+<td style="text-align:left;width: 4.5cm; ">
+<code>getFreqDatabase(x)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 extract allele frequencies as a data.frame in <em>allelic ladder</em> format.
 </td>
 <td style="text-align:left;">
@@ -728,10 +757,10 @@ transfer to other objects, or write the database to a file
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
+<td style="text-align:left;width: 4.5cm; ">
 <code>getMarkers(x)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 extract list of marker objects. Each marker is a <code>N * 2</code> allele matrix (<code>N = pedsize(x)</code>) with locus annotations as attributes
 </td>
 <td style="text-align:left;">
@@ -744,10 +773,10 @@ do computations
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
+<td style="text-align:left;width: 4.5cm; ">
 <code>setAlleles(x, ...)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 replace the genotypes of <code>x</code> without changing the locus attributes.
 </td>
 <td style="text-align:left;">
@@ -755,10 +784,10 @@ erase all genotypes
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
-<code>setFrequencyDatabase(x, db)</code>
+<td style="text-align:left;width: 4.5cm; ">
+<code>setFreqDatabase(x, db)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 replace all allele frequencies without changing the genotype data. The input is a data.frame in <em>allelic ladder</em> format. Conceptually equivalent to <code>setMarkers(x, alleleMatrix = getAlleles(x), locusAnnotations = db)</code>.
 </td>
 <td style="text-align:left;">
@@ -766,10 +795,10 @@ change the frequency database
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
+<td style="text-align:left;width: 4.5cm; ">
 <code>setMarkers(x, ...)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 attach marker objects with or without genotype data. Locus attributes are indicated as a list; genotypes as a matrix or data.frame.
 </td>
 <td style="text-align:left;">
@@ -782,10 +811,10 @@ prepare joint manipulation of a pedigree and marker data
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
+<td style="text-align:left;width: 4.5cm; ">
 <code>as.data.frame(x)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 convert <code>x</code> to a data.frame, with pedigree columns in standard format followed by genotype columns. One column per marker, with genotype format <code>a/b</code> and missing alleles indicated as <code>-</code>.
 </td>
 <td style="text-align:left;">
@@ -793,10 +822,10 @@ pretty-print ped objects
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
+<td style="text-align:left;width: 4.5cm; ">
 <code>as.matrix(x)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 convert <code>x</code> to a <em>numerical</em> matrix, with additional info attached as attributes.
 </td>
 <td style="text-align:left;">
@@ -809,10 +838,10 @@ modify a pedigree with marker data
 </td>
 </tr>
 <tr>
-<td style="text-align:left;width: 5cm; ">
+<td style="text-align:left;width: 4.5cm; ">
 <code>transferMarkers(from, to)</code>
 </td>
-<td style="text-align:left;width: 8cm; ">
+<td style="text-align:left;width: 8.5cm; ">
 transfer genotypes and attributes between pedigree objects (or lists of such).
 </td>
 <td style="text-align:left;">
@@ -827,7 +856,7 @@ transfer simulated marker data
 <hr />
 <ol>
 <li id="fn1"><p>There is an important exception to this: Certain algorithms in pedigree analysis work “top-down”, in the sense that parents must be treated before their children. For this reason, many implementations require, for simplicity, that the individuals are stored in this fashion, i.e. that parents always precede their children. <code>pedtools</code> offers a special reordering function to ensure this, <code>parents_before_children()</code>, which you will find utilised in the source code of packages like <code>ribd</code> and <code>ibdsim2</code>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>You may have come across NSE before, for instance when using <code>subset()</code> on a data.frame. To learn more about NSE, I highly recommend this book chapter by Hadley Wickham:<br />
+<li id="fn2"><p>You may have come across NSE before, for instance when using <code>subset()</code> on a data.frame. To learn more about NSE, I recommend this book chapter by Hadley Wickham:<br />
 <a href="http://adv-r.had.co.nz/Computing-on-the-language.html" class="uri">http://adv-r.had.co.nz/Computing-on-the-language.html</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>

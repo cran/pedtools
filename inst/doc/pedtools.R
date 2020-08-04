@@ -33,11 +33,11 @@ unclass(trio)
 plot(trio, margins = c(1,1,1,1))
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  plot(trio, deceased = "fa", starred = "mo", shaded = "girl",
+#  plot(trio, deceased = "fa", starred = "mo", hatched = "girl",
 #       col = c("green", "red", "blue"), title = "Trio 1")
 
 ## ----echo=FALSE, fig.dim = c(2,2)---------------------------------------------
-plot(trio, deceased = "fa", starred = "mo", shaded = "girl", 
+plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
      col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,1.5,1))
 
 ## -----------------------------------------------------------------------------
@@ -64,8 +64,8 @@ x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
 
 ## -----------------------------------------------------------------------------
 x2 = halfCousinPed(0, child = T)
-x2 = addChildren(x2, father = 1, mother = 4, nch = 1)
-x2 = relabel(x2, old = c(4,3,7,6), new = c(3,4,6,7))
+x2 = addChildren(x2, father = 2, mother = 3, nch = 1)
+x2 = relabel(x2, old = c(7,6), new = c(6,7))
 
 ## -----------------------------------------------------------------------------
 identical(x1, x2)
@@ -79,12 +79,13 @@ identical(x1, x2)
 
 ## ----merge-example, echo = FALSE, message = F---------------------------------
 # Top part
-x = ancestralPed(g = 2) # bottom person is `7`
+x = ancestralPed(g = 2) # bottom person is `7`; relabel to `8`
+x = relabel(x, old = 7, new = 8)
 
 # Bottom part
 y = halfCousinPed(degree = 1) 
 y = swapSex(y, 4)
-y = relabel(y, new = 7:15) # top person becomes `7`
+y = relabel(y, new = 7:15) # top person becomes `8`
 
 # Merge
 z = mergePed(x, y)
@@ -94,12 +95,13 @@ plot(z, margins = c(1,1,1,1))
 
 ## ---- label = "merge-example"-------------------------------------------------
 # Top part
-x = ancestralPed(g = 2) # bottom person is `7`
+x = ancestralPed(g = 2) # bottom person is `7`; relabel to `8`
+x = relabel(x, old = 7, new = 8)
 
 # Bottom part
 y = halfCousinPed(degree = 1) 
 y = swapSex(y, 4)
-y = relabel(y, new = 7:15) # top person becomes `7`
+y = relabel(y, new = 7:15) # top person becomes `8`
 
 # Merge
 z = mergePed(x, y)
@@ -108,13 +110,14 @@ z = mergePed(x, y)
 marker(trio)
 
 ## -----------------------------------------------------------------------------
-m1 = marker(trio, fa = "A", mo = c("A","B"), name = "snp1")
+m1 = marker(trio, fa = "A/A", mo = "A/B", name = "snp1")
 
 ## -----------------------------------------------------------------------------
-marker(trio, fa = "A", mo = c("A","B"), alleles = c("A","B","C"), afreq = c(.2,.3,.5))
+marker(trio, fa = "A/A", mo = "A/B", afreq = c(A = .2, B = .3, C = .5))
 
 ## -----------------------------------------------------------------------------
-m2 = marker(trio, fa = "A", mo = c("A","B"), chrom = 23, name = "snpX")
+m2 = marker(trio, fa = "A/A", mo = "A/B", chrom = "X", name = "snpX")
+m2
 
 ## ---- eval=FALSE--------------------------------------------------------------
 #  plot(trio, marker = m1)
@@ -123,17 +126,17 @@ m2 = marker(trio, fa = "A", mo = c("A","B"), chrom = 23, name = "snpX")
 plot(trio, marker = m1, margins = c(1,1,1,1))
 
 ## ---- eval=FALSE--------------------------------------------------------------
-#  plot(trio, marker = m1, sep = "", skip.empty.genotypes = T)
+#  plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
 
 ## ---- echo=FALSE, fig.dim=c(2,2)----------------------------------------------
-plot(trio, marker = m1, sep = "", skip.empty.genotypes = T, margins = c(1,1,1,1))
+plot(trio, marker = m1, sep = "", showEmpty = T, missing = "?", margins = c(1,1,1,1))
 
 ## -----------------------------------------------------------------------------
 trio = setMarkers(trio, list(m1, m2))
 trio
 
 ## -----------------------------------------------------------------------------
-whichMarkers(trio, chrom = 23)
+whichMarkers(trio, chrom = "X")
 selectMarkers(trio, markers = "snp1")
 
 ## -----------------------------------------------------------------------------
@@ -144,8 +147,13 @@ afreq(trio, marker = "snp1")
 afreq(trio, marker = "snp1") = c(A = 0.9, B = 0.1)
 
 ## -----------------------------------------------------------------------------
+# Girl is not genotyped
 genotype(trio, "snpX", id = "girl")
-genotype(trio, "snpX", id = "girl") = "A"
+
+# Set genotype
+genotype(trio, "snpX", id = "girl") = "A/A"
+
+# Inspect the result
 trio
 
 ## ----getset, echo = FALSE-----------------------------------------------------
@@ -153,7 +161,7 @@ getters.df = rbind(
   c("`getAlleles(x)`", 
     "extract all alleles as a matrix.", 
     "do summary stats on the marker alleles"),
-  c("`getFrequencyDatabase(x)`", 
+  c("`getFreqDatabase(x)`", 
     "extract allele frequencies as a data.frame in *allelic ladder* format.", 
     "transfer to other objects, or write the database to a file"),
   c("`getMarkers(x)`", 
@@ -165,7 +173,7 @@ setters.df = rbind(
   c("`setAlleles(x, ...)`", 
     "replace the genotypes of `x` without changing the locus attributes.", 
     "erase all genotypes"),
-  c("`setFrequencyDatabase(x, db)`", 
+  c("`setFreqDatabase(x, db)`", 
     "replace all allele frequencies without changing the genotype data. The input is a data.frame in *allelic ladder* format. Conceptually equivalent to `setMarkers(x, alleleMatrix = getAlleles(x), locusAnnotations = db)`.", 
     "change the frequency database"),
   c("`setMarkers(x, ...)`", 
@@ -191,8 +199,8 @@ other.df = rbind(
 getset.df = rbind(getters.df, setters.df, conversions.df, other.df)
 tbl.getset = kable(getset.df, 
             col.names = c("Use ...", "When you want to ...", "For example to ..."))
-tbl.getset = column_spec(tbl.getset, 1, width = "5cm")
-tbl.getset = column_spec(tbl.getset, 2, width = "8cm")
+tbl.getset = column_spec(tbl.getset, 1, width = "4.5cm")
+tbl.getset = column_spec(tbl.getset, 2, width = "8.5cm")
 tbl.getset = pack_rows(tbl.getset, "Get", 1, 3, indent = F)
 tbl.getset = pack_rows(tbl.getset, "Set", 4, 6, indent = F)
 tbl.getset = pack_rows(tbl.getset, "Convert", 7, 8, indent = F)

@@ -94,13 +94,20 @@ typedMembers = function(x, internal = FALSE) {
   if(is.pedList(x))
     return(unlist(lapply(x, typedMembers)))
 
-  if (nMarkers(x) == 0)
+  nMark = nMarkers(x)
+  labs = x$ID
+  if (nMark == 0)
     return(if(internal) integer(0) else character(0))
 
-  allelematrix = do.call(cbind, x$MARKERS)
-  emptyrows = rowSums(allelematrix != 0) == 0
-  if(internal) which(!emptyrows) else labels.ped(x)[!emptyrows]
+  allelematrix = unlist(x$MARKERS)
+  typed = .rowSums(allelematrix, m = length(labs), n = 2*nMark) > 0
+
+  # dim(allelematrix) = c(pedsize(x), 2*nMark)
+  # typed = rowSums(allelematrix) > 0
+
+  if(internal) which(typed) else labs[typed]
 }
+
 
 #' @rdname ped_subgroups
 #' @export
@@ -108,11 +115,18 @@ untypedMembers = function(x, internal = FALSE) {
   if(is.pedList(x))
     return(unlist(lapply(x, untypedMembers)))
 
-  if (nMarkers(x) == 0)
-    return(if(internal) seq_len(pedsize(x)) else labels.ped(x))
-  allelematrix = do.call(cbind, x$MARKERS)
-  emptyrows = rowSums(allelematrix != 0) == 0
-  if(internal) which(emptyrows) else labels.ped(x)[emptyrows]
+  nMark = nMarkers(x)
+  labs = x$ID
+  if (nMark == 0)
+    return(if(internal) seq_along(labs) else labs)
+
+  allelematrix = unlist(x$MARKERS)
+  untyped = .rowSums(allelematrix, m = length(labs), n = 2*nMark) == 0
+
+  # dim(allelematrix) = c(pedsize(x), 2*nMark)
+  # untyped = rowSums(allelematrix) == 0
+
+  if(internal) which(untyped) else labs[untyped]
 }
 
 #' @rdname ped_subgroups

@@ -1,18 +1,20 @@
 #' Marker objects
 #'
-#' Creating a marker object associated with a pedigree
+#' Creating a marker object associated with a pedigree.
 #'
 #'
 #' @param x a [`ped`] object
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
 #'   the ID label of a member of `x`, and `genotype` is a numeric or character
 #'   vector of length 1 or 2 (see Examples).
+#' @param geno a character vector of length `pedsize(x)`, with genotypes
+#'   written in the format "a/b".
 #' @param allelematrix a matrix with 2 columns and `pedsize(x)` rows. If this is
 #'   non-NULL, then `...` must be empty.
 #' @param alleles a character (or coercible to character) containing allele
 #'   names. If not given, and `afreq` is named, `names(afreq)` is used. The
 #'   default action is to take the sorted vector of distinct alleles occurring
-#'   in `allelematrix` or `...`.
+#'   in `allelematrix`, `geno` or `...`.
 #' @param afreq a numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
 #'   don't sum to 1 after rounding to 3 decimals. If the vector is named, and
@@ -22,8 +24,6 @@
 #' @param chrom a single integer: the chromosome number. Default: NA.
 #' @param posMb a nonnegative real number: the physical position of the marker,
 #'   in megabases. Default: NA.
-#' @param posCm a nonnegative real number: the centiMorgan position of the
-#'   marker. Default: NA.
 #' @param name a character string: the name of the marker. Default: NA.
 #' @param NAstrings A character vector containing strings to be treated as
 #'   missing alleles. Default: `c("", "0", NA, "-")`.
@@ -45,8 +45,6 @@
 #'
 #'   * `posMb` (physical location in megabases; default = NA)
 #'
-#'   * `posCm` (position in centiMorgan; default = NA)
-#'
 #'   * `name` (marker identifier; default = NA)
 #'
 #'   * `mutmod` (a list of two (male and female) mutation matrices; default =
@@ -66,11 +64,14 @@
 #'   marker(x, alleles = c("A", "B"), afreq = c(0.01, 0.99)),
 #'   ))
 #'
-#' # Genotypes can be assigned using different formats
-#' marker(x, fa = c(1,2), mo = "1/2")
+#' # Genotypes can be assigned individually ...
+#' marker(x, fa = "1/1", mo = "1/2")
 #'
-#' # For homozygous genotypes, three formats are possible
-#' marker(x, fa = 1, mo = c(1,1), child = "1/1")
+#' # ... or using the `geno` vector (all members in order)
+#' marker(x, geno = c("1/1", "1/2", NA))
+#'
+#' # For homozygous genotypes, a single allele suffices
+#' marker(x, fa = 1)
 #'
 #' # Attaching a marker to the pedigree
 #' m = marker(x) # By default a SNP with alleles 1,2
@@ -82,21 +83,22 @@
 #' marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
 #'
 #' @export
-marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
-                  chrom = NA, posMb = NA, posCm = NA, name = NA,
-                  NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
+marker = function(x, ...,  geno = NULL, allelematrix = NULL,
+                  alleles = NULL, afreq = NULL,
+                  chrom = NA, posMb = NA, name = NA,
+                  NAstrings = c(0, "", NA, "-"),
+                  mutmod = NULL, rate = NULL,
                   validate = TRUE) {
 
   # Some parameters cannot have length 0 or be ""
   if(length(chrom) == 0) chrom = NA
   if(length(posMb) == 0) posMb = NA
-  if(length(posCm) == 0) posCm = NA
   if(length(name) == 0 || identical(name, "")) name = NA
 
   pedN = pedsize(x)
 
-  if (is.null(allelematrix)) {
-    # Initalize empty allele matrix
+  if (is.null(geno) && is.null(allelematrix)) {
+    # Initialise empty allele matrix
     m = matrix(0, ncol = 2, nrow = pedN)
 
     # Capture genotypes given in dots
@@ -124,73 +126,82 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
 
       # Split compound genotypes, e.g., "a/b"
       if(lg == 1 && is.character(g))
-        g = strsplit(g, "/")[[1]]
+        g = strsplit(g, "/", fixed = TRUE)[[1]]
 
       # Insert in `m`
       m[ids_int[i], ] = g
     }
   }
-  else {
-    m = allelematrix
+  else if(!is.null(geno)) {
+    if(!is.null(allelematrix))
+      stop2("At least one of `geno` and `allelematrix` must be NULL")
+    geno = as.character(geno)
+    if(length(geno) != pedN)
+      stop2("`geno` incompatible with pedigree")
+    s = strsplit(geno, "/")
+    s[lengths(s) < 2] = lapply(s[lengths(s) < 2], rep, length.out = 2)
+    m = matrix(unlist(s), ncol = 2, byrow = TRUE)
   }
+  else
+    m = allelematrix
+
+  ### Alleles and frequencies
+  if(!is.null(alleles) && !is.null(names(afreq)))
+    stop2("Argument `alleles` should not be used when `afreq` has names")
+  if(is.null(alleles) && !is.null(afreq) && is.null(names(afreq)))
+    stop2("When `alleles` is NULL, `afreq` must be named")
+
 
   # If alleles are NULL, take from afreq names, otherwise from supplied genos
-  if (is.null(alleles)) {
-    if(!is.null(afreq) && !is.null(names(afreq)))
-       alleles = names(afreq)
-    else {
-      alleles = .mysetdiff(m, NAstrings)
-      if (length(alleles) == 0)
-        alleles = 1:2 # NEW
-    }
-  }
-  else if(!all(m %in% c(NAstrings, alleles))) {
-      mtxt = if(is.na(name)) "this marker: " else sprintf("marker `%s`: ", name)
-      stop2("Invalid allele for ", mtxt, setdiff(m, c(NAstrings, alleles)))
-  }
+  als = alleles %||% names(afreq) %||% .mysetdiff(m, NAstrings)
+  if(length(als) == 0)
+    als = 1:2
 
   ### Frequencies
-  if (is.null(afreq)) {
-    nall = length(alleles)
-    afreq = rep.int(1/nall, nall)
-  }
-  if (is.null(names(afreq)))
-    names(afreq) = alleles
+  afreq = afreq %||% {rep_len(1, length(als))/length(als)}
+  names(afreq) = names(afreq) %||% als
 
   # Sort alleles and frequencies (numerical sorting if appropriate)
-  if (!is.numeric(alleles) && !anyNA(suppressWarnings(as.numeric(alleles))))
-    ord = order(as.numeric(alleles))
+  if (!is.numeric(als) && !anyNA(suppressWarnings(as.numeric(als))))
+    ord = order(as.numeric(als))
   else
-    ord = order(alleles)
+    ord = order(als)
 
-  afreq = afreq[ord]
-  alleles = names(afreq)
+  # Final ordered objects
+  AFR = afreq[ord]
+  ALS = names(AFR)
 
   ### Mutation model
   if(!is.null(mutmod)) {
     if (!requireNamespace("pedmut", quietly = TRUE))
       stop2("Package `pedmut` must be installed in order to include mutation models")
-    mutmod = pedmut::mutationModel(mutmod, alleles = alleles, afreq = afreq, rate = rate)
+    mutmod = pedmut::mutationModel(mutmod, alleles = ALS, afreq = AFR, rate = rate)
   }
 
-  ### Create the internal allele matrix
-  m_int = match(m, alleles, nomatch = 0)
+  ### Internal allele matrix
+  if(!all(m %in% c(NAstrings, ALS)))
+    stop2("Invalid allele", if(!is.na(name)) sprintf(" for marker `%s`", name), ": ",
+          setdiff(m, c(NAstrings, ALS)))
+
+  m_int = match(m, ALS, nomatch = 0, incomparables = NAstrings)
   dim(m_int) = dim(m)
 
-  ma = newMarker(m_int, alleles = alleles, afreq = unname(afreq),
+  # Create marker object
+  ma = newMarker(m_int, alleles = ALS, afreq = unname(AFR),
             name = as.character(name), chrom = as.character(chrom),
-            posMb = as.numeric(posMb), posCm = as.numeric(posCm),
-            mutmod = mutmod, pedmembers = labels(x), sex = x$SEX)
+            posMb = as.numeric(posMb), mutmod = mutmod,
+            pedmembers = labels(x), sex = x$SEX)
 
-  if(validate) validateMarker(ma)
-
+  if(validate)
+    validateMarker(ma)
   ma
 }
 
 
 newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
-                     chrom = NA_character_, posMb = NA_real_, posCm = NA_real_,
+                     chrom = NA_character_, posMb = NA_real_,
                      mutmod = NULL, pedmembers, sex) {
+
   stopifnot2(is.matrix(allelematrix_int),
             ncol(allelematrix_int) == 2,
             is.integer(allelematrix_int),
@@ -199,13 +210,12 @@ newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
             is.character(name),
             is.character(chrom),
             is.numeric(posMb),
-            is.numeric(posCm),
             is.null(mutmod) || is.list(mutmod),
             is.character(pedmembers),
             is.integer(sex))
 
   structure(allelematrix_int, alleles = alleles, afreq = afreq, name = name,
-            chrom = chrom, posMb = posMb, posCm = posCm, mutmod = mutmod,
+            chrom = chrom, posMb = posMb, mutmod = mutmod,
             pedmembers = pedmembers, sex = sex, class = "marker")
 }
 
@@ -219,6 +229,8 @@ validateMarker = function(x) {
   if(any(alleles %in% NA_allele_))
     stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
 
+  if(dup <- anyDuplicated(alleles))
+    stop2("Duplicated allele label: ", alleles[dup])
   ## afreq
   afreq = attrs$afreq
   if (length(afreq) != length(alleles))

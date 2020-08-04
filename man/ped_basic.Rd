@@ -11,15 +11,15 @@
 \alias{selfingPed}
 \title{Create simple pedigrees}
 \usage{
-nuclearPed(
-  nch,
-  sex = 1,
-  father = "1",
-  mother = "2",
-  children = as.character(seq.int(3, length.out = nch))
-)
+nuclearPed(nch = 1, sex = 1, father = "1", mother = "2", children = NULL)
 
-halfSibPed(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1)
+halfSibPed(
+  nch1 = 1,
+  nch2 = 1,
+  sex1 = 1,
+  sex2 = 1,
+  type = c("paternal", "maternal")
+)
 
 linearPed(n, sex = 1)
 
@@ -32,8 +32,8 @@ ancestralPed(g)
 selfingPed(s, sex = 1)
 }
 \arguments{
-\item{nch}{The number of children. If NULL, it is taken to be the
-\code{length(children)}}
+\item{nch}{The number of children, by default 1. If \code{children} is not NULL,
+\code{nch} is set to \code{length(children)}}
 
 \item{sex}{A vector with integer gender codes (0=unknown, 1=male, 2=female).
 In \code{nuclearPed()}, it contains the genders of the children and is recycled
@@ -43,16 +43,19 @@ most \code{n} (recycled if shorter than this). In \code{selfingPed()} it should 
 single number, indicating the gender of the last individual (the others
 must necessarily have gender code 0.)}
 
-\item{father}{The label of the father.}
+\item{father}{The label of the father. Default: "1".}
 
-\item{mother}{The label of the mother.}
+\item{mother}{The label of the mother. Default: "2".}
 
-\item{children}{A character of length \code{nch}, with labels of the children.}
+\item{children}{A character with labels of the children. Default: "3", "4",
+...}
 
 \item{nch1, nch2}{The number of children in each sibship.}
 
 \item{sex1, sex2}{Vectors of gender codes for the children in each sibship.
 Recycled (if necessary) to lengths \code{nch1} and \code{nch2} respectively.}
+
+\item{type}{Either "paternal" or "maternal".}
 
 \item{n}{The number of generations, not including the initial founders.}
 
@@ -81,8 +84,7 @@ Utility functions for creating some common pedigree structures.
 \details{
 \code{halfSibPed(nch1, nch2)} produces a pedigree containing two sibships (of
 sizes \code{nch1} and \code{nch2}) with the same father, but different mothers. If
-maternal halfsibs are wanted instead, use \code{\link[=swapSex]{swapSex()}} afterwards. (See
-examples below.)
+maternal half sibs are wanted instead, add \code{type = "maternal"}.
 
 \code{cousinPed(degree = n, removal = k)} creates a pedigree with two \code{n}'th
 cousins, \code{k} times removed. By default, removals are added on the right side,
@@ -103,10 +105,10 @@ nuclearPed(5, sex = c(1, 1, 2, 2, 2))
 linearPed(3, sex = 2)
 
 # Paternal half brothers
-x = halfSibPed()
+halfSibPed()
 
-# Change into maternal half brothers
-x = swapSex(x, 1)
+# Maternal half sisters
+halfSibPed(sex1 = 2, sex2 = 2, type = "maternal")
 
 # Larger half sibships: boy and girl on one side; 3 girls on the other
 halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)

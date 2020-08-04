@@ -16,10 +16,6 @@ test_that("simple marker getters work", {
   expect_equal(posMb(m), 1e7)
   expect_equal(posMb(x, markers=1), 1e7)
   expect_equal(posMb(x, markers="m1"), 1e7)
-
-  expect_equal(posCm(m), NA_real_)
-  expect_equal(posCm(x, markers=1), NA_real_)
-  expect_equal(posCm(x, markers="m1"), NA_real_)
 })
 
 
@@ -139,7 +135,7 @@ test_that("genotype replacement gives correct error messages", {
   expect_error({genotype(x, "m1", 100) = 3}, "Unknown ID label: 100")
   expect_error({genotype(x, "m1", "girl") = 3}, "Unknown ID label: girl")
   expect_error({genotype(x, "m1", 101) = 3}, "Unknown allele for this marker: 3")
-  expect_error({genotype(x, "m1", 101) = 1:3}, "Length of genotype vector must be 1 or 2")
+  expect_error({genotype(x, "m1", 101) = 1:3}, "Number of alleles must be 1 or 2")
 })
 
 test_that("genotype replacement works with partial genotypes", {

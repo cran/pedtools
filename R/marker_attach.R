@@ -19,8 +19,6 @@
 #'
 #' * `posMb` : physical location in megabases (NA)
 #'
-#' * `posCm` : position in centiMorgan (NA)
-#'
 #' * `name` : marker name (NA)
 #'
 #' * `mutmod` : mutation model, or model name (NULL)
@@ -48,8 +46,11 @@
 #'   for missing alleles.
 #' @param sep If this is a single string, each entry of `alleleMatrix` is
 #'   interpreted as a genotype, and will be split by calling `strsplit(...,
-#'   split = sep, fixed = TRUE)`. For example, if the entries are formatted as
-#'   "A/B", put `sep = "/"`. Default: NULL.
+#'   split = sep, fixed = TRUE)`. If `alleleMatrix` contains entries with "/",
+#'   this will be taken as separator by default. (To override this behaviour,
+#'   put `sep = FALSE`.)
+#' @param checkCons A logical. If TRUE (default), each marker is checked for
+#'   consistency with `x`.
 #'
 #' @return A `ped` object.
 #' @examples
@@ -71,7 +72,13 @@ NULL
 #' @rdname marker_attach
 #' @export
 setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
-                      sep = NULL) {
+                      sep = NULL, checkCons = TRUE) {
+
+  # If `sep` is not given, but AM contains entries with "/", use this
+  if(!is.null(alleleMatrix) && is.null(sep) && any(grepl("/", alleleMatrix, fixed = TRUE)))
+    sep = "/"
+  if(isFALSE(sep))
+    sep = NULL
 
   # If pedlist input, recurse over components
   if(is.pedList(x)) {
@@ -106,8 +113,11 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   else
     stop2("Argument `m` must be either a single `marker` object, a list of such, or NULL")
 
+  # Check consistency with `x`
+  if(checkCons)
+    checkConsistency(x, mlist)
+
   class(mlist) = "markerList"
-  checkConsistency(x, mlist)
   x$MARKERS = mlist
   x
 }
@@ -115,7 +125,13 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 #' @rdname marker_attach
 #' @export
 addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
-                      sep = NULL) {
+                      sep = NULL, checkCons = TRUE) {
+
+  # If `sep` is not given, but AM contains entries with "/", use this
+  if(!is.null(alleleMatrix) && is.null(sep) && any(grepl("/", alleleMatrix, fixed = TRUE)))
+    sep = "/"
+  if(isFALSE(sep))
+    sep = NULL
 
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
@@ -141,8 +157,11 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   else
     stop2("Argument `m` must be either a single `marker` object, a list of such, or NULL")
 
+  # Check consistency with `x`
+  if(checkCons)
+    checkConsistency(x, mlist)
+
   # Append to x and return
-  checkConsistency(x, mlist)
   mlist = c(x$MARKERS, mlist)
   class(mlist) = "markerList"
   x$MARKERS = mlist
@@ -153,7 +172,7 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 checkLocusAttribs = function(a) {
   if(length(a) == 0) return(a)
 
-  attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "posCm", "mutmod", "rate")
+  attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")
 
   # Format 1: List of lists
   if(is.list(a) && all(sapply(a, is.list))) {

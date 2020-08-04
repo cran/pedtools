@@ -29,15 +29,15 @@
 #' # Write to file
 #' fn = writePed(x, prefix = tempfile("test"))
 #'
-#' # Remember `sep = "/"` when reading the file
-#' # (since `writePed()` writes genotypes as "a/b")
-#' y = readPed(fn, sep = "/")
+#' # Read
+#' y = readPed(fn)
 #'
 #' stopifnot(identical(x, y))
 #'
 #' @importFrom utils write.table
 #' @export
-writePed = function(x, prefix, what = "ped", famid = is.pedList(x), header = TRUE, merlin = FALSE, verbose = TRUE) {
+writePed = function(x, prefix, what = "ped", famid = is.pedList(x),
+                    header = TRUE, merlin = FALSE, verbose = TRUE) {
 
   if(merlin)
     return(writePed_merlin(x, prefix = prefix, verbose = verbose))
@@ -75,7 +75,7 @@ writePed = function(x, prefix, what = "ped", famid = is.pedList(x), header = TRU
   }
 
   if ("freq" %in% what) {
-    writeFrequencyDatabase(x, filename = fnames[["freq"]], format = "list")
+    writeFreqDatabase(x, filename = fnames[["freq"]], format = "list")
     if(verbose) message("File written: ", fnames[["freq"]])
   }
 

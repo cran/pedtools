@@ -4,8 +4,7 @@
 #'
 #' `halfSibPed(nch1, nch2)` produces a pedigree containing two sibships (of
 #' sizes `nch1` and `nch2`) with the same father, but different mothers. If
-#' maternal halfsibs are wanted instead, use [swapSex()] afterwards. (See
-#' examples below.)
+#' maternal half sibs are wanted instead, add `type = "maternal"`.
 #'
 #' `cousinPed(degree = n, removal = k)` creates a pedigree with two `n`'th
 #' cousins, `k` times removed. By default, removals are added on the right side,
@@ -17,8 +16,8 @@
 #'
 #' `selfingPed(s)` returns a line of `s` consecutive selfings.
 
-#' @param nch The number of children. If NULL, it is taken to be the
-#'   `length(children)`
+#' @param nch The number of children, by default 1. If `children` is not NULL,
+#'   `nch` is set to `length(children)`
 #' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).
 #'   In `nuclearPed()`, it contains the genders of the children and is recycled
 #'   (if necessary) to length `nch`. In `linearPed()` it also contains the
@@ -26,12 +25,14 @@
 #'   most `n` (recycled if shorter than this). In `selfingPed()` it should be a
 #'   single number, indicating the gender of the last individual (the others
 #'   must necessarily have gender code 0.)
-#' @param father The label of the father.
-#' @param mother The label of the mother.
-#' @param children A character of length `nch`, with labels of the children.
+#' @param father The label of the father. Default: "1".
+#' @param mother The label of the mother. Default: "2".
+#' @param children A character with labels of the children. Default: "3", "4",
+#'   ...
 #' @param nch1,nch2 The number of children in each sibship.
 #' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
 #'   Recycled (if necessary) to lengths `nch1` and `nch2` respectively.
+#' @param type Either "paternal" or "maternal".
 #' @param n The number of generations, not including the initial founders.
 #' @param degree A non-negative integer: 0=siblings, 1=first cousins; 2=second
 #'   cousins, a.s.o.
@@ -57,10 +58,10 @@
 #' linearPed(3, sex = 2)
 #'
 #' # Paternal half brothers
-#' x = halfSibPed()
+#' halfSibPed()
 #'
-#' # Change into maternal half brothers
-#' x = swapSex(x, 1)
+#' # Maternal half sisters
+#' halfSibPed(sex1 = 2, sex2 = 2, type = "maternal")
 #'
 #' # Larger half sibships: boy and girl on one side; 3 girls on the other
 #' halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)
@@ -85,14 +86,16 @@ NULL
 
 #' @rdname ped_basic
 #' @export
-nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
-                      children = as.character(seq.int(3, length.out = nch))) {
-  if(missing(nch))
+nuclearPed = function(nch = 1, sex = 1, father = '1', mother = '2',
+                      children = NULL) {
+
+  if(is.null(children)) {
+    if(!isCount(nch))
+      stop2("`nch` must be a positive integer: ", nch)
+    children = as.character(2 + seq_len(nch))
+  }
+  else
     nch = length(children)
-  if(!is_count(nch))
-    stop2("`nch` must be a positive integer: ", nch)
-  if(length(children) != nch)
-    stop2("`children` must have length `nch`")
   if(length(father) != 1)
     stop2("`father` must have length 1")
   if(length(mother) != 1)
@@ -116,26 +119,35 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
 
 #' @rdname ped_basic
 #' @export
-halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
-  if(!is_count(nch1))
+halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1, type = c("paternal", "maternal")) {
+  if(!isCount(nch1))
     stop2("`nch1` must be a positive integer: ", nch1)
-  if(!is_count(nch2))
+  if(!isCount(nch2))
     stop2("`nch2` must be a positive integer: ", nch2)
   sex1 = validate_sex(sex1, nInd = nch1)
   sex2 = validate_sex(sex2, nInd = nch2)
 
-  x = ped(id = seq_len(3 + nch1 + nch2),
-          fid = c(0, 0, 0, rep.int(1, nch1 + nch2)),
-          mid = c(0, 0, 0, rep.int(2, nch1), rep.int(3, nch2)),
-          sex = c(1, 2, 2, sex1, sex2),
-          verbose = FALSE)
-  x
+  switch(match.arg(type),
+  paternal = {
+    fid = c(0, 0, 0, rep.int(2, nch1 + nch2))
+    mid = c(0, 0, 0, rep.int(1, nch1), rep.int(3, nch2))
+    sex = c(2, 1, 2, sex1, sex2)
+  },
+  maternal = {
+    fid = c(0, 0, 0, rep.int(1, nch1), rep.int(3, nch2))
+    mid = c(0, 0, 0, rep.int(2, nch1 + nch2))
+    sex = c(1, 2, 1, sex1, sex2)
+  })
+
+  ped(id = seq_len(3 + nch1 + nch2),
+      fid = fid, mid = mid, sex = sex,
+      verbose = FALSE, validate = FALSE)
 }
 
 #' @rdname ped_basic
 #' @export
 linearPed = function(n, sex = 1) {
-  if(!is_count(n, minimum = 0))
+  if(!isCount(n, minimum = 0))
     stop2("`n` must be a nonnegative integer: ", n)
 
   sex = validate_sex(sex, nInd = n)
@@ -164,9 +176,9 @@ linearPed = function(n, sex = 1) {
 #' @rdname ped_basic
 #' @export
 cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
-  if(!is_count(degree, minimum = 0))
+  if(!isCount(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum = 0))
+  if(!isCount(removal, minimum = 0))
     stop2("`removal` must be a nonnegative integer: ", removal)
 
   deg_right = deg_left = degree
@@ -190,6 +202,10 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FAL
     z = swapSex(z, parents[2], verbose = FALSE)
     z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = FALSE)
   }
+
+  # Relabel
+  z = relabel(z, "asPlot")
+
   z
 }
 
@@ -197,9 +213,9 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FAL
 #' @rdname ped_basic
 #' @export
 halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
-  if(!is_count(degree, minimum = 0))
+  if(!isCount(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum = 0))
+  if(!isCount(removal, minimum = 0))
     stop2("`removal` must be a nonnegative integer: ", removal)
 
   deg_right = deg_left = degree
@@ -222,13 +238,17 @@ halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child =
     z = swapSex(z, parents[2], verbose = FALSE)
     z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = FALSE)
   }
+
+  # Relabel
+  z = relabel(z, "asPlot")
+
   z
 }
 
 #' @rdname ped_basic
 #' @export
 ancestralPed = function(g) {
-  if(!is_count(g, minimum = 0))
+  if(!isCount(g, minimum = 0))
     stop2("`g` must be a nonnegative integer: ", g)
 
   if(g == 0)
@@ -248,7 +268,7 @@ ancestralPed = function(g) {
 #' @rdname ped_basic
 #' @export
 selfingPed = function(s, sex = 1) {
-  if(!is_count(s, minimum = 0))
+  if(!isCount(s, minimum = 0))
     stop2("`s` must be a nonnegative integer: ", s)
 
   if(s == 0)
