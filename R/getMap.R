@@ -6,10 +6,7 @@
 #'
 #' * `na.action` = 0: Return map unmodified
 #'
-#' * `na.action` = 1: Replace missing values with dummy values. In the `CHROM`
-#' column, missing values are set to 0. Missing entries in `MARKER` are replaced
-#' with their index (row number). If the `POS` column contain any missing data,
-#' the entire column is replaced by 1,2,... .
+#' * `na.action` = 1: Replace missing values with dummy values.
 #'
 #' * `na.action` = 2: Remove markers with missing data.
 #'
@@ -74,10 +71,23 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
   if (na.action == 1) {
     if (verbose)
       message("Warning: Missing map entries. Inserting dummy values.")
-    chrom[is.na(chrom)] = "0"
-    marker[is.na(marker)] = seq_along(marker)[is.na(marker)]
-    if(anyNA(mb))
-      mb = seq_along(mb)
+
+    naPos = is.na(mb) | is.na(chrom)
+
+    # Autosomal unknowns: Put each on separate chromosome
+    if(any(naPosAut <- naPos & !chrom %in% c("X", 23))) {
+      chrom[naPosAut] = 100 + 1:sum(naPosAut)
+      mb[naPosAut] = 0
+    }
+
+    # X unknowns: Separate by 400 cM
+    if(any(naPosX <- naPos & chrom %in% c("X", 23))) {
+      if(sum(naPosX) > 10) stop2("More than 10 markers on X with unknown position")
+      mb[naPosX] = (1:sum(naPosX)) * 400 + if(all(naPos)) -400 else max(mb, na.rm = TRUE)
+    }
+
+    # NA names: make unique
+    marker[is.na(marker)] = paste0("NA_", seq_len(sum(is.na(marker))))
   }
   else if(na.action == 2) {
     if(verbose)
@@ -97,7 +107,7 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
 #' @importFrom utils read.table
 #' @export
 setMap = function(x, map, matchNames = NA, ...) {
-  if(!is.ped(x) || is.pedList(x))
+  if(!is.ped(x) && !is.pedList(x))
     stop2("Input must be a `ped` object or a list of such")
 
   N = nMarkers(x)
@@ -110,12 +120,16 @@ setMap = function(x, map, matchNames = NA, ...) {
   if(!is.data.frame(map))
     stop2("`map` must be a data frame or file path")
 
+  if(is.pedList(x)) {
+    return(lapply(x, function(comp) setMap(comp, map = map, matchNames = matchNames)))
+  }
+
   mapNames = map[[2]]
   xNames = name(x, 1:N)
 
   # Match names if either i) mismatch in number, or ii) names actually match in some order
   if(is.na(matchNames))
-    matchNames = (nrow(map) != N) || setequal(mapNames, xNames)
+    matchNames = (nrow(map) != N) || (!all(is.na(mapNames)) && setequal(mapNames, xNames))
 
   if(matchNames) {
     mIdx = match(xNames, mapNames, nomatch = NA)
@@ -127,9 +141,8 @@ setMap = function(x, map, matchNames = NA, ...) {
   else {
     if(nrow(map) != N)
       stop2("`map` incompatible with `x` (with `matchNames = F`)")
-    chrom(x, N) = map[[1]]
-    name(x, N) = map[[3]]
-    posMb(x, mIdx) = map[[3]]
+    chrom(x, 1:N) = map[[1]]
+    posMb(x, 1:N) = map[[3]]
   }
 
   x

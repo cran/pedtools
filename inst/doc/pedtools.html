@@ -12,7 +12,7 @@
 
 <meta name="author" content="Magnus Dehli Vigeland" />
 
-<meta name="date" content="2020-08-04" />
+<meta name="date" content="2020-11-14" />
 
 <title>Introduction to the pedtools package</title>
 
@@ -45,6 +45,45 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
 <script>$(document).ready(function(){
     if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
         $('[data-toggle="tooltip"]').tooltip();
@@ -54,6 +93,230 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+border-bottom: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -340,7 +603,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to the pedtools package</h1>
 <h4 class="author">Magnus Dehli Vigeland</h4>
-<h4 class="date">2020-08-04</h4>
+<h4 class="date">2020-11-14</h4>
 
 
 <div id="TOC">
@@ -436,11 +699,11 @@ From the way it is printed, the object <code>trio</code> appears to be a data fr
 <h2 number="1.2"><span class="header-section-number">1.2</span> Basic pedigree plots</h2>
 <p>To plot a pedigree, simply use <code>plot()</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">plot</span>(trio)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAACsAAFUAK4AAVaorAAArgNRVAABVACtVqqpVqv+AKwCAgFWA1P+qVQCqqlWq1ICq/6qq///UgCvU////qlX/1ID//6r//9T////pc/ZoAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADAUlEQVR4nO2cC1PqMBSEQxWqKPVRC/r//6gNvRcVm6RNcrI5zu6MjlDYzde8O2PMh3IZdAFSRQC0CIAWAdAiAFoEQIsAaBEALQKg9ScBjE8Fi7YochZg5ecl9L3cXoRKAYz3ZegSHuBXirsSqgRYU6gaAeYzHMkVAqwoqeNtLMCq1q4KYP4KAXIrx6RFgBQRIOQhLmkAz7Ucn6+uCREgdK06gNomMgKELtQHsGrrogkAtB+ImbkXt3XX+2iAuS08bFMfuXa6/hruqUTs4u97ib0LpFoBLsWOerQYuVhc6r/8ywvypNf30P2DBn8CoP0JgPYnANqfAGh/b0BvzE7SP4s8Aac2ufhogL2ofx65A45bY5rXj25cESaAxAAct/ft2HptAWzyYHxNOVQD3e3YFzaHiGIE/Z06bsfA3t69fvwZRopTexsRYAFOdwdrGF8FcQC7y6/9+4O9+4PzHi7oA0NKG4oD2H/9mu6e+x6GAMahtHkuXgO/ANwDSgDgyytS6BoYxl507kaxSgZI7APW5tQmTMjJAImjkO0Dm0MXP46mA8TPA1nE1Sg6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAN0Acf9+uTJD0Npc/pBMETM27ldZc0r5FgsSsxWqhIKuigAcpiWzZDyLhkl4KgHwWJZNE7AkQAlLr2PhuPyOBEA7EqCAo/pRiADZ0vJ7KlkL6QdQvx/QvyPTvyeesVX2VOLaV99zoZ9HrGl8Mnc2jzycblWGoHcREQAtAqBFALQIgBYBvLqca5TlxLRZFaoBAjglBNAZs3ncHKaD0h5N86IMoDufD/cPoL1501YD05Fe3X+AnbomdD5azB7sNQHs1QH02gHU18DUB3q9AFejkEIAOw80T82rXgCrqSdIS64PZDmyNyyZGrCnC6YcdLtC3A+gRQC0CIAWAdAiAFoEQIsAaKkH+AQ7KM57aNZRYQAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAADoAAGYAOpAAZrY6AAA6kNtmAABmADpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///8NKk6TAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADAUlEQVR4nO2cC1PqMBSEQxWqKPVRC/r//6gNvRcVm6RNcrI5zu6MjlDYzde8O2PMh3IZdAFSRQC0CIAWAdAiAFoEQIsAaBEALQKg9ScBjE8Fi7YochZg5ecl9L3cXoRKAYz3ZegSHuBXirsSqgRYU6gaAeYzHMkVAqwoqeNtLMCq1q4KYP4KAXIrx6RFgBQRIOQhLmkAz7Ucn6+uCREgdK06gNomMgKELtQHsGrrogkAtB+ImbkXt3XX+2iAuS08bFMfuXa6/hruqUTs4u97ib0LpFoBLsWOerQYuVhc6r/8ywvypNf30P2DBn8CoP0JgPYnANqfAGh/b0BvzE7SP4s8Aac2ufhogL2ofx65A45bY5rXj25cESaAxAAct/ft2HptAWzyYHxNOVQD3e3YFzaHiGIE/Z06bsfA3t69fvwZRopTexsRYAFOdwdrGF8FcQC7y6/9+4O9+4PzHi7oA0NKG4oD2H/9mu6e+x6GAMahtHkuXgO/ANwDSgDgyytS6BoYxl507kaxSgZI7APW5tQmTMjJAImjkO0Dm0MXP46mA8TPA1nE1Sg6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAN0Acf9+uTJD0Npc/pBMETM27ldZc0r5FgsSsxWqhIKuigAcpiWzZDyLhkl4KgHwWJZNE7AkQAlLr2PhuPyOBEA7EqCAo/pRiADZ0vJ7KlkL6QdQvx/QvyPTvyeesVX2VOLaV99zoZ9HrGl8Mnc2jzycblWGoHcREQAtAqBFALQIgBYBvLqca5TlxLRZFaoBAjglBNAZs3ncHKaD0h5N86IMoDufD/cPoL1501YD05Fe3X+AnbomdD5azB7sNQHs1QH02gHU18DUB3q9AFejkEIAOw80T82rXgCrqSdIS64PZDmyNyyZGrCnC6YcdLtC3A+gRQC0CIAWAdAiAFoEQIsAaKkH+AQ7KM57aNZRYQAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
 <p>Under the hood, <code>pedtools::plot()</code> is an elaborate wrapper of the excellent plotting functionality of the <code>kinship2</code> package. Most of the possibilities provided by kinship2 are available from pedtools, and several features are added. An overview can be found in the documentation <code>?plot.ped</code>, but a quick example should get you started:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">plot</span>(trio, <span class="dt">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="dt">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="dt">hatched =</span> <span class="st">&quot;girl&quot;</span>, </span>
 <span id="cb8-2"><a href="#cb8-2"></a>     <span class="dt">col =</span> <span class="kw">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">title =</span> <span class="st">&quot;Trio 1&quot;</span>)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAACsAAFUAAP8AKysAK1UAK4AAVaoA/wArAAArAFUrVaorgIArgNRVAABVACtVKwBVKytVgKpVgNRVqqpVqv+AKwCAVQCAgFWAqoCA1P+qVQCqVSuqqlWq1ICq1NSq1P+q/6qq///UgCvUgFXUqoDU1NTU/9TU////AAD/qlX/1ID//6r//9T///8z3HJUAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYA/wA6AAA6AGY6ZrY6kJA6kNtmAABmADpmOgBmOjpmkLZmkNtmtrZmtv+QOgCQZgCQkGaQtpCQ2/+2ZgC2Zjq2tma225C229u22/+2/7a2///bkDrbkGbbtpDb29vb/9vb////AAD/tmb/25D//7b//9v///8XqFVOAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
 <p>See Section 2.2 for how to add, and control the appearance of, marker genotypes to pedigree plots.</p>
 </div>
 <div id="builtin" class="section level2" number="1.3">
@@ -505,7 +768,7 @@ Here is another possibility. We start by creating the father as a singleton, and
 <div id="example-2-an-inbred-child" class="section level3 unnumbered" number>
 <h3 class="unnumbered" number>Example 2: An inbred child</h3>
 <p>This time we will create this inbred family:</p>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 <p><strong>Alternative A</strong><br />
 One approach is to first create individuals 1-6 as half sibships, with 1 child on the left side, and 2 children on the right. After this, we use <code>addChildren()</code> to add the inbred child.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>x1 =<span class="st"> </span><span class="kw">halfSibPed</span>(<span class="dt">nch1 =</span> <span class="dv">1</span>, <span class="dt">nch2 =</span> <span class="dv">2</span>, <span class="dt">sex1 =</span> <span class="dv">1</span>, <span class="dt">sex2 =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">1</span>)</span>
@@ -537,7 +800,7 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The <c
 <div id="example-3-a-complex-family-tree" class="section level3" number="1.4.1">
 <h3 number="1.4.1"><span class="header-section-number">1.4.1</span> Example 3: A complex family tree</h3>
 <p>For our final example we consider a complicated family tree extending both upwards and downwards from a single person.</p>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 <p>We will use this example to demonstrate the <code>mergePed()</code> function. When this function is given two pedigrees, it “glues together” members with matching ID labels, and checks that the result is a valid pedigree.</p>
 <p>The hardest part of using <code>mergePed()</code> is to get the labelling right; this will almost always involve the <code>relabel()</code> function. To keep track of the labels, you should plot after each new line of code. Here is how the pedigree was created:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># Top part</span></span>
@@ -637,10 +900,10 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <h2 number="2.2"><span class="header-section-number">2.2</span> Plotting pedigrees with marker data</h2>
 <p>Including marker data in a pedigree plot is straightforward:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAACsAAFUAK4AAVaorAAArACsrKysrK4ArgNRVAABVACtVVStVqqpVqv+AKwCAKyuAgFWA1P+qVQCqqlWq1ICq/6qq///UgCvU////qlX/1ID//6r//9T////ODipTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAD2UlEQVR4nO2cjXKbMBCEZddua7cljdU2FDt+/8csAmN+LNnWwbEo3Z0kE03M7X2SDiQyYM6Jy6ATGCsCoEUAtAiAFgHQIgBaBECLAGgRAK0PCWCCmjm3Z2y9ADEf1lPrdg9hsQD9pMPDsFSAG6vEADxOAfNlAniN/O6LBIjobAKoKHWAKH8CKEgRYCbpAYT+EJZk0AhAgHGHjF+4LRUAciH7PwEiFp4pAWCW08KL93I2NNLVx/A42J5YvHwabOqjDBYB0EWIvq0SvcqKi//8wU/Yaq+Q1VfgBADHJwA6PgHQ8QmAjv+RAXJjdprxJ1LQ4LSfIH0sQKYafyqFDI5bY9ZvZ1uuBUeByACO2x/7cga7JJx7YcLT+f4I2E1ZC6uDKIkH8e/quC1Nc9eDefldlBSn/SbSwAGcvh1csDFDIAXYXX9k7y+u94tAPz6sgWLcHJICZO2PugdD/XgfoDyVrn9DRuAGIHRSuQvQxhELOwJFWUFVCck1AcCIGnAhTvtRF+QJAEachVwNrA52zHl0CgDZdWAicTWKNiAA2oAAaAMCCA1sc+E4fv3bbU4V/6G6CdjqHnvUUuL4+btbBpUqNr1mtIQAvQTsJ9eJgY2V3yC/LqJt1mtGSwjQS6AGCNxl8Bq8v2zKr+q3n4duM14ygH4CDYC3D70Gbulaj1hVAm0zXjKAfgKXKeTvQq+BO6IesaoE2ma8ZAD9BOoiNhXGUwbVbvpsXRXZrNeMlwhgkEA9AoXxDoHPIL/8czCrS6BtCiQCGCRQAwS60GNwKR+3B3IzsNMUSAIwSKAByJ8FaHafZRW5GdhpCpKRAAwSuI6Atwg8Bs0Hy5nYzsBmYsZKAjBI4FoDT55G2/sXdvXl0G1KylgAMEigOQvF3pWYSFyNog0IgDYgANqAAGgDAqANCIA2IADagABoAwKgDQiANiAA2iBtAPFzHzEeepGvmasyqIU2d1p6PnpxZ+ooxbBa00gnrDfqjFY6URMC8AdNHmBWL5WgyQAEY85qphGTAOiYBEDHJMBMMZO/DnxUgITWQsmvRr1hk9rQeOKmtSO7DZzanvjc63LN+yqad51GvNEkwkQz+BwiAFoEQIsAaBEALQKgpQtwfXBnoveEeDTTCBAgKCUAa8zqdXWoXw/yatZ/EgOw1RtRLgD76pmqpADqZzBsA7BLbgpVL9Rwz/LUAFlyAHnqAMmPQF0DeboAg7NQggDuOrD+tX5LF8CpkD7GHiW9GpjoRXWPpDMChfjx3WhxP4AWAdAiAFoEQIsAaBEALQKgRQC0CIAWAdAiAFoEQIsAaBEALQKg9Q+DYYCBO07kAwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6Ojo6OpA6kNtmAABmADpmZjpmtrZmtv+QOgCQOjqQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///87oUNWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAD2UlEQVR4nO2cjXKbMBCEZddua7cljdU2FDt+/8csAmN+LNnWwbEo3Z0kE03M7X2SDiQyYM6Jy6ATGCsCoEUAtAiAFgHQIgBaBECLAGgRAK0PCWCCmjm3Z2y9ADEf1lPrdg9hsQD9pMPDsFSAG6vEADxOAfNlAniN/O6LBIjobAKoKHWAKH8CKEgRYCbpAYT+EJZk0AhAgHGHjF+4LRUAciH7PwEiFp4pAWCW08KL93I2NNLVx/A42J5YvHwabOqjDBYB0EWIvq0SvcqKi//8wU/Yaq+Q1VfgBADHJwA6PgHQ8QmAjv+RAXJjdprxJ1LQ4LSfIH0sQKYafyqFDI5bY9ZvZ1uuBUeByACO2x/7cga7JJx7YcLT+f4I2E1ZC6uDKIkH8e/quC1Nc9eDefldlBSn/SbSwAGcvh1csDFDIAXYXX9k7y+u94tAPz6sgWLcHJICZO2PugdD/XgfoDyVrn9DRuAGIHRSuQvQxhELOwJFWUFVCck1AcCIGnAhTvtRF+QJAEachVwNrA52zHl0CgDZdWAicTWKNiAA2oAAaAMCCA1sc+E4fv3bbU4V/6G6CdjqHnvUUuL4+btbBpUqNr1mtIQAvQTsJ9eJgY2V3yC/LqJt1mtGSwjQS6AGCNxl8Bq8v2zKr+q3n4duM14ygH4CDYC3D70Gbulaj1hVAm0zXjKAfgKXKeTvQq+BO6IesaoE2ma8ZAD9BOoiNhXGUwbVbvpsXRXZrNeMlwhgkEA9AoXxDoHPIL/8czCrS6BtCiQCGCRQAwS60GNwKR+3B3IzsNMUSAIwSKAByJ8FaHafZRW5GdhpCpKRAAwSuI6Atwg8Bs0Hy5nYzsBmYsZKAjBI4FoDT55G2/sXdvXl0G1KylgAMEigOQvF3pWYSFyNog0IgDYgANqAAGgDAqANCIA2IADagABoAwKgDQiANiAA2iBtAPFzHzEeepGvmasyqIU2d1p6PnpxZ+ooxbBa00gnrDfqjFY6URMC8AdNHmBWL5WgyQAEY85qphGTAOiYBEDHJMBMMZO/DnxUgITWQsmvRr1hk9rQeOKmtSO7DZzanvjc63LN+yqad51GvNEkwkQz+BwiAFoEQIsAaBEALQKgpQtwfXBnoveEeDTTCBAgKCUAa8zqdXWoXw/yatZ/EgOw1RtRLgD76pmqpADqZzBsA7BLbgpVL9Rwz/LUAFlyAHnqAMmPQF0DeboAg7NQggDuOrD+tX5LF8CpkD7GHiW9GpjoRXWPpDMChfjx3WhxP4AWAdAiAFoEQIsAaBEALQKgRQC0CIAWAdAiAFoEQIsAaBEALQKg9Q+DYYCBO07kAwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
 <p>The appearance of the genotypes can be tweaked in various ways, as documented in <code>?plot.ped</code>. Here’s an example:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">plot</span>(trio, <span class="dt">marker =</span> m1, <span class="dt">showEmpty =</span> T, <span class="dt">missing =</span> <span class="st">&quot;?&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAACsAAFUAK4AAVaorAAArACsrgNRVAABVACtVVStVqqpVqv+AKwCAgFWA1P+qVQCqqlWq1ICq/6qq///UgCvU////qlX/1ID//6r//9T////pJq/aAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEA0lEQVR4nO2cjXKbMBCEZdeu3daJSWuKHd7/PYv4EYqDsHXScVy6O2lGmca3+iQdnMggUyuXke5AqgAgLQBICwDSAoC0ACAtAEgLANICgLS+JIAJauG+PWM7CRDzy3wa3eYQVgvwsdPhaVgrwCcrZQATTgHzdQJMGk27rxIgYrABwCLtAFH+AGAQI8BC4gMI/UdYlEkDAADSPpJeuK0VQORG9n8CRBSemgBkymnizXs9Gxpq9XH/ObE9Mbl8utvURxmsAsBHiH6sEl1lxcV//sNP2HJXyOwVOACE4wNAOj4ApOMDQDr+VwYojTlwxs+koMHtmKH7sgAn1vi5FDK47o3ZXuqiqQWTQGgA1/2vY7OCbSese2XCy3l+BopdkwubM6kTD+LP6rpvTEs7gmXzr2oobsddpIEFuP0422ApU0AFOLhvp/cXO/pVYBwf5kCVtoaoAKfxWzeCoXGcB2gupdvfIjPwCSB0UZkFGOOQJTsDVZNBbQrRlQEgIQdsiNsx6YacASDhKmRzYHMuUq6jOQBo94FMQjUqbQAAaQMASBsAgGxQjLeOIuFeTAcYXIv2CXvwZhrckX3/aQuhu2a8yADOtfj2t57ZVoUMyrGMLlMqajKAc+0Ags8YAgbvL7vm675JEBVgdB0AAmMYMLDFaz9rXpMgKsDo2i+h0BAGDOyn+lnzmgRRAUbXLolNi/G0QbufrgubRV6TIiKA59rNQGWi9gNl/+fB04cmRUQAz7UDCA7hpEGfPnYX5DVJogH4rj1AGQMw7D+bLPKapK7QAHzXYQYCSTBpMPxysxK9JqkrNADfdciBiMvo+ASjGNc+MY1JAF4HthdiKZFLqEalDQAgbQAAaQMASBsAQNoAANIGAJA2AIC0AQCkDQAgbQAAaQPdAOT3PmI8+CK7nrMysIU2Mz/x+fDFXWigGMNyLSOesJNRF7TiiaoIYDqoeoBFvViCqgEIxlzUjCMmAKRjAkA6JgAWiqn+PvBVARTVQuqr0cmwqjY0E3F17cg+B9a2J64/DDnncxXOp04JJ5pEmHAGX0IAkBYApAUAaQFAWgCQFi+Ae3Un0zkhE1poBgAQFBNAYczmdXPujgd5Nds/ygCK9kSUHuDYvlGlCqB7A6MYAA7qllB7oIZ9k6cDOKkDKLUDqJ+BLgdKvQB3VyGFAPY+sH3bXvQCWFX0F9kjxJcDmQ6qeySeGagSXuCNFPYD0gKAtNgA3LlYcwdkZRAXgH2Z/LrfeQ0mMQG4s+HmD4nLICYAdzrf/DF9GcSaxG7g9c1AK7f0FeaA1XXvDlcIHYySQXwA7y99t12DRXwALnEZM7jmBFgig2uUEjPCDDwnAEgLANICgLQAIC0ASAsA0lIP8A/NNNZBHQKIFwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6kNtmAABmADpmZjpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///9DYrSiAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEA0lEQVR4nO2cjXKbMBCEZdeu3daJSWuKHd7/PYv4EYqDsHXScVy6O2lGmca3+iQdnMggUyuXke5AqgAgLQBICwDSAoC0ACAtAEgLANICgLS+JIAJauG+PWM7CRDzy3wa3eYQVgvwsdPhaVgrwCcrZQATTgHzdQJMGk27rxIgYrABwCLtAFH+AGAQI8BC4gMI/UdYlEkDAADSPpJeuK0VQORG9n8CRBSemgBkymnizXs9Gxpq9XH/ObE9Mbl8utvURxmsAsBHiH6sEl1lxcV//sNP2HJXyOwVOACE4wNAOj4ApOMDQDr+VwYojTlwxs+koMHtmKH7sgAn1vi5FDK47o3ZXuqiqQWTQGgA1/2vY7OCbSese2XCy3l+BopdkwubM6kTD+LP6rpvTEs7gmXzr2oobsddpIEFuP0422ApU0AFOLhvp/cXO/pVYBwf5kCVtoaoAKfxWzeCoXGcB2gupdvfIjPwCSB0UZkFGOOQJTsDVZNBbQrRlQEgIQdsiNsx6YacASDhKmRzYHMuUq6jOQBo94FMQjUqbQAAaQMASBsAgGxQjLeOIuFeTAcYXIv2CXvwZhrckX3/aQuhu2a8yADOtfj2t57ZVoUMyrGMLlMqajKAc+0Ags8YAgbvL7vm675JEBVgdB0AAmMYMLDFaz9rXpMgKsDo2i+h0BAGDOyn+lnzmgRRAUbXLolNi/G0QbufrgubRV6TIiKA59rNQGWi9gNl/+fB04cmRUQAz7UDCA7hpEGfPnYX5DVJogH4rj1AGQMw7D+bLPKapK7QAHzXYQYCSTBpMPxysxK9JqkrNADfdciBiMvo+ASjGNc+MY1JAF4HthdiKZFLqEalDQAgbQAAaQMASBsAQNoAANIGAJA2AIC0AQCkDQAgbQAAaQPdAOT3PmI8+CK7nrMysIU2Mz/x+fDFXWigGMNyLSOesJNRF7TiiaoIYDqoeoBFvViCqgEIxlzUjCMmAKRjAkA6JgAWiqn+PvBVARTVQuqr0cmwqjY0E3F17cg+B9a2J64/DDnncxXOp04JJ5pEmHAGX0IAkBYApAUAaQFAWgCQFi+Ae3Un0zkhE1poBgAQFBNAYczmdXPujgd5Nds/ygCK9kSUHuDYvlGlCqB7A6MYAA7qllB7oIZ9k6cDOKkDKLUDqJ+BLgdKvQB3VyGFAPY+sH3bXvQCWFX0F9kjxJcDmQ6qeySeGagSXuCNFPYD0gKAtNgA3LlYcwdkZRAXgH2Z/LrfeQ0mMQG4s+HmD4nLICYAdzrf/DF9GcSaxG7g9c1AK7f0FeaA1XXvDlcIHYySQXwA7y99t12DRXwALnEZM7jmBFgig2uUEjPCDDwnAEgLANICgLQAIC0ASAsA0lIP8A/NNNZBHQKIFwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
 </div>
 <div id="markers-attached-to-ped-objects" class="section level2" number="2.3">
 <h2 number="2.3"><span class="header-section-number">2.3</span> Markers attached to <code>ped</code> objects</h2>
