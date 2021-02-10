@@ -41,10 +41,20 @@
 #'          fid = c(0,0,2,0,4,4,0,2),
 #'          mid = c(0,0,3,0,5,5,0,8),
 #'          sex = c(1,2,1,2,1,2,2,2))
-#' stopifnot(setequal(spouses(x, 2), c(3,8)),
-#'           setequal(children(x, 2), c(4,9)),
-#'           setequal(descendants(x, 2), c(4,6,7,9)),
-#'           setequal(leaves(x), c(6,7,9)))
+#'
+#' spouses(x, id = 2) # 3, 8
+#' children(x, 2)     # 4, 9
+#' descendants(x, 2)  # 4, 6, 7, 9
+#' siblings(x, 4)     # 9 (full or half)
+#' unrelated(x, 4)    # 5, 8
+#' father(x, 4)       # 2
+#' mother(x, 4)       # 3
+#'
+#' siblings(x, 4, half = FALSE) # none
+#' siblings(x, 4, half = TRUE)  # 9
+#'
+#' leaves(x)          # 6, 7, 9
+#' founders(x)        # 2, 3, 5, 8
 #'
 #' @name ped_subgroups
 NULL
@@ -175,11 +185,11 @@ spouses = function(x, id, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 unrelated = function(x, id, internal = FALSE) {
-  if (!internal)  id = internalID(x, id)
-  ancs = c(id, ancestors(x, id))
-    rel = unique.default(unlist(lapply(ancs, function(a) c(a, descendants(x, a, internal = FALSE)))))
-    unrel = setdiff(labels.ped(x), rel)
-    if (internal) internalID(x, unrel) else unrel
+  if (!internal) id = internalID(x, id)
+  ancs = c(id, ancestors(x, id, internal = TRUE))
+  rel = lapply(ancs, function(a) c(a, descendants(x, a, internal = TRUE)))
+  unrel = setdiff(1:pedsize(x), unlist(rel))
+  if (internal) unrel else labels.ped(x)[unrel]
 }
 
 
@@ -212,16 +222,17 @@ siblings = function(x, id, half = NA, internal = FALSE) {
 
   samefather = x$FIDX == fa
   samemother = x$MIDX == mo
+
   sib_int =
-    if (isTRUE(half)) samefather | samemother
-    else if (isFALSE(half)) xor(samefather, samemother)
-    else if(is.na(half)) samefather & samemother
+    if (isTRUE(half)) xor(samefather, samemother)   # half only
+    else if (isFALSE(half)) samefather & samemother # full only
+    else if(is.na(half)) samefather | samemother    # either
   sib_int[id] = FALSE
   if (internal) which(sib_int) else labels.ped(x)[sib_int]
 }
 
-#' @rdname ped_subgroups
-#' @export
+
+# TODO: Review this before re-export
 cousins = function(x, id, degree = 1, removal = 0, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
   gp = grandparents(x, id, degree = degree, internal = TRUE)

@@ -18,7 +18,6 @@
 \alias{parents}
 \alias{grandparents}
 \alias{siblings}
-\alias{cousins}
 \alias{nephews_nieces}
 \alias{ancestors}
 \alias{commonAncestors}
@@ -57,8 +56,6 @@ parents(x, id, internal = FALSE)
 grandparents(x, id, degree = 2, internal = FALSE)
 
 siblings(x, id, half = NA, internal = FALSE)
-
-cousins(x, id, degree = 1, removal = 0, half = NA, internal = FALSE)
 
 nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
 
@@ -117,10 +114,20 @@ x = ped(id = 2:9,
          fid = c(0,0,2,0,4,4,0,2),
          mid = c(0,0,3,0,5,5,0,8),
          sex = c(1,2,1,2,1,2,2,2))
-stopifnot(setequal(spouses(x, 2), c(3,8)),
-          setequal(children(x, 2), c(4,9)),
-          setequal(descendants(x, 2), c(4,6,7,9)),
-          setequal(leaves(x), c(6,7,9)))
+
+spouses(x, id = 2) # 3, 8
+children(x, 2)     # 4, 9
+descendants(x, 2)  # 4, 6, 7, 9
+siblings(x, 4)     # 9 (full or half)
+unrelated(x, 4)    # 5, 8
+father(x, 4)       # 2
+mother(x, 4)       # 3
+
+siblings(x, 4, half = FALSE) # none
+siblings(x, 4, half = TRUE)  # 9
+
+leaves(x)          # 6, 7, 9
+founders(x)        # 2, 3, 5, 8
 
 }
 \author{

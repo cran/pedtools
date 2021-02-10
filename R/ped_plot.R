@@ -124,6 +124,7 @@
 #' plot(y, hints = hints) # good
 #'
 #' @importFrom graphics points text
+#' @importFrom kinship2 plot.pedigree
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
@@ -361,7 +362,8 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
 
 
   # Expand dots (needed in some commands below)
-  dotArgs = match.call(expand.dots = FALSE)$`...`
+  dotArgs.uneval = match.call(expand.dots = FALSE)$`...`
+  dotArgs = lapply(dotArgs.uneval, eval.parent, n = 2L)
   cex = dotArgs[['cex']]
   fam = dotArgs$family
 

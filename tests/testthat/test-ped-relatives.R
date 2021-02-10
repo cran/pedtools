@@ -47,13 +47,27 @@ test_that("spouses are correct after reorder", {
   expect_equal(spouses(x,3, internal=T), numeric(0))
 })
 
+test_that("siblings are correctly detected", {
+  x = halfSibPed(nch1 = 2, nch2 = 1)
+  expect_equal(siblings(x, 1), character(0))
+  expect_equal(siblings(x, 4), c("5", "6"))
+  expect_equal(siblings(x, 4, half = T), "6")
+  expect_equal(siblings(x, 4, half = F), "5")
+})
+
+test_that("unrelated ped members are correctly detected", {
+  x = halfCousinPed(0, removal = 1, child = T)
+  expect_equal(unrelated(x, 4), c("3", "6"))
+  expect_equal(unrelated(x, 8), character(0))
+})
+
 test_that("internal = TRUE results in integer output", {
   x = singleton(1)
   expect_type(father(x, 1, internal = T), "integer")
   expect_type(mother(x, 1, internal = T), "integer")
   expect_type(parents(x, 1, internal = T), "integer")
   expect_type(children(x, 1, internal = T), "integer")
-  expect_type(cousins(x, 1, internal = T), "integer")
+  # expect_type(cousins(x, 1, internal = T), "integer")
   expect_type(ancestors(x, 1, internal = T), "integer")
   expect_type(descendants(x, 1, internal = T), "integer")
   expect_type(unrelated(x, 1, internal = T), "integer")

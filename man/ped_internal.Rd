@@ -5,6 +5,7 @@
 \alias{reorderPed}
 \alias{parentsBeforeChildren}
 \alias{hasParentsBeforeChildren}
+\alias{foundersFirst}
 \alias{internalID}
 \title{Internal ordering of pedigree members}
 \usage{
@@ -14,19 +15,21 @@ parentsBeforeChildren(x)
 
 hasParentsBeforeChildren(x)
 
+foundersFirst(x)
+
 internalID(x, ids, errorIfUnknown = TRUE)
 }
 \arguments{
-\item{x}{A \code{ped} object}
+\item{x}{A \code{ped} object. Most of these functions also accepts ped lists.}
 
 \item{neworder}{A permutation of \code{labels(x)} or of vector \code{1:pedsize(x)}. By
 default, the sorting order of the ID labels is used.}
 
 \item{ids}{A character vector (or coercible to one) of original ID labels.}
 
-\item{errorIfUnknown}{A logical. If TRUE (default), \code{internalID(x, ids)} results
-in an error if not all elements of \code{ids} are recognised as names of members
-in \code{x}.}
+\item{errorIfUnknown}{A logical. If TRUE (default), the function stops with
+an error if not all elements of \code{ids} are recognised as names of members in
+\code{x}.}
 }
 \description{
 These functions give access to - and enable modifications of - the order in
@@ -46,17 +49,24 @@ whenever a pedigree is created, unless explicitly avoided with \code{reorder = F
 \code{hasParentsBeforeChildren()} can be used as a quick test to decide if it is
 necessary to call \code{parentsBeforeChildren()}.
 
+The \code{foundersFirst()} function reorders the pedigree so that all the founders
+come first.
+
 The utility \code{internalID()} converts ID labels to indices in the internal
-ordering.
+ordering. If \code{x} is a list of pedigrees, the output is a data frame
+containing both the component number and internal ID (within the component).
 }
 \examples{
 x = ped(id = 3:1, fid = c(1,0,0), mid = c(2,0,0), sex = c(1,2,1), reorder = FALSE)
 x
 
-# The 'ids' argument is converted to character
+# The 'ids' argument is converted to character, hence these are equivalent:
 internalID(x, ids = 3)
 internalID(x, ids = "3")
 
+hasParentsBeforeChildren(x)
+
+# Fix the ordering
 y = parentsBeforeChildren(x)
 internalID(y, ids = 3)
 

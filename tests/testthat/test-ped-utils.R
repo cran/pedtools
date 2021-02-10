@@ -10,6 +10,20 @@ test_that("getSex() works with and without labels", {
 
 })
 
+test_that("swapSex() works in circular wedding loop", {
+  x = addChildren(addSon(halfSibPed(), 3), 6, 1, 1)
+  y = addChildren(addSon(halfSibPed(type = "mat"), 3), 1, 6, 1)
+  expect_equal(swapSex(x, 1), y)
+})
+
+test_that("swapSex() works in ped list", {
+  x = list(nuclearPed(), singleton("a"), singleton("b"), nuclearPed(fa=4, mo=5, ch=6))
+  y = list(swapSex(nuclearPed(),1, verb=F), singleton("a", sex = 2),
+           singleton("b"), nuclearPed(fa=4, mo=5, ch=6, sex=2))
+
+  expect_equal(swapSex(x, c(1, "a", 6), verb=F), y)
+})
+
 test_that("is.pedList() is FALSE for empty list", {
   expect_false(is.pedList(list()))
 })
@@ -54,6 +68,14 @@ test_that("internalID gives sensible error messages", {
   expect_error(internalID(y, c("foo", 1:3, "bar")), "Unknown ID label: foo, bar")
   expect_error(internalID(y, ""), "Unknown ID label:")
   expect_error(internalID(y, 0), "Unknown ID label: 0")
+})
+
+test_that("internalID works in ped lists", {
+  y = list(nuclearPed(1), singleton("a"))
+  expect_equal(internalID(y, "a"), data.frame(id = "a", comp = 2L, int = 1L))
+  expect_error(internalID(y, "foo"), "Unknown ID label: foo")
+  expect_equal(internalID(y, "foo", errorIfUnknown = FALSE),
+               data.frame(id = "foo", comp = NA_integer_, int = NA_integer_))
 })
 
 test_that("mergePed() works in half sib example", {
