@@ -1,10 +1,10 @@
 #' Plot pedigrees with genotypes
 #'
 #' This is the main function for pedigree plotting, with many options for
-#' controlling the appearance of pedigree symbols and accompanying labels. Most
-#' of the work is done by the plotting functionality in the `kinship2` package.
+#' controlling the appearance of pedigree symbols and accompanying labels. It
+#' wraps the plotting functionality in the `kinship2` package.
 #'
-#' `plot.ped` is in essence an elaborate wrapper for
+#' This plotting function is in essence an elaborate wrapper for
 #' [kinship2::plot.pedigree()].
 #'
 #' @param x A [ped()] object.
@@ -54,7 +54,7 @@
 #' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param hints A list with alignment hints passed on to
-#'   `kinship2::align.pedigree()`. Rarely necessary, but see Examples.
+#'   [kinship2::align.pedigree()]. Rarely necessary, but see Examples.
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
@@ -67,8 +67,8 @@
 #'   additional annotation.
 #' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
-#' @param \dots Arguments passed on to `plot.pedigree` in the `kinship2`
-#'   package. In particular `symbolsize` and `cex` can be useful.
+#' @param \dots Arguments passed on to [kinship2::plot.pedigree()]. In
+#'   particular `symbolsize` and `cex` can be useful.
 #'
 #' @author Magnus Dehli Vigeland
 #' @seealso [kinship2::plot.pedigree()]
@@ -225,6 +225,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 
   # Very soft deprecation of `shaded`
   if(!is.null(shaded)) {
+    message("The argument `shaded` has been renamed to `hatched`; please use this instead.")
     hatched = shaded
     shaded = NULL
   }
@@ -530,14 +531,13 @@ plot.pedList = function(x, ...) {
 #' # its parameters can be specified in its own list.
 #'
 #' x1 = nuclearPed(nch = 3)
-#' m1 = marker(x1, `3` = 1:2)
+#' m1 = marker(x1, `3` = "1/2")
 #' marg1 = c(7, 4, 7, 4)
 #' plot1 = list(x1, marker = m1, margins = marg1, title = "Plot 1",
 #'              deceased = 1:2, cex = 1.3)
 #'
 #' x2 = cousinPed(2)
-#' m2 = marker(x2, alleles = "A")
-#' genotype(m2, leaves(x2)) = "A"
+#' m2 = marker(x2, `11` = "A/A", `12` = "A/A")
 #' marg2 = c(3, 4, 2, 4)
 #' plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2",
 #'              symbolsize = 1.2, labs = NULL)
@@ -658,8 +658,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     widths = rep_len(widths, N)
   }
 
-  maxGen = max(vapply(flatlist, function(arglist) .generations(arglist[[1]]), 1))
-
+  maxGen = max(vapply(flatlist, function(arglist) generations(arglist[[1]]), 1))
 
   extra.args = list(...)
 
@@ -678,7 +677,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
     # Margins
     arglist$margins = arglist$margins %||% {
-      g = .generations(arglist$x)
+      g = generations(arglist$x)
       addMar = 2 * (maxGen - g + 1)
       defaultmargins + c(addMar, 0, addMar, 0)
     }

@@ -1,7 +1,7 @@
 Type: Package
 Package: pedtools
 Title: Creating and Working with Pedigrees and Marker Data
-Version: 1.0.1
+Version: 1.1.0
 Authors@R: 
     person(given = "Magnus Dehli",
            family = "Vigeland",
@@ -28,11 +28,11 @@ Suggests: igraph, kableExtra, knitr, pedmut, rmarkdown, testthat
 VignetteBuilder: knitr
 Encoding: UTF-8
 Language: en-GB
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 NeedsCompilation: no
-Packaged: 2021-06-21 20:29:13 UTC; magnusdv
+Packaged: 2021-12-08 10:42:39 UTC; magnusdv
 Author: Magnus Dehli Vigeland [aut, cre]
     (<https://orcid.org/0000-0002-9134-4962>)
 Maintainer: Magnus Dehli Vigeland <m.d.vigeland@medisin.uio.no>
 Repository: CRAN
-Date/Publication: 2021-06-22 05:10:02 UTC
+Date/Publication: 2021-12-08 11:10:02 UTC

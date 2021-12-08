@@ -1,7 +1,8 @@
 #' Marker objects
 #'
-#' Creating a marker object associated with a pedigree.
-#'
+#' Creating a marker object associated with a pedigree. The function `marker()`
+#' returns a marker object, while `addMarker()` first creates the marker
+#' and then attaches it to `x`.
 #'
 #' @param x a [`ped`] object
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
@@ -58,6 +59,9 @@
 #' # An empty SNP with alleles "A" and "B"
 #' marker(x, alleles = c("A", "B"))
 #'
+#' # Creating and attaching to `x`
+#' addMarker(x, alleles = c("A", "B"))
+#'
 #' # Alleles/frequencies can be given jointly or separately
 #' stopifnot(identical(
 #'   marker(x, afreq = c(A = 0.01, B = 0.99)),
@@ -70,8 +74,6 @@
 #' # ... or using the `geno` vector (all members in order)
 #' marker(x, geno = c("1/1", "1/2", NA))
 #'
-#' # For homozygous genotypes, a single allele suffices
-#' marker(x, fa = 1)
 #'
 #' # Attaching a marker to the pedigree
 #' m = marker(x) # By default a SNP with alleles 1,2
@@ -95,62 +97,25 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   if(length(posMb) == 0) posMb = NA
   if(length(name) == 0 || identical(name, "")) name = NA
 
-  pedN = pedsize(x)
+  labs = labels(x)
 
-  if (is.null(geno) && is.null(allelematrix)) {
-    # Initialise empty allele matrix
-    m = matrix(0, ncol = 2, nrow = pedN)
+  # Parse genotypes into list of 2-vectors
+  glist = parseGeno(geno) %||% parseDots(...)
 
-    # Capture genotypes given in dots
-    dots = eval(substitute(alist(...)))
-    if((ld <- length(dots)) > pedN)
-      stop2("Too many genotype assignments")
+  if(length(glist) && !is.null(allelematrix))
+    stop2("When specifying genotypes, `allelematrix` must be NULL")
 
-    # Genotypes (may be empty)
-    genos = lapply(dots, eval.parent)
+  # Allele matrix (N x 2) of actual alleles
+  m = allelematrix %||% glist2amat(glist, labs)
 
-    # Internal ID of each genotype
-    # (If no names, take pedigree members in sequence)
-    dotnames = names(dots)
-    if(is.null(dotnames))
-      ids_int = seq_len(ld)
-    else
-      ids_int = internalID(x, dotnames)
-
-    for(i in seq_len(ld)) {
-      g = genos[[i]]
-      lg = length(g)
-
-      if(!is.vector(g) || !lg %in% 1:2)
-        stop2("Genotype must be a vector of length 1 or 2: ", deparse(g))
-
-      # Split compound genotypes, e.g., "a/b"
-      if(lg == 1 && is.character(g))
-        g = strsplit(g, "/", fixed = TRUE)[[1]]
-
-      # Insert in `m`
-      m[ids_int[i], ] = g
-    }
-  }
-  else if(!is.null(geno)) {
-    if(!is.null(allelematrix))
-      stop2("At least one of `geno` and `allelematrix` must be NULL")
-    geno = as.character(geno)
-    if(length(geno) != pedN)
-      stop2("`geno` incompatible with pedigree")
-    s = strsplit(geno, "/")
-    s[lengths(s) < 2] = lapply(s[lengths(s) < 2], rep, length.out = 2)
-    m = matrix(unlist(s), ncol = 2, byrow = TRUE)
-  }
-  else
-    m = allelematrix
+  # Trim whitespace of alleles
+  m[] = trimws(m)
 
   ### Alleles and frequencies
   if(!is.null(alleles) && !is.null(names(afreq)))
     stop2("Argument `alleles` should not be used when `afreq` has names")
   if(is.null(alleles) && !is.null(afreq) && is.null(names(afreq)))
     stop2("When `alleles` is NULL, `afreq` must be named")
-
 
   # If alleles are NULL, take from afreq names, otherwise from supplied genos
   als = alleles %||% names(afreq) %||% .mysetdiff(m, NAstrings)
@@ -197,26 +162,116 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   ma
 }
 
+# Convert genotypes given in marker(x, ...) into named list
+parseDots = function(...) {
+  dots = eval(substitute(alist(...)))
+  if(!length(dots))
+    return(NULL)
 
-newMarkerOLD = function(allelematrix_int, alleles, afreq, name = NA_character_,
-                     chrom = NA_character_, posMb = NA_real_,
-                     mutmod = NULL, pedmembers, sex) {
+  glist = lapply(dots, eval.parent)
 
-  stopifnot2(is.matrix(allelematrix_int),
-            ncol(allelematrix_int) == 2,
-            is.integer(allelematrix_int),
-            is.character(alleles),
-            is.numeric(afreq),
-            is.character(name),
-            is.character(chrom),
-            is.numeric(posMb),
-            is.null(mutmod) || is.list(mutmod),
-            is.character(pedmembers),
-            is.integer(sex))
+  lg = lengths(glist)
 
-  structure(allelematrix_int, alleles = alleles, afreq = afreq, name = name,
-            chrom = chrom, posMb = posMb, mutmod = mutmod,
-            pedmembers = pedmembers, sex = sex, class = "marker")
+  # Split compound genotypes, e.g., "a/b"
+  g1 = as.character(unlist(glist[lg == 1]))
+  glist[lg == 1] = strsplit(g1, split = "/", fixed = TRUE)
+
+  glist
+}
+
+# Convert `geno` argument into named list
+parseGeno = function(geno) {
+  if(is.null(geno))
+    return(NULL)
+
+  storage.mode(geno) = "character"
+  strsplit(geno, split = "/", fixed = TRUE)
+}
+
+# Convert glist to allele matrix (actual alleles)
+glist2amat = function(glist, labs) {
+  # Empty allele matrix
+  m = matrix(0, ncol = 2, nrow = length(labs))
+
+  if(!length(glist))
+    return(m)
+
+  if(is.null(names(glist)) && length(glist) == length(labs))
+    names(glist) = labs
+
+  nms = names(glist)
+  if(is.null(nms) || any(nms == ""))
+    stop2("Genotypes must be named")
+
+  unkn = setdiff(nms, unlist(labs))
+  if(length(unkn))
+    stop2("Unknown ID label: ", unkn)
+
+  lg = lengths(glist)
+
+  if(any(bad <- (lg < 1 | lg > 2))) {
+    i = which(bad)[1]
+    stop2(sprintf("Unclear genotype for `%s`: ", nms[i]), glist[[i]])
+  }
+
+  # Recycle single alleles
+  glist[lg == 1] = lapply(glist[lg == 1], rep, length.out = 2)
+
+  if(d <- anyDuplicated(nms))
+    stop2(sprintf("Multiple genotypes given for individual `%s`", nms[d]))
+
+  # Fill matrix
+  idx = match(nms, labs)
+  m[idx, ] = do.call(rbind, glist)
+
+  m
+}
+
+#' @rdname marker
+#' @export
+addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
+                     afreq = NULL, chrom = NA, posMb = NA, name = NA,
+                     NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
+                     validate = TRUE) {
+
+  if(is.pedList(x)) {
+    if(!is.null(allelematrix))
+      stop2("The argument `allelematrix` cannot be used when `x` is a list of pedigrees")
+    if(is.null(alleles) && is.null(afreq))
+      stop2("Either `alleles` or `afreq` must be specified when `x` is a list of pedigrees")
+
+    glist = parseGeno(geno) %||% parseDots(...)
+
+    nms = names(glist)
+    if(is.null(nms))
+      stop2("Genotypes must be named")
+
+    unkn = setdiff(nms, unlist(labels(x)))
+    if(length(unkn))
+      stop2("Unknown ID label: ", unkn)
+
+    y = lapply(x, function(comp) {
+      labsi = labels(comp)
+      mi = glist2amat(glist[intersect(nms, labsi)], labsi)
+
+      addMarker(comp, allelematrix = mi, alleles = alleles,
+                afreq = afreq, chrom = chrom, posMb = posMb, name = name,
+                NAstrings = NAstrings, mutmod = mutmod, rate = rate,
+                validate = validate)
+    })
+    return(y)
+  }
+
+  if(!is.ped(x))
+    stop2("Input to `addMarker()` must be a `ped` object or a list of such")
+
+  # Otherwise
+  m = marker(x, ..., geno = geno, allelematrix = allelematrix,
+             alleles = alleles, afreq = afreq,
+             chrom = chrom, posMb = posMb, name = name,
+             NAstrings = NAstrings, mutmod = mutmod, rate = rate,
+             validate = validate)
+  addMarkers(x, m)
 }
 
 #' Internal marker constructor
@@ -266,11 +321,13 @@ validateMarker = function(x) {
   ## alleles
   alleles = attrs$alleles
   NA_allele_ = c(0, "", NA)
+
   if(any(alleles %in% NA_allele_))
     stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
 
   if(dup <- anyDuplicated(alleles))
     stop2("Duplicated allele label: ", alleles[dup])
+
   ## afreq
   afreq = attrs$afreq
   if (length(afreq) != length(alleles))

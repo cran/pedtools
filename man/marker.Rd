@@ -2,9 +2,26 @@
 % Please edit documentation in R/marker.R
 \name{marker}
 \alias{marker}
+\alias{addMarker}
 \title{Marker objects}
 \usage{
 marker(
+  x,
+  ...,
+  geno = NULL,
+  allelematrix = NULL,
+  alleles = NULL,
+  afreq = NULL,
+  chrom = NA,
+  posMb = NA,
+  name = NA,
+  NAstrings = c(0, "", NA, "-"),
+  mutmod = NULL,
+  rate = NULL,
+  validate = TRUE
+)
+
+addMarker(
   x,
   ...,
   geno = NULL,
@@ -75,13 +92,18 @@ NULL)
 }
 }
 \description{
-Creating a marker object associated with a pedigree.
+Creating a marker object associated with a pedigree. The function \code{marker()}
+returns a marker object, while \code{addMarker()} first creates the marker
+and then attaches it to \code{x}.
 }
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "child")
 
 # An empty SNP with alleles "A" and "B"
 marker(x, alleles = c("A", "B"))
+
+# Creating and attaching to `x`
+addMarker(x, alleles = c("A", "B"))
 
 # Alleles/frequencies can be given jointly or separately
 stopifnot(identical(
@@ -95,8 +117,6 @@ marker(x, fa = "1/1", mo = "1/2")
 # ... or using the `geno` vector (all members in order)
 marker(x, geno = c("1/1", "1/2", NA))
 
-# For homozygous genotypes, a single allele suffices
-marker(x, fa = 1)
 
 # Attaching a marker to the pedigree
 m = marker(x) # By default a SNP with alleles 1,2

@@ -3,7 +3,8 @@
 #' Various utility functions for `ped` objects.
 #'
 #' @param x A `ped` object, or (in some functions - see Details) a list of such.
-#' @param maxComp A logical, by default TRUE. See Value.
+#' @param maxOnly A logical, by default TRUE. (See Value.)
+#' @param maxComp A logical, by default TRUE. (See Value.)
 #' @param chromType Either "autosomal" (default) or "x".
 #'
 #' @return
@@ -11,12 +12,14 @@
 #' * `pedsize(x)` returns the number of pedigree members in each component of
 #' `x`.
 #'
-#' * `generations(x)` returns the number of generations in `x`, defined as the
-#' number of individuals in the longest line of parent-child links. (Note that
-#' this definition is valid also if `x` has loops.) If `x` has multiple
-#' components, the output depends on the parameter `maxComp`. If this is FALSE,
-#' the output is a vector containing the result for each component. If TRUE
-#' (default), only the highest number is returned.
+#' * `generations(x)` by default returns the number of generations in `x`,
+#' defined as the number of individuals in the longest line of parent-child
+#' links. (Note that this definition is valid also if `x` has loops.) If
+#' `maxOnly = FALSE`, the output is a named integer vector, showing the
+#' generation number of each pedigree member. If `x` has multiple components,
+#' the output depends on the parameter `maxComp`. If this is FALSE, the output
+#' is a vector containing the result for each component. If TRUE (default), only
+#' the highest number is returned.
 #'
 #' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of
@@ -87,13 +90,14 @@ pedsize = function(x) {
 
 #' @rdname ped_utils
 #' @export
-generations = function(x, maxComp = TRUE) {
+generations = function(x, maxOnly = TRUE, maxComp = TRUE) {
 
   if(is.pedList(x)) {
     gens = sapply(x, generations)
     return(if(maxComp) max(gens) else gens)
   }
 
+  xorig = x
   x = parentsBeforeChildren(x)
 
   FIDX = x$FIDX
@@ -107,8 +111,13 @@ generations = function(x, maxComp = TRUE) {
   for(i in NONFOU)
     dp[i] = 1L + max(dp[c(FIDX[i], MIDX[i])])
 
-  max(dp)
+  if(maxOnly)
+    return(max(dp))
+
+  names(dp) = x$ID
+  dp[xorig$ID]
 }
+
 
 #' @rdname ped_utils
 #' @export
@@ -293,14 +302,14 @@ hasNumLabs = function(x) {
   isTRUE(all(labs == numlabs))
 }
 
-
+# CAN BE REMOVED!
 .generations = function(x) {
   FOU = founders(x, internal = TRUE)
-  max(lengths(unlist(.descentPaths(x, FOU, internal = TRUE), recursive = FALSE)))
+  max(lengths(unlist(descentPaths(x, FOU, internal = TRUE), recursive = FALSE)))
 }
 
 # Utility function for generating numbered "NN" labels.
-# Returns "NN_i" where i increments largest j occuring as NN_j, NN.j or NN-j in input.
+# Returns "NN_i" where i increments largest j occurring as NN_j, NN.j or NN-j in input.
 nextNN = function(labs) { # labs a character vector
   NNs = grepl("^NN", labs)
   if(!any(NNs))
@@ -310,30 +319,6 @@ nextNN = function(labs) { # labs a character vector
     return("NN_1")
   nextNNnum = max(NNnum, na.rm = TRUE) + 1
   return(sprintf("NN_%d", nextNNnum))
-}
-
-
-.descentPaths = function(x, ids, internal = FALSE) {
-  if (!internal) ids = internalID(x, ids)
-
-  offs = lapply(1:pedsize(x), children, x = x, internal = TRUE)
-  lapply(ids, function(id) {
-    res = list(id)
-    while (TRUE) {
-      newoffs = offs[vapply(res, function(path) path[length(path)], 1)]
-      if (length(unlist(newoffs)) == 0)
-        break
-      nextstep = lapply(1:length(res), function(r)
-        if (length(newoffs[[r]]) == 0) res[r]
-        else lapply(newoffs[[r]], function(kid) c(res[[r]], kid)))
-      res = unlist(nextstep, recursive = FALSE)
-    }
-    if (!internal) {
-      labs = labels(x)
-      res = lapply(res, function(int_ids) labs[int_ids])
-    }
-    res
-  })
 }
 
 

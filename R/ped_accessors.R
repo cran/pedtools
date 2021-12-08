@@ -29,23 +29,37 @@
 #' relabel(x, new = "girl", old = 3)
 #'
 #' @importFrom kinship2 align.pedigree
+#' @importFrom utils as.roman
 #' @export
 relabel = function(x, new, old = labels(x), reorder = FALSE) {
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 
-  if(identical(new, "asPlot")) {
+  if(identical(new, "asPlot") || identical(new, "generations")) {
     if(is.pedList(x))
       stop2("`asPlot` cannot be used with ped lists")
     p = align.pedigree(as_kinship2_pedigree(x), packed = FALSE, align = FALSE)
     oldIdx = unlist(lapply(seq_along(p$n), function(i) p$nid[i, 1:p$n[i]]))
 
-    if(anyDuplicated(oldIdx))
-      oldIdx = unique.default(oldIdx)
-      # stop2('option `new = "asPlot"` failed for this pedigree')
+    # Remove duplicates
+    dups = duplicated(oldIdx)
+    if(any(dups))
+      oldIdx = oldIdx[!dups]
 
     old = labels(x)[oldIdx]
-    new = seq_along(old)
+
+    if(identical(new, "generations")) {
+      gen = rep(seq_along(p$n), p$n)
+
+      if(any(dups))
+        gen = gen[!dups]
+
+      idx = unlist(lapply(1:max(gen), function(g) seq_len(sum(gen == g))))
+      new = paste(as.roman(gen), idx, sep = "-")
+    }
+    else {
+      new = seq_along(old)
+    }
 
     reorder = TRUE
   }
@@ -123,7 +137,8 @@ labels.list = function(object, ...) {
 #' Functions for retrieving or changing the sex of specified pedigree members.
 #'
 #' @param x A `ped` object or a list of such.
-#' @param ids A character vector (or coercible to one) containing ID labels.
+#' @param ids A character vector (or coercible to one) containing ID labels. If
+#'   NULL, defaults to all members of `x`.
 #' @param named A logical: return a named vector or not.
 #' @param sex A numeric vector with entries 1 (= male), 2 (= female) or 0 (=
 #'   unknown). If `ids` is NULL, `sex` must be named with ID labels. If `sex` is
@@ -137,7 +152,7 @@ labels.list = function(object, ...) {
 #' * `getSex(x, ids)` returns an integer vector of the same length as `ids`,
 #' with entries 0 (unknown), 1 (male) or 2 (female).
 #'
-#' * `setSex(x, ids, sex)` returns a ped object identical to `x`, but where the
+#' * `setSex(x, ids, sex)` returns a ped object similar to `x`, but where the
 #' sex of `ids` is set according to the entries of `sex`
 #'
 #' * `swapSex(x, ids)` returns a ped object identical to `x`, but where the sex
@@ -170,7 +185,7 @@ labels.list = function(object, ...) {
 #'
 #' @importFrom stats setNames
 #' @export
-getSex = function(x, ids, named = FALSE) {
+getSex = function(x, ids = NULL, named = FALSE) {
   if(is.pedList(x)) {
     sexVec = unlist(lapply(x, function(comp) comp$SEX), recursive = FALSE, use.names = FALSE)
     nms = unlist(labels(x), recursive = FALSE, use.names = FALSE)
@@ -187,17 +202,12 @@ getSex = function(x, ids, named = FALSE) {
   else
     sexVec = setNames(x$SEX, x$ID)
 
-  if(missing(ids))
-    ids = names(sexVec)
-  else
-    ids = as.character(ids)
+  storage.mode(sexVec) = "integer"
 
-  res = sexVec[ids]
+  res = if(is.null(ids)) sexVec else sexVec[as.character(ids)]
 
-  if(named)
-    storage.mode(res) = "integer"
-  else
-    res = as.integer(res)
+  if(!named)
+    res = unname(res)
 
   res
 }
