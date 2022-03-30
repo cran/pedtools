@@ -11,7 +11,14 @@
 #' * `na.action` = 2: Remove markers with missing data.
 #'
 #' In `setMap()`, the `map` argument should be a data frame (or file) with the
-#' following columns in order: 1) chromosome, 2) marker name, 3) position in megabases.
+#' following columns in order:
+#'
+#' 1) chromosome
+#'
+#' 2) marker name
+#'
+#' 3) position (Mb)
+#'
 #' Column names are ignored, as are any columns after the first three.
 #'
 #' @param x An object of class `ped` or a list of such.
@@ -19,7 +26,8 @@
 #'   `x`. By default, all markers are included.
 #' @param na.action Either 0 (default), 1 or 2. (See Details.)
 #' @param verbose A logical.
-#' @param map Either a data frame or the path to a map file.
+#' @param map Either a data frame or the path to a map file. See Details
+#'   regarding format.
 #' @param matchNames A logical; if TRUE, pre-existing marker names of `x` will
 #'   be used to assign chromosome labels and positions from `map`.
 #' @param ... Further arguments passed to `read.table()`.
@@ -28,6 +36,9 @@
 #'   `MB`.
 #'
 #'   `setMap()` returns `x` with modified marker attributes.
+#'
+#'   `hasLinkedMarkers()` returns TRUE if two markers are located (with set
+#'   position) on the same chromosome, and FALSE otherwise.
 #'
 #' @examples
 #' x = singleton(1)
@@ -43,7 +54,9 @@
 #'
 #' # Getting and setting map are inverses
 #' y = setMap(x, getMap(x))
-#' identical(x,y)
+#' stopifnot(identical(x,y))
+#'
+#' hasLinkedMarkers(x)
 #'
 #' @export
 getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
@@ -129,21 +142,42 @@ setMap = function(x, map, matchNames = NA, ...) {
 
   # Match names if either i) mismatch in number, or ii) names actually match in some order
   if(is.na(matchNames))
-    matchNames = (nrow(map) != N) || (!all(is.na(mapNames)) && setequal(mapNames, xNames))
+    matchNames = (nrow(map) != N) || (!any(is.na(mapNames)) && setequal(mapNames, xNames))
 
   if(matchNames) {
     mIdx = match(xNames, mapNames, nomatch = NA)
     mIdx = mIdx[!is.na(mIdx)]
 
-    chrom(x, mIdx) = map[[1]][mIdx]
-    posMb(x, mIdx) = map[[3]][mIdx]
+    chr = map[[1]][mIdx]
+    pos = map[[3]][mIdx]
+    x = setChrom(x, 1:N, chrom = chr)
+    x = setPosition(x, 1:N, posMb = pos)
   }
   else {
     if(nrow(map) != N)
-      stop2("`map` incompatible with `x` (with `matchNames = F`)")
-    chrom(x, 1:N) = map[[1]]
-    posMb(x, 1:N) = map[[3]]
+      stop2("`map` incompatible with `x`. If the markers are named, set `matchNames = TRUE`")
+
+    x = setChrom(x, 1:N, chrom = map[[1]])
+    x = setMarkername(x, 1:N, name = map[[2]])
+    x = setPosition(x, 1:N, posMb = map[[3]])
   }
 
   x
 }
+
+
+
+#' @export
+#' @rdname getMap
+hasLinkedMarkers = function(x) {
+  map = getMap(x, na.action = 0, verbose = FALSE)
+  if(is.null(map))
+    return(FALSE)
+
+  # With data on both chrom and position
+  haspos = !is.na(map$CHROM) & !is.na(map$MB)
+
+  # Return TRUE if two markers on the same chromosome
+  anyDuplicated(map$CHROM[haspos]) > 0
+}
+

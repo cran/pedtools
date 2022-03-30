@@ -12,13 +12,247 @@
 
 <meta name="author" content="Magnus Dehli Vigeland" />
 
-<meta name="date" content="2021-12-08" />
+<meta name="date" content="2022-03-30" />
 
 <title>Introduction to the pedtools package</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
-<script src="data:application/javascript;base64,JChkb2N1bWVudCkucmVhZHkoZnVuY3Rpb24oKXsKICAgIGlmICh0eXBlb2YgJCgnW2RhdGEtdG9nZ2xlPSJ0b29sdGlwIl0nKS50b29sdGlwID09PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgJCgnW2RhdGEtdG9nZ2xlPSJ0b29sdGlwIl0nKS50b29sdGlwKCk7CiAgICB9CiAgICBpZiAoJCgnW2RhdGEtdG9nZ2xlPSJwb3BvdmVyIl0nKS5wb3BvdmVyID09PSAnZnVuY3Rpb24nKSB7CiAgICAgICAgJCgnW2RhdGEtdG9nZ2xlPSJwb3BvdmVyIl0nKS5wb3BvdmVyKCk7CiAgICB9Cn0pOwo="></script>
-<link href="data:text/css,%0A%2Elightable%2Dminimal%20%7B%0Aborder%2Dcollapse%3A%20separate%3B%0Aborder%2Dspacing%3A%2016px%201px%3B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%2Elightable%2Dminimal%20td%20%7B%0Amargin%2Dleft%3A%205px%3B%0Amargin%2Dright%3A%205px%3B%0A%7D%0A%2Elightable%2Dminimal%20th%20%7B%0Amargin%2Dleft%3A%205px%3B%0Amargin%2Dright%3A%205px%3B%0A%7D%0A%2Elightable%2Dminimal%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%2300000050%3B%0Aempty%2Dcells%3A%20hide%3B%0A%7D%0A%2Elightable%2Dminimal%20tbody%20tr%3Afirst%2Dchild%20td%20%7B%0Apadding%2Dtop%3A%200%2E5em%3B%0A%7D%0A%2Elightable%2Dminimal%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dminimal%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dclassic%20%7B%0Aborder%2Dtop%3A%200%2E16em%20solid%20%23111111%3B%0Aborder%2Dbottom%3A%200%2E16em%20solid%20%23111111%3B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0Amargin%3A%2010px%205px%3B%0A%7D%0A%2Elightable%2Dclassic%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dclassic%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%200%2E14em%20solid%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%20caption%20%7B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%20td%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%20th%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Afont%2Dweight%3A%20normal%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%200%2E10em%20solid%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23F9EEC1%3B%0A%7D%0A%2Elightable%2Dclassic%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20%7B%0Aborder%2Dtop%3A%203px%20double%20%23111111%3B%0Aborder%2Dbottom%3A%203px%20double%20%23111111%3B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%203px%20double%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20caption%20%7B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20td%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20th%20%7B%0Apadding%2Dleft%3A%205px%3B%0Apadding%2Dright%3A%205px%3B%0Afont%2Dweight%3A%20normal%3B%0Acolor%3A%20%23222222%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20tbody%20tr%3Alast%2Dchild%20td%20%7B%0Aborder%2Dbottom%3A%203px%20double%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23111111%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23F9EEC1%3B%0A%7D%0A%2Elightable%2Dclassic%2D2%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dmaterial%20%7B%0Amin%2Dwidth%3A%20100%25%3B%0Awhite%2Dspace%3A%20nowrap%3B%0Atable%2Dlayout%3A%20fixed%3B%0Afont%2Dfamily%3A%20Roboto%2C%20sans%2Dserif%3B%0Aborder%3A%201px%20solid%20%23EEE%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%2Elightable%2Dmaterial%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%201px%20solid%20%23EEE%3B%0A%7D%0A%2Elightable%2Dmaterial%20th%20%7B%0Aheight%3A%2056px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0A%7D%0A%2Elightable%2Dmaterial%20td%20%7B%0Aheight%3A%2052px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0Aborder%2Dtop%3A%201px%20solid%20%23eeeeee%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dstriped%20tbody%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%2Elightable%2Dstriped%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ddd%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20%7B%0Amin%2Dwidth%3A%20100%25%3B%0Awhite%2Dspace%3A%20nowrap%3B%0Atable%2Dlayout%3A%20fixed%3B%0Afont%2Dfamily%3A%20Roboto%2C%20sans%2Dserif%3B%0Aborder%3A%201px%20solid%20%23FFFFFF12%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0Amargin%2Dbottom%3A%2010px%3B%0Abackground%2Dcolor%3A%20%23363640%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%201px%20solid%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20th%20%7B%0Aheight%3A%2056px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0Acolor%3A%20%23FFFFFF60%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%20td%20%7B%0Aheight%3A%2052px%3B%0Apadding%2Dleft%3A%2016px%3B%0Apadding%2Dright%3A%2016px%3B%0Acolor%3A%20%23FFFFFF%3B%0Aborder%2Dtop%3A%201px%20solid%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dstriped%20tbody%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dmaterial%2Ddark%2Elightable%2Dstriped%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23FFFFFF12%3B%0A%7D%0A%2Elightable%2Dpaper%20%7B%0Awidth%3A%20100%25%3B%0Amargin%2Dbottom%3A%2010px%3B%0Acolor%3A%20%23444%3B%0A%7D%0A%2Elightable%2Dpaper%20tfoot%20tr%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A%2Elightable%2Dpaper%20tfoot%20tr%3Afirst%2Dchild%20td%20%7B%0Aborder%2Dtop%3A%201px%20solid%20%2300000020%3B%0A%7D%0A%2Elightable%2Dpaper%20thead%20tr%3Alast%2Dchild%20th%20%7B%0Acolor%3A%20%23666%3B%0Avertical%2Dalign%3A%20bottom%3B%0Aborder%2Dbottom%3A%201px%20solid%20%2300000020%3B%0Aline%2Dheight%3A%201%2E15em%3B%0Apadding%3A%2010px%205px%3B%0A%7D%0A%2Elightable%2Dpaper%20td%20%7B%0Avertical%2Dalign%3A%20middle%3B%0Aborder%2Dbottom%3A%201px%20solid%20%2300000010%3B%0Aline%2Dheight%3A%201%2E15em%3B%0Apadding%3A%207px%205px%3B%0A%7D%0A%2Elightable%2Dpaper%2Elightable%2Dhover%20tbody%20tr%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23F9EEC1%3B%0A%7D%0A%2Elightable%2Dpaper%2Elightable%2Dstriped%20tbody%20tr%3Anth%2Dchild%28even%29%20%7B%0Abackground%2Dcolor%3A%20%2300000008%3B%0A%7D%0A%2Elightable%2Dpaper%2Elightable%2Dstriped%20tbody%20td%20%7B%0Aborder%3A%200%3B%0A%7D%0A" rel="stylesheet" />
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+border-bottom: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -28,6 +262,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -129,7 +364,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -143,69 +558,105 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Introduction to the pedtools package</h1>
 <h4 class="author">Magnus Dehli Vigeland</h4>
-<h4 class="date">2021-12-08</h4>
+<h4 class="date">2022-03-30</h4>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#pedigrees"><span class="toc-section-number">1</span> Pedigrees</a>
+<li><a href="#pedigrees"><span class="toc-section-number">1</span>
+Pedigrees</a>
 <ul>
-<li><a href="#the-ped-class"><span class="toc-section-number">1.1</span> The <code>ped</code> class</a></li>
+<li><a href="#the-ped-class"><span class="toc-section-number">1.1</span>
+The <code>ped</code> class</a></li>
 <li><a href="#basic-pedigree-plots"><span class="toc-section-number">1.2</span> Basic pedigree plots</a></li>
-<li><a href="#builtin"><span class="toc-section-number">1.3</span> Built-in pedigree structures</a></li>
-<li><a href="#examples-of-pedigree-construction"><span class="toc-section-number">1.4</span> Examples of pedigree construction</a></li>
+<li><a href="#builtin"><span class="toc-section-number">1.3</span>
+Built-in pedigree structures</a></li>
+<li><a href="#examples-of-pedigree-construction"><span class="toc-section-number">1.4</span> Examples of pedigree
+construction</a></li>
 <li><a href="#pedigree-subsets"><span class="toc-section-number">1.5</span> Pedigree subsets</a></li>
 </ul></li>
-<li><a href="#markers"><span class="toc-section-number">2</span> Markers</a>
+<li><a href="#markers"><span class="toc-section-number">2</span>
+Markers</a>
 <ul>
 <li><a href="#creating-marker-objects"><span class="toc-section-number">2.1</span> Creating marker objects</a></li>
-<li><a href="#plotting-pedigrees-with-marker-data"><span class="toc-section-number">2.2</span> Plotting pedigrees with marker data</a></li>
-<li><a href="#markers-attached-to-ped-objects"><span class="toc-section-number">2.3</span> Markers attached to <code>ped</code> objects</a></li>
-<li><a href="#accessing-and-modifying-individual-markers"><span class="toc-section-number">2.4</span> Accessing and modifying individual markers</a></li>
-<li><a href="#gettingsettingmodifying-many-markers-simultaneously"><span class="toc-section-number">2.5</span> Getting/setting/modifying many markers simultaneously</a></li>
+<li><a href="#plotting-pedigrees-with-marker-data"><span class="toc-section-number">2.2</span> Plotting pedigrees with marker
+data</a></li>
+<li><a href="#markers-attached-to-ped-objects"><span class="toc-section-number">2.3</span> Markers attached to
+<code>ped</code> objects</a></li>
+<li><a href="#accessing-and-modifying-individual-markers"><span class="toc-section-number">2.4</span> Accessing and modifying individual
+markers</a></li>
+<li><a href="#gettingsettingmodifying-many-markers-simultaneously"><span class="toc-section-number">2.5</span> Getting/setting/modifying many
+markers simultaneously</a></li>
 </ul></li>
 </ul>
 </div>
 
-<p>The purpose of this vignette is to show how to work with pedigrees and marker data in <code>pedtools</code>.</p>
-<p>The following command installs the current CRAN version of the package:</p>
+<p>The purpose of this vignette is to show how to work with pedigrees
+and marker data in <code>pedtools</code>.</p>
+<p>The following command installs the current CRAN version of the
+package:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;pedtools&quot;</span>)</span></code></pre></div>
-<p>Alternatively, you may want the latest development version from GitHub:</p>
+<p>Alternatively, you may want the latest development version from
+GitHub:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;devtools&quot;) # install devtools if needed</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;magnusdv/pedtools&quot;</span>)</span></code></pre></div>
 <p>Now you should be able to load <code>pedtools</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pedtools)</span></code></pre></div>
 <div id="pedigrees" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Pedigrees</h1>
-<p>In <code>pedtools</code> and all related packages, pedigrees are stored as <code>ped</code> objects. We start by explaining briefly what these objects look like, and their basic constructor. If you are reading this vignette simply to learn how to create a particular pedigree, you may want to skip ahead to section 1.3 where we describe practical shortcuts to common pedigree structures.</p>
+<p>In <code>pedtools</code> and all related packages, pedigrees are
+stored as <code>ped</code> objects. We start by explaining briefly what
+these objects look like, and their basic constructor. If you are reading
+this vignette simply to learn how to create a particular pedigree, you
+may want to skip ahead to section 1.3 where we describe practical
+shortcuts to common pedigree structures.</p>
 <div id="the-ped-class" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> The <code>ped</code> class</h2>
+<h2><span class="header-section-number">1.1</span> The <code>ped</code>
+class</h2>
 <p><strong>The <code>ped</code> constructor function</strong><br />
-The most direct way to create a pedigree in <code>pedtools</code> is with the <code>ped()</code> constructor. This takes as input 4 vectors of equal length:</p>
+The most direct way to create a pedigree in <code>pedtools</code> is
+with the <code>ped()</code> constructor. This takes as input 4 vectors
+of equal length:</p>
 <ul>
 <li><code>id</code> : individual ID labels (numeric or character)</li>
 <li><code>fid</code> : id of the fathers (0 if not included)</li>
 <li><code>mid</code> : id of the mothers (0 if not included)</li>
-<li><code>sex</code> : gender codes, with entries 0 (unknown), 1 (male) or 2 (female)</li>
+<li><code>sex</code> : gender codes, with entries 0 (unknown), 1 (male)
+or 2 (female)</li>
 </ul>
-<p>In other words, the j’th pedigree member has label <code>id[j]</code>, father <code>fid[j]</code>, mother <code>mid[j]</code>, and gender given by <code>sex[j]</code>.</p>
-<p>For example, the following creates a family <em>trio</em>, i.e. father, mother and child:</p>
+<p>In other words, the j’th pedigree member has label
+<code>id[j]</code>, father <code>fid[j]</code>, mother
+<code>mid[j]</code>, and gender given by <code>sex[j]</code>.</p>
+<p>For example, the following creates a family <em>trio</em>,
+i.e. father, mother and child:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ped</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">fid =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">mid =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">2</span>), <span class="at">sex =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  id fid mid sex</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1   *   *   1</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   2   *   *   2</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   3   1   2   2</span></span></code></pre></div>
-<p>In this example the child (<code>id=3</code>) is female, since the associated entry in <code>sex</code> is 2. Note that missing parents are printed as <code>*</code>. Individuals without parents are called <em>founders</em> of the pedigree, while the <em>nonfounders</em> have both parents specified. It is not allowed to have exactly one parent.</p>
-<p>Instead of numerical labels as above, we could have used character strings. Let us create the trio again, with more informative labels, and store it in a variable named <code>trio</code>.</p>
+<p>In this example the child (<code>id=3</code>) is female, since the
+associated entry in <code>sex</code> is 2. Note that missing parents are
+printed as <code>*</code>. Individuals without parents are called
+<em>founders</em> of the pedigree, while the <em>nonfounders</em> have
+both parents specified. It is not allowed to have exactly one
+parent.</p>
+<p>Instead of numerical labels as above, we could have used character
+strings. Let us create the trio again, with more informative labels, and
+store it in a variable named <code>trio</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>trio <span class="ot">=</span> <span class="fu">ped</span>(<span class="at">id =</span> <span class="fu">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>), <span class="at">fid =</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;fa&quot;</span>), <span class="at">mid =</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">&quot;mo&quot;</span>), <span class="at">sex =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>trio</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   *   *   1</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2</span></span></code></pre></div>
-<p>The special strings <code>&quot;0&quot;</code>, <code>&quot;&quot;</code> and <code>NA</code> are all interpreted as a missing parent.</p>
-<p><strong>The internal structure of <code>ped</code> objects</strong><br />
-From the way it is printed, the object <code>trio</code> appears to be a data frame, but this is not exactly true. Rather it is an object of class <code>ped</code>, which is basically a list. We can see the actual content of <code>trio</code> by unclassing it:</p>
+<p>The special strings <code>&quot;0&quot;</code>, <code>&quot;&quot;</code> and
+<code>NA</code> are all interpreted as a missing parent.</p>
+<p><strong>The internal structure of <code>ped</code>
+objects</strong><br />
+From the way it is printed, the object <code>trio</code> appears to be a
+data frame, but this is not exactly true. Rather it is an object of
+class <code>ped</code>, which is basically a list. We can see the actual
+content of <code>trio</code> by unclassing it:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unclass</span>(trio)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $ID</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;fa&quot;   &quot;mo&quot;   &quot;girl&quot;</span></span>
@@ -233,51 +684,83 @@ From the way it is printed, the object <code>trio</code> appears to be a data fr
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $MARKERS</span></span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
-<p>In most cases it is not recommended for regular users to interact directly with the internal slots of a <code>ped</code>, since this can have unfortunate consequences unless you know exactly what you are doing. Instead, one should use accessor functions like <code>labels()</code>, <code>getMarkers()</code> and <code>founderInbreeding()</code>. The most important accessors are described within this vignette, while others are documented in the help page <code>?ped_utils</code>.</p>
+<p>In most cases it is not recommended for regular users to interact
+directly with the internal slots of a <code>ped</code>, since this can
+have unfortunate consequences unless you know exactly what you are
+doing. Instead, one should use accessor functions like
+<code>labels()</code>, <code>getMarkers()</code> and
+<code>founderInbreeding()</code>. The most important accessors are
+described within this vignette, while others are documented in the help
+page <code>?ped_utils</code>.</p>
 </div>
 <div id="basic-pedigree-plots" class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> Basic pedigree plots</h2>
+<h2><span class="header-section-number">1.2</span> Basic pedigree
+plots</h2>
 <p>To plot a pedigree, simply use <code>plot()</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAADoAAGYAOpAAZrY6AAA6kNtmAABmADpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///8NKk6TAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADAUlEQVR4nO2cC1PqMBSEQxWqKPVRC/r//6gNvRcVm6RNcrI5zu6MjlDYzde8O2PMh3IZdAFSRQC0CIAWAdAiAFoEQIsAaBEALQKg9ScBjE8Fi7YochZg5ecl9L3cXoRKAYz3ZegSHuBXirsSqgRYU6gaAeYzHMkVAqwoqeNtLMCq1q4KYP4KAXIrx6RFgBQRIOQhLmkAz7Ucn6+uCREgdK06gNomMgKELtQHsGrrogkAtB+ImbkXt3XX+2iAuS08bFMfuXa6/hruqUTs4u97ib0LpFoBLsWOerQYuVhc6r/8ywvypNf30P2DBn8CoP0JgPYnANqfAGh/b0BvzE7SP4s8Aac2ufhogL2ofx65A45bY5rXj25cESaAxAAct/ft2HptAWzyYHxNOVQD3e3YFzaHiGIE/Z06bsfA3t69fvwZRopTexsRYAFOdwdrGF8FcQC7y6/9+4O9+4PzHi7oA0NKG4oD2H/9mu6e+x6GAMahtHkuXgO/ANwDSgDgyytS6BoYxl507kaxSgZI7APW5tQmTMjJAImjkO0Dm0MXP46mA8TPA1nE1Sg6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAN0Acf9+uTJD0Npc/pBMETM27ldZc0r5FgsSsxWqhIKuigAcpiWzZDyLhkl4KgHwWJZNE7AkQAlLr2PhuPyOBEA7EqCAo/pRiADZ0vJ7KlkL6QdQvx/QvyPTvyeesVX2VOLaV99zoZ9HrGl8Mnc2jzycblWGoHcREQAtAqBFALQIgBYBvLqca5TlxLRZFaoBAjglBNAZs3ncHKaD0h5N86IMoDufD/cPoL1501YD05Fe3X+AnbomdD5azB7sNQHs1QH02gHU18DUB3q9AFejkEIAOw80T82rXgCrqSdIS64PZDmyNyyZGrCnC6YcdLtC3A+gRQC0CIAWAdAiAFoEQIsAaKkH+AQ7KM57aNZRYQAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
-<p>Under the hood, <code>pedtools::plot()</code> is an elaborate wrapper of the excellent plotting functionality of the <code>kinship2</code> package. Most of the possibilities provided by kinship2 are available from pedtools, and several features are added. An overview can be found in the documentation <code>?plot.ped</code>, but a quick example should get you started:</p>
+<p>Under the hood, <code>pedtools::plot()</code> is an elaborate wrapper
+of the excellent plotting functionality of the <code>kinship2</code>
+package. Most of the possibilities provided by kinship2 are available
+from pedtools, and several features are added. An overview can be found
+in the documentation <code>?plot.ped</code>, but a quick example should
+get you started:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="at">hatched =</span> <span class="st">&quot;girl&quot;</span>, </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="at">title =</span> <span class="st">&quot;Trio 1&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYA/wA6AAA6AGY6ZrY6kJA6kNtmAABmADpmOgBmOjpmkLZmkNtmtrZmtv+QOgCQZgCQkGaQtpCQ2/+2ZgC2Zjq2tma225C229u22/+2/7a2///bkDrbkGbbtpDb29vb/9vb////AAD/tmb/25D//7b//9v///8XqFVOAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
-<p>See Section 2.2 for how to add, and control the appearance of, marker genotypes to pedigree plots.</p>
+<p>See Section 2.2 for how to add, and control the appearance of, marker
+genotypes to pedigree plots.</p>
 </div>
 <div id="builtin" class="section level2" number="1.3">
-<h2><span class="header-section-number">1.3</span> Built-in pedigree structures</h2>
-<p>Rather than using the <code>ped()</code> function directly, it is usually quicker and safer to build pedigrees step by step, applying the arsenal of utility functions offered by <code>pedtools</code>. A typical workflow is as follows:</p>
+<h2><span class="header-section-number">1.3</span> Built-in pedigree
+structures</h2>
+<p>Rather than using the <code>ped()</code> function directly, it is
+usually quicker and safer to build pedigrees step by step, applying the
+arsenal of utility functions offered by <code>pedtools</code>. A typical
+workflow is as follows:</p>
 <ol style="list-style-type: decimal">
 <li>Choose one of the basic pedigree structures as starting point.</li>
 <li>Add/remove individuals as needed.</li>
 <li>Modify attributes like genders and labels.</li>
 </ol>
-<p>You will find several examples below, but first let us list the available tools for each of the 3 steps.</p>
+<p>You will find several examples below, but first let us list the
+available tools for each of the 3 steps.</p>
 <p><strong>Basic pedigrees</strong><br />
-The following pedigree structures serve as starting points for pedigree constructions. For parameters and details, see <code>?ped_basic</code>.</p>
+The following pedigree structures serve as starting points for pedigree
+constructions. For parameters and details, see
+<code>?ped_basic</code>.</p>
 <ul>
-<li><code>singleton()</code>, a pedigree consisting of a single individual</li>
-<li><code>nuclearPed()</code>, a nuclear pedigree (parents+children)</li>
-<li><code>halfSibPed()</code>, two sibships with one parent in common</li>
+<li><code>singleton()</code>, a pedigree consisting of a single
+individual</li>
+<li><code>nuclearPed()</code>, a nuclear pedigree
+(parents+children)</li>
+<li><code>halfSibPed()</code>, two sibships with one parent in
+common</li>
 <li><code>linearPed()</code>, a straight line of successors</li>
 <li><code>cousinPed()</code>, cousins of specified degree/removal</li>
-<li><code>halfCousinPed()</code>, half cousins of specified degree/removal</li>
-<li><code>ancestralPed()</code>, a family tree containing the ancestors of a single person</li>
+<li><code>halfCousinPed()</code>, half cousins of specified
+degree/removal</li>
+<li><code>ancestralPed()</code>, a family tree containing the ancestors
+of a single person</li>
 </ul>
-<p>There are also more specialized structures, including double cousins, selfing pedigrees, and consecutive matings between full siblings. Look them up in <code>?ped_complex</code> if you are interested.</p>
+<p>There are also more specialized structures, including double cousins,
+selfing pedigrees, and consecutive matings between full siblings. Look
+them up in <code>?ped_complex</code> if you are interested.</p>
 <p><strong>Add/remove/extract individuals</strong><br />
-The functions below are used to modify an existing <code>ped</code> object by adding/removing individuals, or extracting a sub-pedigree. For details, see <code>?ped_modify</code>.</p>
+The functions below are used to modify an existing <code>ped</code>
+object by adding/removing individuals, or extracting a sub-pedigree. For
+details, see <code>?ped_modify</code>.</p>
 <ul>
-<li><code>addChildren()</code>, with special cases <code>addSon()</code> and <code>addDaughter()</code></li>
+<li><code>addChildren()</code>, with special cases <code>addSon()</code>
+and <code>addDaughter()</code></li>
 <li><code>addParents()</code></li>
 <li><code>removeIndividuals()</code></li>
 <li><code>branch()</code></li>
 <li><code>subset()</code></li>
 </ul>
 <p><strong>Edit labels and attributes</strong><br />
-The following functions modify various attributes of a <code>ped</code> object. See <code>?ped_modify</code> for parameters and details.</p>
+The following functions modify various attributes of a <code>ped</code>
+object. See <code>?ped_modify</code> for parameters and details.</p>
 <ul>
 <li><code>setSex()</code></li>
 <li><code>swapSex()</code></li>
@@ -285,44 +768,65 @@ The following functions modify various attributes of a <code>ped</code> object. 
 </ul>
 </div>
 <div id="examples-of-pedigree-construction" class="section level2" number="1.4">
-<h2><span class="header-section-number">1.4</span> Examples of pedigree construction</h2>
+<h2><span class="header-section-number">1.4</span> Examples of pedigree
+construction</h2>
 <div id="example-1-trio" class="section level3 unnumbered">
 <h3 class="unnumbered">Example 1: Trio</h3>
-<p>As our first example we will recreate the <code>trio</code> pedigree without using the <code>ped()</code> constructor. To give a hint of the flexibility, we show 3 alternative ways to code this.</p>
+<p>As our first example we will recreate the <code>trio</code> pedigree
+without using the <code>ped()</code> constructor. To give a hint of the
+flexibility, we show 3 alternative ways to code this.</p>
 <p><strong>Alternative A</strong><br />
-The obvious starting point is <code>nuclearPed()</code>, with <code>nch = 1</code> to indicate 1 child. By default, this creates a trio with numeric labels (father=1; mother=2; child=3) and a male child. Hence we fix the gender with <code>swapSex()</code>, and edit the labels with <code>relabel()</code>:</p>
+The obvious starting point is <code>nuclearPed()</code>, with
+<code>nch = 1</code> to indicate 1 child. By default, this creates a
+trio with numeric labels (father=1; mother=2; child=3) and a male child.
+Hence we fix the gender with <code>swapSex()</code>, and edit the labels
+with <code>relabel()</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>trio2 <span class="ot">=</span> <span class="fu">nuclearPed</span>(<span class="at">nch =</span> <span class="dv">1</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>trio2 <span class="ot">=</span> <span class="fu">swapSex</span>(trio2, <span class="at">ids =</span> <span class="dv">3</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>trio2 <span class="ot">=</span> <span class="fu">relabel</span>(trio2, <span class="at">new =</span> <span class="fu">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>))</span></code></pre></div>
 <p><strong>Alternative B (quickest and best)</strong><br />
-The previous approach can be condensed into a one-liner, since <code>nuclearPed()</code> allows an alternative syntax in which child genders and labels are specified directly:</p>
+The previous approach can be condensed into a one-liner, since
+<code>nuclearPed()</code> allows an alternative syntax in which child
+genders and labels are specified directly:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>trio3 <span class="ot">=</span> <span class="fu">nuclearPed</span>(<span class="at">father =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">mother =</span> <span class="st">&quot;mo&quot;</span>, <span class="at">children =</span> <span class="st">&quot;girl&quot;</span>, <span class="at">sex =</span> <span class="dv">2</span>)</span></code></pre></div>
 <p><strong>Alternative C</strong><br />
-Here is another possibility. We start by creating the father as a singleton, and then add the daughter:</p>
+Here is another possibility. We start by creating the father as a
+singleton, and then add the daughter:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">singleton</span>(<span class="st">&quot;fa&quot;</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">addDaughter</span>(trio4, <span class="at">parent =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mother: Creating new individual with ID = NN_1</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">relabel</span>(trio4, <span class="at">old =</span> <span class="st">&quot;NN_1&quot;</span>, <span class="at">new =</span> <span class="st">&quot;mo&quot;</span>)</span></code></pre></div>
-<p>Note that <code>addDaughter()</code> automatically created the mother as “NN_1”, so we needed to relabel her.</p>
+<p>Note that <code>addDaughter()</code> automatically created the mother
+as “NN_1”, so we needed to relabel her.</p>
 </div>
 <div id="example-2-an-inbred-child" class="section level3 unnumbered">
 <h3 class="unnumbered">Example 2: An inbred child</h3>
 <p>This time we will create this inbred family:</p>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAS1BMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6AGY6Ojo6kNtmAABmtv+QOgCQZgCQ2/+2ZgC2/7a2///bkDrb////tmb/25D//7b//9v////qHGfVAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAF/0lEQVR4nO2d7XraRhQGlaRua+qWlgrM/V9pwSR50mA0+3WWlZn55dir854dFgmB452Ossh07wZGR0GAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBwLKg6RttMxeJiSqvsFj8h6+LE7Iymy7pJhO4edzPFVs2XvzDrJQ2E7h12PX32y2iLoJaTeDGQe9+O6739iHNJpAjKLT5LhkFxbMKrUdQuwnkLcXQ7htGNJyAggpKLb02yg7ILdIioeUEMgVF9x8fkFtfQQW1FATjFQTjF+u3YLGh4ID7r6DKEdEBCoIRCoIRwYISyo8tKPqFooKWq6SUH0DQ2DerjyCo6u2UEQRFvx+Uu7AyR3UQVDOBtGNyL/85o3oIqphA4jFXr9dTPxQYRFD5BJLTpoV/lVVMGdFMUPEE0tO+K6cbzMxGegkqnEBOWsLdd2bFH6oW3OonBlxFZRxRk3avir0DgtMU1L1i74DgNAV1LniXiLiwLs33NLRKQT0NNY7q1XnjX2VcShq42hBRTXNWffYsjdn/9k+zWle8vpzuA56zD8uI203Tp78KA5JSDpvPcYJeX07N76Zfco9Lz9udup+rDEHIPE3JgvIX0P7pj+NlEmVg4mHzfH4YSh8Bzpin5zm1/eJzQsUjnJQZKehEqqDyc+a2eAWlpe4in2LJgsr9zMVn6aTcufwqkBgQLGguPkd/Dcbk15cv/1bUpwFpgir8VD2+SdlVl7E2gor97Or9cPrlYhlUPElQhZ+K1hPyL2qSL8RZtb+RUL3Yz/6pwfpZ7GB7Ov28vsReBQIF7S6fOdTdCyy3sD3Vr1qlDW75+r4FeoOwJuoLD+Enro3quoP4CXsPrbbqMH6OQb18JEEhzVTWHMpPSDt1JQfzM97noAoKPToABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQcDDCWryp066/eer1kcPEKCg6voKCu1AQaFHDxCgoOr6CgrtQEGhRw8QoKDq+goK7UBBoUcPEKCg6voKCu1AQaFHDxCgoOr6CgrtQEGhRw8QoKDq+goK7UBB1+OrPoUryQopmj6BbEGFP8vme7uNHeVOYFRB/6vVUtHHEHT9l3zblc782ZCC3inUbBF9BEHv1lEQlYmtfvNn6xHUqPz6Bd2soiAqEl1fQVREQVBk7YKaBKxd0GKN1QuK/r3c1QuqOjphhII+uqDg59gDXMUS0hRUPkRBMEZBy2Me4WY1Ke2R3w9KS3t/lIIWRz3Ie9KJadfDWun5IIJ+Xi+P87lYetp04+tqwgWV3onnpuWUzSF3Am3TsbuuaU1QEKAgQEGAggAFAQoCFAQoCFAQUNfyNnPfpay0w+b86r9u76hF9k8J5asEzVOkoP2v9Tu2LDGfmj9syFCNoNNDHCmoas8i5rLlD26wWCNo9+XPSEG7wGfXMXmBVgg6JYSeg7a/T5Xb7y0yf/57k1C/XNB5iUYKOmzOxbdhhnbnDVJ5B81yQbtT/6Er6I24E9Fl80ysXyzo7SkcL6hq+71FLqdnrF8s6OvmaXm7mxUICrvWX9YO1h/3hWKD/QkXOWyS6o8r6Lg9nz/jTtJvJ1He/3BgQfX7EwJzyssIb1YBBQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQHRLZf+/fphCBd0z/AWKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEOBn88AaerwrCgIUBCgIUBCgIEBBgIIABQEKAroJmks2SxqAviuI91wcjr6CcMvF8egqaP8Ut9dTFF0Fbde3gLoKOmzWt4C6Cpo/xW69G0JPQbnbtQ1BR0GrfIb1FBS3I2gkHQWt8hTUU9AKXyUevVlFFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAv4DfNrQuwKh1+YAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
 <p><strong>Alternative A</strong><br />
-One approach is to first create individuals 1-6 as half sibships, with 1 child on the left side, and 2 children on the right. After this, we use <code>addChildren()</code> to add the inbred child.</p>
+One approach is to first create the pedigree consisting of individuals
+1-6, with <code>halfSibPed()</code>, and then use
+<code>addChildren()</code> to add the inbred child.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">=</span> <span class="fu">halfSibPed</span>(<span class="at">nch1 =</span> <span class="dv">1</span>, <span class="at">nch2 =</span> <span class="dv">2</span>, <span class="at">sex1 =</span> <span class="dv">1</span>, <span class="at">sex2 =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">=</span> <span class="fu">addChildren</span>(x1, <span class="at">father =</span> <span class="dv">4</span>, <span class="at">mother =</span> <span class="dv">5</span>, <span class="at">nch =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p><strong>Alternative B</strong><br />
-We could also view the half siblings 4 and 5 as half cousins of degree 0. The <code>halfCousinPed()</code> function accepts an option <code>child = TRUE</code> adding an inbred child. The labels will be different with this approach, so you should plot the pedigree after each command to see who-is-who. Also, we must relabel in the end.</p>
+We could also view the half siblings 4 and 5 as half cousins of degree
+0. The <code>halfCousinPed()</code> function accepts an option
+<code>child = TRUE</code> adding an inbred child. The labels will be
+different with this approach, so you should plot the pedigree after each
+command to see who-is-who. Also, we must relabel in the end.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">halfCousinPed</span>(<span class="dv">0</span>, <span class="at">child =</span> T)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">addChildren</span>(x2, <span class="at">father =</span> <span class="dv">2</span>, <span class="at">mother =</span> <span class="dv">3</span>, <span class="at">nch =</span> <span class="dv">1</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">relabel</span>(x2, <span class="at">old =</span> <span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">6</span>), <span class="at">new =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>))</span></code></pre></div>
 <p><strong>A note about the order of pedigree members</strong></p>
-<p>Although both <code>x1</code> and <code>x2</code> reproduce exactly the plot shown above, they are not identical objects:</p>
+<p>Although both <code>x1</code> and <code>x2</code> reproduce exactly
+the plot shown above, they are not identical objects:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(x1, x2)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
-<p>The reason is the <em>order</em> in which the individuals are stored. For <code>x1</code> the ordering is the natural sequence <code>1,2,3,4,5,6,7</code>, but for <code>x2</code> our construction process has produced a slightly different order:</p>
+<p>The reason is the <em>order</em> in which the individuals are stored.
+For <code>x1</code> the ordering is the natural sequence
+<code>1,2,3,4,5,6,7</code>, but for <code>x2</code> our construction
+process has produced a slightly different order:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>x2</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  id fid mid sex</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1   *   *   2</span></span>
@@ -332,17 +836,32 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The <c
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   5   2   3   2</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   7   4   5   1</span></span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   6   2   3   1</span></span></code></pre></div>
-<p>The internal ordering is usually of little importance in applications.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> However, if you get annoyed by “wrong” orderings such as for <code>x2</code> above, you can use <code>reorderPed()</code> to permute the pedigree any way you like. In fact, the default action of this function is to permute into the natural order of the labels, which is exactly what we need to make <code>x2</code> identical to <code>x1</code>:</p>
+<p>The internal ordering is usually of little importance in
+applications.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> However, if you get annoyed by “wrong”
+orderings such as for <code>x2</code> above, you can use
+<code>reorderPed()</code> to permute the pedigree any way you like. In
+fact, the default action of this function is to permute into the natural
+order of the labels, which is exactly what we need to make
+<code>x2</code> identical to <code>x1</code>:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">reorderPed</span>(x2)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(x1, x2)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div id="example-3-a-complex-family-tree" class="section level3" number="1.4.1">
-<h3><span class="header-section-number">1.4.1</span> Example 3: A complex family tree</h3>
-<p>For our final example we consider a complicated family tree extending both upwards and downwards from a single person.</p>
+<h3><span class="header-section-number">1.4.1</span> Example 3: A
+complex family tree</h3>
+<p>Here we consider the family tree below, extending both upwards and
+downwards from a single person.</p>
 <p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
-<p>We will use this example to demonstrate the <code>mergePed()</code> function. When this function is given two pedigrees, it “glues together” members with matching ID labels, and checks that the result is a valid pedigree.</p>
-<p>The hardest part of using <code>mergePed()</code> is to get the labelling right; this will almost always involve the <code>relabel()</code> function. To keep track of the labels, you should plot after each new line of code. Here is how the pedigree was created:</p>
+<p>We will use this example to demonstrate the <code>mergePed()</code>
+function. When this function is given two pedigrees, it “glues together”
+members with matching ID labels, and checks that the result is a valid
+pedigree.</p>
+<p>The hardest part of using <code>mergePed()</code> is to get the
+labelling right; this will almost always involve the
+<code>relabel()</code> function. To keep track of the labels, you should
+plot after each new line of code. Here is how the pedigree was
+created:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Top part</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">ancestralPed</span>(<span class="at">g =</span> <span class="dv">2</span>) <span class="co"># bottom person is `7`; relabel to `8`</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">relabel</span>(x, <span class="at">old =</span> <span class="dv">7</span>, <span class="at">new =</span> <span class="dv">8</span>)</span>
@@ -359,9 +878,14 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The <c
 </div>
 <div id="pedigree-subsets" class="section level2" number="1.5">
 <h2><span class="header-section-number">1.5</span> Pedigree subsets</h2>
-<p>Pedtools offers a range of utility functions for identifying subsets of pedigree members. These come in two flavours: 1) members with certain <em>global</em> property, and 2) members with a certain relationship to a given individual.</p>
+<p>Many situations call for selecting all pedigree members sharing some
+property, e.g., all females, or all descendants of some person. Several
+utilities in pedtools exist to help with such tasks. Generally these
+come in two flavours: 1) members with certain <em>global</em> property,
+and 2) members with a certain relationship to a given individual.</p>
 <p><strong>Pedigree members with a certain property</strong><br />
-Each of the following functions returns a vector specifying the members with the given property.</p>
+Each of the following functions returns a vector specifying the members
+with the given property.</p>
 <ul>
 <li><code>founders()</code></li>
 <li><code>nonfounders()</code></li>
@@ -371,9 +895,16 @@ Each of the following functions returns a vector specifying the members with the
 <li><code>typedMembers()</code></li>
 <li><code>untypedMembers()</code></li>
 </ul>
-<p>By default, the output of these functions is a character vector containing ID labels. However, adding the option <code>internal = TRUE</code> will give you an integer vector instead, reporting the internal indices of the members. This is frequently used in the source code of <code>pedtools</code>, but is usually not intended for end users of the package.</p>
+<p>By default, the output of these functions is a character vector
+containing ID labels. However, adding the option
+<code>internal = TRUE</code> will give you an integer vector instead,
+reporting the internal indices of the members. This is frequently used
+in the source code of <code>pedtools</code>, but is usually not intended
+for end users of the package.</p>
 <p><strong>Relatives of a given individual</strong><br />
-The functions below take as input a <code>ped</code> object and the label of a single member. They return a vector of all members with the given relation to that individual.</p>
+The functions below take as input a <code>ped</code> object and the
+label of a single member. They return a vector of all members with the
+given relation to that individual.</p>
 <ul>
 <li><code>father()</code></li>
 <li><code>mother()</code></li>
@@ -392,10 +923,14 @@ The functions below take as input a <code>ped</code> object and the label of a s
 </div>
 <div id="markers" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Markers</h1>
-<p>The other main theme of the <code>pedtools</code> package (pedigrees being the first) are marker genotypes.</p>
+<p>The other main theme of the <code>pedtools</code> package (pedigrees
+being the first) are marker genotypes.</p>
 <div id="creating-marker-objects" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Creating marker objects</h2>
-<p>Marker objects created with the <code>marker()</code> function. For example, the following command makes an empty marker associated with the <code>trio</code> pedigree:</p>
+<h2><span class="header-section-number">2.1</span> Creating marker
+objects</h2>
+<p>Marker objects created with the <code>marker()</code> function. For
+example, the following command makes an empty marker associated with the
+<code>trio</code> pedigree:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marker</span>(trio)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   -/-</span></span>
@@ -407,9 +942,19 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1   2</span></span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
-<p>As shown in the output, the marker is indeed empty: All pedigree members have missing genotypes, and there is no assigned name or position. By default, markers are diallelic, with alleles 1 and 2, with equal frequencies. For a more interesting example, let us make a SNP named “snp1”, with alleles “A” and “B”. The father is homozygous “A/A”, while the mother is heterozygous. We store it in a variable <code>m1</code> for later use.</p>
+<p>As shown in the output, the marker is indeed empty: All pedigree
+members have missing genotypes, and there is no assigned name or
+position. By default, markers are diallelic, with alleles 1 and 2, with
+equal frequencies. For a more interesting example, let us make a SNP
+named “snp1”, with alleles “A” and “B”. The father is homozygous “A/A”,
+while the mother is heterozygous. We store it in a variable
+<code>m1</code> for later use.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span> <span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">name =</span> <span class="st">&quot;snp1&quot;</span>)</span></code></pre></div>
-<p>This illustrates several points. Firstly, individual genotypes may be specified using the ID labels. The different alleles occurring in the genotypes is interpreted as the complete set of alleles for the marker. Finally, these are assigned equal frequencies. Of course, this behaviour can be overridden, by declaring alleles frequencies explicitly:</p>
+<p>This illustrates several points. Firstly, individual genotypes may be
+specified using the ID labels. The different alleles occurring in the
+genotypes is interpreted as the complete set of alleles for the marker.
+Finally, these are assigned equal frequencies. Of course, this behaviour
+can be overridden, by declaring alleles frequencies explicitly:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">afreq =</span> <span class="fu">c</span>(<span class="at">A =</span> .<span class="dv">2</span>, <span class="at">B =</span> .<span class="dv">3</span>, <span class="at">C =</span> .<span class="dv">5</span>))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   A/A</span></span>
@@ -421,7 +966,12 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    A   B   C</span></span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.2 0.3 0.5</span></span></code></pre></div>
-<p>The markers chromosome can be declared using the <code>chrom</code> argument, and similarly its position by <code>posMb</code> (megabases). Markers with unknown chromosome are treated as autosomal. To define an X-linked marker, put <code>chrom = &quot;X&quot;</code>. the fact that males are hemizygous on X (i.e. they have only one allele) is reflected in the printout of such markers:</p>
+<p>The markers chromosome can be declared using the <code>chrom</code>
+argument, and similarly its position by <code>posMb</code> (megabases).
+Markers with unknown chromosome are treated as autosomal. To define an
+X-linked marker, put <code>chrom = &quot;X&quot;</code>. the fact that males are
+hemizygous on X (i.e. they have only one allele) is reflected in the
+printout of such markers:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">=</span> <span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">chrom =</span> <span class="st">&quot;X&quot;</span>, <span class="at">name =</span> <span class="st">&quot;snpX&quot;</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>m2</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  snpX</span></span>
@@ -434,26 +984,44 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    A   B</span></span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
-<p>A side note: It may come as a surprise that you don’t need quotes around the ID labels (which are characters!) in the above commands. This is because <code>marker()</code> uses <em>non-standard evaluation (NSE)</em>, a peculiarity of the R language which often leads to less typing and more readable code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Unfortunately, this doesn’t work with numerical ID labels. Thus to assign a genotype to someone labelled “1” you need quotes, as in <code>marker(trio, &quot;1&quot; = &quot;A/A&quot;)</code>.</p>
+<p>A side note: It may come as a surprise that you don’t need quotes
+around the ID labels (which are characters!) in the above commands. This
+is because <code>marker()</code> uses <em>non-standard evaluation
+(NSE)</em>, a peculiarity of the R language which often leads to less
+typing and more readable code.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Unfortunately, this doesn’t work with
+numerical ID labels. Thus to assign a genotype to someone labelled “1”
+you need quotes, as in <code>marker(trio, &quot;1&quot; = &quot;A/A&quot;)</code>.</p>
 </div>
 <div id="plotting-pedigrees-with-marker-data" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> Plotting pedigrees with marker data</h2>
+<h2><span class="header-section-number">2.2</span> Plotting pedigrees
+with marker data</h2>
 <p>Including marker data in a pedigree plot is straightforward:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">marker =</span> m1)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6Ojo6OpA6kNtmAABmADpmZjpmtrZmtv+QOgCQOjqQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///87oUNWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAD2UlEQVR4nO2cjXKbMBCEZddua7cljdU2FDt+/8csAmN+LNnWwbEo3Z0kE03M7X2SDiQyYM6Jy6ATGCsCoEUAtAiAFgHQIgBaBECLAGgRAK0PCWCCmjm3Z2y9ADEf1lPrdg9hsQD9pMPDsFSAG6vEADxOAfNlAniN/O6LBIjobAKoKHWAKH8CKEgRYCbpAYT+EJZk0AhAgHGHjF+4LRUAciH7PwEiFp4pAWCW08KL93I2NNLVx/A42J5YvHwabOqjDBYB0EWIvq0SvcqKi//8wU/Yaq+Q1VfgBADHJwA6PgHQ8QmAjv+RAXJjdprxJ1LQ4LSfIH0sQKYafyqFDI5bY9ZvZ1uuBUeByACO2x/7cga7JJx7YcLT+f4I2E1ZC6uDKIkH8e/quC1Nc9eDefldlBSn/SbSwAGcvh1csDFDIAXYXX9k7y+u94tAPz6sgWLcHJICZO2PugdD/XgfoDyVrn9DRuAGIHRSuQvQxhELOwJFWUFVCck1AcCIGnAhTvtRF+QJAEachVwNrA52zHl0CgDZdWAicTWKNiAA2oAAaAMCCA1sc+E4fv3bbU4V/6G6CdjqHnvUUuL4+btbBpUqNr1mtIQAvQTsJ9eJgY2V3yC/LqJt1mtGSwjQS6AGCNxl8Bq8v2zKr+q3n4duM14ygH4CDYC3D70Gbulaj1hVAm0zXjKAfgKXKeTvQq+BO6IesaoE2ma8ZAD9BOoiNhXGUwbVbvpsXRXZrNeMlwhgkEA9AoXxDoHPIL/8czCrS6BtCiQCGCRQAwS60GNwKR+3B3IzsNMUSAIwSKAByJ8FaHafZRW5GdhpCpKRAAwSuI6Atwg8Bs0Hy5nYzsBmYsZKAjBI4FoDT55G2/sXdvXl0G1KylgAMEigOQvF3pWYSFyNog0IgDYgANqAAGgDAqANCIA2IADagABoAwKgDQiANiAA2iBtAPFzHzEeepGvmasyqIU2d1p6PnpxZ+ooxbBa00gnrDfqjFY6URMC8AdNHmBWL5WgyQAEY85qphGTAOiYBEDHJMBMMZO/DnxUgITWQsmvRr1hk9rQeOKmtSO7DZzanvjc63LN+yqad51GvNEkwkQz+BwiAFoEQIsAaBEALQKgpQtwfXBnoveEeDTTCBAgKCUAa8zqdXWoXw/yatZ/EgOw1RtRLgD76pmqpADqZzBsA7BLbgpVL9Rwz/LUAFlyAHnqAMmPQF0DeboAg7NQggDuOrD+tX5LF8CpkD7GHiW9GpjoRXWPpDMChfjx3WhxP4AWAdAiAFoEQIsAaBEALQKgRQC0CIAWAdAiAFoEQIsAaBEALQKg9Q+DYYCBO07kAwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
-<p>The appearance of the genotypes can be tweaked in various ways, as documented in <code>?plot.ped</code>. Here’s an example:</p>
+<p>The appearance of the genotypes can be tweaked in various ways, as
+documented in <code>?plot.ped</code>. Here’s an example:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">marker =</span> m1, <span class="at">showEmpty =</span> T, <span class="at">missing =</span> <span class="st">&quot;?&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6kNtmAABmADpmZjpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///9DYrSiAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEA0lEQVR4nO2cjXKbMBCEZdeu3daJSWuKHd7/PYv4EYqDsHXScVy6O2lGmca3+iQdnMggUyuXke5AqgAgLQBICwDSAoC0ACAtAEgLANICgLS+JIAJauG+PWM7CRDzy3wa3eYQVgvwsdPhaVgrwCcrZQATTgHzdQJMGk27rxIgYrABwCLtAFH+AGAQI8BC4gMI/UdYlEkDAADSPpJeuK0VQORG9n8CRBSemgBkymnizXs9Gxpq9XH/ObE9Mbl8utvURxmsAsBHiH6sEl1lxcV//sNP2HJXyOwVOACE4wNAOj4ApOMDQDr+VwYojTlwxs+koMHtmKH7sgAn1vi5FDK47o3ZXuqiqQWTQGgA1/2vY7OCbSese2XCy3l+BopdkwubM6kTD+LP6rpvTEs7gmXzr2oobsddpIEFuP0422ApU0AFOLhvp/cXO/pVYBwf5kCVtoaoAKfxWzeCoXGcB2gupdvfIjPwCSB0UZkFGOOQJTsDVZNBbQrRlQEgIQdsiNsx6YacASDhKmRzYHMuUq6jOQBo94FMQjUqbQAAaQMASBsAgGxQjLeOIuFeTAcYXIv2CXvwZhrckX3/aQuhu2a8yADOtfj2t57ZVoUMyrGMLlMqajKAc+0Ags8YAgbvL7vm675JEBVgdB0AAmMYMLDFaz9rXpMgKsDo2i+h0BAGDOyn+lnzmgRRAUbXLolNi/G0QbufrgubRV6TIiKA59rNQGWi9gNl/+fB04cmRUQAz7UDCA7hpEGfPnYX5DVJogH4rj1AGQMw7D+bLPKapK7QAHzXYQYCSTBpMPxysxK9JqkrNADfdciBiMvo+ASjGNc+MY1JAF4HthdiKZFLqEalDQAgbQAAaQMASBsAQNoAANIGAJA2AIC0AQCkDQAgbQAAaQPdAOT3PmI8+CK7nrMysIU2Mz/x+fDFXWigGMNyLSOesJNRF7TiiaoIYDqoeoBFvViCqgEIxlzUjCMmAKRjAkA6JgAWiqn+PvBVARTVQuqr0cmwqjY0E3F17cg+B9a2J64/DDnncxXOp04JJ5pEmHAGX0IAkBYApAUAaQFAWgCQFi+Ae3Un0zkhE1poBgAQFBNAYczmdXPujgd5Nds/ygCK9kSUHuDYvlGlCqB7A6MYAA7qllB7oIZ9k6cDOKkDKLUDqJ+BLgdKvQB3VyGFAPY+sH3bXvQCWFX0F9kjxJcDmQ6qeySeGagSXuCNFPYD0gKAtNgA3LlYcwdkZRAXgH2Z/LrfeQ0mMQG4s+HmD4nLICYAdzrf/DF9GcSaxG7g9c1AK7f0FeaA1XXvDlcIHYySQXwA7y99t12DRXwALnEZM7jmBFgig2uUEjPCDDwnAEgLANICgLQAIC0ASAsA0lIP8A/NNNZBHQKIFwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
 </div>
 <div id="markers-attached-to-ped-objects" class="section level2" number="2.3">
-<h2><span class="header-section-number">2.3</span> Markers attached to <code>ped</code> objects</h2>
-<p>Although a <code>ped</code> object is needed in the creation of a <code>marker</code>, the two are independent of each other once the marker is created. In many applications it is useful to <em>attach</em> markers to their <code>ped</code> object. In particular for bigger projects with many markers, this makes it easier to manipulate the dataset as a unit.</p>
-<p>To attach a marker <code>m</code> (which could be a list of several markers) to a pedigree <code>x</code>, there are two options:</p>
+<h2><span class="header-section-number">2.3</span> Markers attached to
+<code>ped</code> objects</h2>
+<p>Although a <code>ped</code> object is needed in the creation of a
+<code>marker</code>, the two are independent of each other once the
+marker is created. In many applications it is useful to <em>attach</em>
+markers to their <code>ped</code> object. In particular for bigger
+projects with many markers, this makes it easier to manipulate the
+dataset as a unit.</p>
+<p>To attach a marker <code>m</code> (which could be a list of several
+markers) to a pedigree <code>x</code>, there are two options:</p>
 <ul>
 <li><code>setMarkers(x, m)</code></li>
 <li><code>addMarkers(x, m)</code></li>
 </ul>
-<p>The difference between these is that <code>setMarkers()</code> replaces all existing markers, while <code>addMarkers()</code> appends <code>m</code> to the existing ones. In our <code>trio</code> example the two are equivalent since there are no existing markers.</p>
+<p>The difference between these is that <code>setMarkers()</code>
+replaces all existing markers, while <code>addMarkers()</code> appends
+<code>m</code> to the existing ones. In our <code>trio</code> example
+the two are equivalent since there are no existing markers.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>trio <span class="ot">=</span> <span class="fu">setMarkers</span>(trio, <span class="fu">list</span>(m1, m2))</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>trio</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
@@ -461,14 +1029,23 @@ The functions below take as input a <code>ped</code> object and the label of a s
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  -/-</span></span></code></pre></div>
 <p><strong>Selecting and removing attached markers</strong><br />
-Four closely related functions functions are useful for manipulating markers attached to a pedigree:</p>
+Four closely related functions functions are useful for manipulating
+markers attached to a pedigree:</p>
 <ul>
-<li><code>selectMarkers()</code>, returns a <code>ped</code> object where only the indicated markers are retained</li>
-<li><code>removeMarkers()</code>, returns a <code>ped</code> object where the indicated markers are removed</li>
-<li><code>getMarkers()</code>, returns a list of the indicated markers</li>
-<li><code>whichMarkers()</code>, returns the indices of the indicated markers</li>
+<li><code>selectMarkers()</code>, returns a <code>ped</code> object
+where only the indicated markers are retained</li>
+<li><code>removeMarkers()</code>, returns a <code>ped</code> object
+where the indicated markers are removed</li>
+<li><code>getMarkers()</code>, returns a list of the indicated
+markers</li>
+<li><code>whichMarkers()</code>, returns the indices of the indicated
+markers</li>
 </ul>
-<p>All of these have exactly the same arguments, described in more detail in <code>?marker_select</code>. Let us do a couple of examples here. Recall that by now, our <code>trio</code> has two attached markers; the first is called “snp1”, and the other is on the X chromosome.</p>
+<p>All of these have exactly the same arguments, described in more
+detail in <code>?marker_select</code>. Let us do a couple of examples
+here. Recall that by now, our <code>trio</code> has two attached
+markers; the first is called “snp1”, and the other is on the X
+chromosome.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">whichMarkers</span>(trio, <span class="at">chrom =</span> <span class="st">&quot;X&quot;</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">selectMarkers</span>(trio, <span class="at">markers =</span> <span class="st">&quot;snp1&quot;</span>)</span>
@@ -478,28 +1055,58 @@ Four closely related functions functions are useful for manipulating markers att
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-</span></span></code></pre></div>
 </div>
 <div id="accessing-and-modifying-individual-markers" class="section level2" number="2.4">
-<h2><span class="header-section-number">2.4</span> Accessing and modifying individual markers</h2>
-<p>Internally, a marker object is stored as a matrix with two columns (one for each allele) and one row for each pedigree member. The matrix is numeric (for computational convenience) while the allele labels and other meta information are added as <em>attributes</em>. The most important of these are:</p>
+<h2><span class="header-section-number">2.4</span> Accessing and
+modifying individual markers</h2>
+<p>Internally, a marker object is stored as a matrix with two columns
+(one for each allele) and one row for each pedigree member. The matrix
+is numeric (for computational convenience) while the allele labels and
+other meta information are added as <em>attributes</em>. The most
+important of these are:</p>
 <ul>
-<li><code>alleles</code> : The allele labels, stored as a character vector.</li>
-<li><code>afreq</code> : The allele frequencies, in the same order as the alleles. An error is issued if the frequencies do not sum to 1 after rounding to 3 decimals.</li>
-<li><code>name</code> : The marker name, which can be any character string not consisting solely of digits.</li>
-<li><code>chrom</code> : The chromosome name. This can be given as an integer, but is always converted to character. The special values “23” and “X” are recognized as the human X chromosome, which affects the way genotypes are printed.</li>
+<li><code>alleles</code> : The allele labels, stored as a character
+vector.</li>
+<li><code>afreq</code> : The allele frequencies, in the same order as
+the alleles. An error is issued if the frequencies do not sum to 1 after
+rounding to 3 decimals.</li>
+<li><code>name</code> : The marker name, which can be any character
+string not consisting solely of digits.</li>
+<li><code>chrom</code> : The chromosome name. This can be given as an
+integer, but is always converted to character. The special values “23”
+and “X” are recognized as the human X chromosome, which affects the way
+genotypes are printed.</li>
 <li><code>posMb</code> : Chromosomal position given in megabases.</li>
 </ul>
-<p>In addition to those listed above, there are two more attributes: <code>pedmembers</code> and <code>sex</code>. They store the ID labels and genders of the pedigree associated with the marker, and are only used to empower the printing method of marker objects.</p>
+<p>In addition to those listed above, there are two more attributes:
+<code>pedmembers</code> and <code>sex</code>. They store the ID labels
+and genders of the pedigree associated with the marker, and are only
+used to empower the printing method of marker objects.</p>
 <p><strong>Marker accessor functions</strong><br />
-For each marker attribute listed above, there is a corresponding function with the same name for retrieving its content. These functions take as input either a <code>marker</code> object, or a <code>ped</code> object together with the name (or index) of an attached marker. This may sound a bit confusing, but a few examples will make it clear!</p>
-<p>Recall that our marker “snp1” exists in two copies: One is stored in the variable <code>m1</code>, while the other is attached to <code>trio</code>. In both cases we can extract the allele frequencies with the function <code>afreq()</code>.</p>
+For each marker attribute listed above, there is a corresponding
+function with the same name for retrieving its content. These functions
+take as input either a <code>marker</code> object, or a <code>ped</code>
+object together with the name (or index) of an attached marker. This may
+sound a bit confusing, but a few examples will make it clear!</p>
+<p>Recall that our marker “snp1” exists in two copies: One is stored in
+the variable <code>m1</code>, while the other is attached to
+<code>trio</code>. In both cases we can extract the allele frequencies
+with the function <code>afreq()</code>.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(m1)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   A   B </span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.5 0.5</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(trio, <span class="at">marker =</span> <span class="st">&quot;snp1&quot;</span>)</span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   A   B </span></span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.5 0.5</span></span></code></pre></div>
-<p>We can also <em>modify</em> the frequencies using this syntax. To avoid confusion about the allele order, the frequencies must be named with the allele labels (just as in the output of <code>afreq()</code> above).</p>
+<p>We can also <em>modify</em> the frequencies using this syntax. To
+avoid confusion about the allele order, the frequencies must be named
+with the allele labels (just as in the output of <code>afreq()</code>
+above).</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(trio, <span class="at">marker =</span> <span class="st">&quot;snp1&quot;</span>) <span class="ot">=</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="fl">0.9</span>, <span class="at">B =</span> <span class="fl">0.1</span>)</span></code></pre></div>
-<p>In addition to the functions getting and setting marker attributes, there is one more important marker accessor, namely <code>genotype()</code>. This returns the genotype of a specified individual, and can also be used to modify genotypes. As the others, it can be applied to marker objects directly, or to pedigrees with attached markers. Here we show a few examples of the latter type:</p>
+<p>In addition to the functions getting and setting marker attributes,
+there is one more important marker accessor, namely
+<code>genotype()</code>. This returns the genotype of a specified
+individual, and can also be used to modify genotypes. As the others, it
+can be applied to marker objects directly, or to pedigrees with attached
+markers. Here we show a few examples of the latter type:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Girl is not genotyped</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NA NA</span></span>
@@ -515,8 +1122,12 @@ For each marker attribute listed above, there is a corresponding function with t
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  A/A</span></span></code></pre></div>
 </div>
 <div id="gettingsettingmodifying-many-markers-simultaneously" class="section level2" number="2.5">
-<h2><span class="header-section-number">2.5</span> Getting/setting/modifying many markers simultaneously</h2>
-Several functions in <code>pedtools</code> are indented for modifying many (or all) markers at the same time. Their purpose and typical use cases are summarised in the table below. The argument <code>x</code> always denotes a <code>ped</code> object.
+<h2><span class="header-section-number">2.5</span>
+Getting/setting/modifying many markers simultaneously</h2>
+Several functions in <code>pedtools</code> are indented for modifying
+many (or all) markers at the same time. Their purpose and typical use
+cases are summarised in the table below. The argument <code>x</code>
+always denotes a <code>ped</code> object.
 <table>
 <thead>
 <tr>
@@ -553,7 +1164,8 @@ do summary stats on the marker alleles
 <code>getFreqDatabase(x)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-extract allele frequencies as a data.frame in <em>allelic ladder</em> format.
+extract allele frequencies as a data.frame in <em>allelic ladder</em>
+format.
 </td>
 <td style="text-align:left;">
 transfer to other objects, or write the database to a file
@@ -564,7 +1176,9 @@ transfer to other objects, or write the database to a file
 <code>getMarkers(x)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-extract list of marker objects. Each marker is a <code>N * 2</code> allele matrix (<code>N = pedsize(x)</code>) with locus annotations as attributes
+extract list of marker objects. Each marker is a <code>N * 2</code>
+allele matrix (<code>N = pedsize(x)</code>) with locus annotations as
+attributes
 </td>
 <td style="text-align:left;">
 do computations
@@ -580,7 +1194,8 @@ do computations
 <code>setAlleles(x, ...)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-replace the genotypes of <code>x</code> without changing the locus attributes.
+replace the genotypes of <code>x</code> without changing the locus
+attributes.
 </td>
 <td style="text-align:left;">
 erase all genotypes
@@ -591,7 +1206,10 @@ erase all genotypes
 <code>setFreqDatabase(x, db)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-replace all allele frequencies without changing the genotype data. The input is a data.frame in <em>allelic ladder</em> format. Conceptually equivalent to <code>setMarkers(x, alleleMatrix = getAlleles(x), locusAnnotations = db)</code>.
+replace all allele frequencies without changing the genotype data. The
+input is a data.frame in <em>allelic ladder</em> format. Conceptually
+equivalent to
+<code>setMarkers(x, alleleMatrix = getAlleles(x), locusAnnotations = db)</code>.
 </td>
 <td style="text-align:left;">
 change the frequency database
@@ -602,7 +1220,8 @@ change the frequency database
 <code>setMarkers(x, ...)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-attach marker objects with or without genotype data. Locus attributes are indicated as a list; genotypes as a matrix or data.frame.
+attach marker objects with or without genotype data. Locus attributes
+are indicated as a list; genotypes as a matrix or data.frame.
 </td>
 <td style="text-align:left;">
 prepare joint manipulation of a pedigree and marker data
@@ -618,7 +1237,10 @@ prepare joint manipulation of a pedigree and marker data
 <code>as.data.frame(x)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-convert <code>x</code> to a data.frame, with pedigree columns in standard format followed by genotype columns. One column per marker, with genotype format <code>a/b</code> and missing alleles indicated as <code>-</code>.
+convert <code>x</code> to a data.frame, with pedigree columns in
+standard format followed by genotype columns. One column per marker,
+with genotype format <code>a/b</code> and missing alleles indicated as
+<code>-</code>.
 </td>
 <td style="text-align:left;">
 pretty-print ped objects
@@ -629,7 +1251,8 @@ pretty-print ped objects
 <code>as.matrix(x)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-convert <code>x</code> to a <em>numerical</em> matrix, with additional info attached as attributes.
+convert <code>x</code> to a <em>numerical</em> matrix, with additional
+info attached as attributes.
 </td>
 <td style="text-align:left;">
 modify a pedigree with marker data
@@ -645,7 +1268,8 @@ modify a pedigree with marker data
 <code>transferMarkers(from, to)</code>
 </td>
 <td style="text-align:left;width: 8.5cm; ">
-transfer genotypes and attributes between pedigree objects (or lists of such).
+transfer genotypes and attributes between pedigree objects (or lists of
+such).
 </td>
 <td style="text-align:left;">
 transfer simulated marker data
@@ -655,11 +1279,21 @@ transfer simulated marker data
 </table>
 </div>
 </div>
-<div class="footnotes">
+<div class="footnotes footnotes-end-of-document">
 <hr />
 <ol>
-<li id="fn1"><p>There is an important exception to this: Certain algorithms in pedigree analysis work “top-down”, in the sense that parents must be treated before their children. For this reason, many implementations require, for simplicity, that the individuals are stored in this fashion, i.e. that parents always precede their children. <code>pedtools</code> offers a special reordering function to ensure this, <code>parents_before_children()</code>, which you will find utilised in the source code of packages like <code>ribd</code> and <code>ibdsim2</code>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>You may have come across NSE before, for instance when using <code>subset()</code> on a data.frame. To learn more about NSE, I recommend this book chapter by Hadley Wickham:<br />
+<li id="fn1"><p>There is an important exception to this: Certain
+algorithms in pedigree analysis work “top-down”, in the sense that
+parents must be treated before their children. For this reason, many
+implementations require, for simplicity, that the individuals are stored
+in this fashion, i.e. that parents always precede their children.
+<code>pedtools</code> offers a special reordering function to ensure
+this, <code>parents_before_children()</code>, which you will find
+utilised in the source code of packages like <code>ribd</code> and
+<code>ibdsim2</code>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>You may have come across NSE before, for instance when
+using <code>subset()</code> on a data.frame. To learn more about NSE, I
+recommend this book chapter by Hadley Wickham:<br />
 <a href="http://adv-r.had.co.nz/Computing-on-the-language.html" class="uri">http://adv-r.had.co.nz/Computing-on-the-language.html</a><a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
