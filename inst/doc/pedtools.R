@@ -60,11 +60,11 @@ plot(x1, margin = c(1,1,1,1))
 
 ## -----------------------------------------------------------------------------
 x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
-x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
+x1 = addSon(x1, parents = 4:5)
 
 ## -----------------------------------------------------------------------------
 x2 = halfCousinPed(0, child = T)
-x2 = addChildren(x2, father = 2, mother = 3, nch = 1)
+x2 = addSon(x2, parents = 2:3)
 x2 = relabel(x2, old = c(7,6), new = c(6,7))
 
 ## -----------------------------------------------------------------------------
@@ -77,34 +77,33 @@ x2
 x2 = reorderPed(x2)
 identical(x1, x2)
 
-## ----merge-example, echo = FALSE, message = F---------------------------------
+## ----merge-example, echo = FALSE, message=FALSE-------------------------------
 # Top part
-x = ancestralPed(g = 2) # bottom person is `7`; relabel to `8`
-x = relabel(x, old = 7, new = 8)
+x = ancestralPed(g = 2) # bottom person is "7"
 
 # Bottom part
-y = halfCousinPed(degree = 1) 
+y = halfCousinPed(degree = 1) # top person is "2"
 y = swapSex(y, 4)
-y = relabel(y, new = 7:15) # top person becomes `8`
 
 # Merge
-z = mergePed(x, y)
+z = mergePed(x, y, by = c("7" = "2"), relabel = TRUE)
 
 ## ----merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7--------------
 plot(z, margins = c(1,1,1,1))
 
 ## ---- label = "merge-example"-------------------------------------------------
 # Top part
-x = ancestralPed(g = 2) # bottom person is `7`; relabel to `8`
-x = relabel(x, old = 7, new = 8)
+x = ancestralPed(g = 2) # bottom person is "7"
 
 # Bottom part
-y = halfCousinPed(degree = 1) 
+y = halfCousinPed(degree = 1) # top person is "2"
 y = swapSex(y, 4)
-y = relabel(y, new = 7:15) # top person becomes `8`
 
 # Merge
-z = mergePed(x, y)
+z = mergePed(x, y, by = c("7" = "2"), relabel = TRUE)
+
+## ----merge-parts, fig.width = 9, fig.height = 3.5-----------------------------
+plotPedList(list(x, y, z))
 
 ## -----------------------------------------------------------------------------
 marker(trio)
@@ -134,6 +133,11 @@ plot(trio, marker = m1, sep = "", showEmpty = T, missing = "?", margins = c(1,1,
 ## -----------------------------------------------------------------------------
 trio = setMarkers(trio, list(m1, m2))
 trio
+
+## -----------------------------------------------------------------------------
+nuclearPed(1) |> 
+  addMarker(name = "myMarker", alleles = c("a", "b", "c")) |>
+  setGenotype(marker = 1, id = 3, geno = "a/c")
 
 ## -----------------------------------------------------------------------------
 whichMarkers(trio, chrom = "X")

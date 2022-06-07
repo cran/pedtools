@@ -1,22 +1,46 @@
+# pedtools 1.3.0
+
+## New features
+
+* New function `avuncularPed()` for creating aunt/uncle - nephew/niece pedigrees.
+
+* New function `addAllele()` for extending the allele set of a marker.
+
+* `addSon()` and `addDaughter()` are now more flexible. The previous argument `parent` has been renamed to `parents` and accepts one or two parents in any order.
+
+* `mergePed()` has been overhauled. In particular the new argument `by` makes it much more user friendly.
+
+* `setAfreq()` gains argument `strict`.
+
+
+## Other
+
+* Minor improvements of README and vignette.
+
+* Fixed bug in `setGenotype()` when setting multiple markers.
+
+* Fixed bug ignoring alleles in `distributeMarkers()`.
+
+
 # pedtools 1.2.0
 
 ## New features
 
 * **pedtools** now depends on R 4.1 (or later) because of the pipe operator `|>`.
 
-* New function `setSNPs()` for creating and attaching a set of SNP markers with given position and allele frequencies.
+* New function `setSNPs()` for creating and attaching a set of SNP markers with given positions and allele frequencies.
 
 * New function `distributeMarkers()` for creating and attaching equal markers evenly across a set of chromosomes (by default, the human autosomes).
 
-* New function `halfSibTriangle()`, implementing an interesting breeding pattern.
+* New function `halfSibTriangle()` implementing an interesting breeding pattern.
 
 ## Bug fixes
 
-* In `transferMarkers()` ignore members with unknown sex when checking compatibility.
+* `transferMarkers()` now ignores members of unknown sex when checking compatibility.
 
-* Fix bug in `addMarker()` when input is a list of pedigrees.
+* Fixed bug in `addMarker()` when input is a list of pedigrees.
 
-* Fix glitches in `setMap()`.
+* Fixed glitches in `setMap()`.
 
 ## Other
 
@@ -24,7 +48,7 @@
 
 * Added many tests.
 
-* Rewrite the README example to show piping.
+* Rewrite README example to show piping.
 
 
 # pedtools 1.1.0
