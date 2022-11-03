@@ -11,7 +11,6 @@ plotPedList(
   titles = NULL,
   frames = TRUE,
   fmar = NULL,
-  frametitles = NULL,
   source = NULL,
   dev.height = NULL,
   dev.width = NULL,
@@ -40,8 +39,6 @@ given in individuals subplots.}
 
 \item{fmar}{A single number in the interval \eqn{[0,0.5)} controlling the
 position of the frames.}
-
-\item{frametitles}{Deprecated; use \code{titles} instead.}
 
 \item{source}{NULL (default), or the name or index of an element of \code{plots}.
 If given, marker data is temporarily transferred from this to all the other
@@ -93,7 +90,7 @@ plotPedList(peds, widths = w, frames = FALSE)
 plotPedList(peds, widths = w, groups = list(1, 2:3), titles = 1:2)
 
 # Parameters added in the main call are used in each sub-plot
-plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
+plotPedList(peds, widths = w, margins = c(6, 3, 6, 3), labs = leaves,
             hatched = leaves, symbolsize = 1.3, col = list(red = 1))
 
 dev.off()
@@ -129,9 +126,7 @@ plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2",
              symbolsize = 1.2, labs = NULL)
 
 x3 = singleton("Mr. X")
-marg3 = c(10, 0, 0, 0)
-plot3 = list(x3, margins = marg3, title = "Plot 3",
-             symbolsize = 1, cex = 2)
+plot3 = list(x3, title = "Plot 3", cex = 2, carrier = "Mr. X")
 
 x4 = halfSibPed()
 hatched = 4:5
@@ -141,7 +136,8 @@ plot4 = list(x4, margins = marg4, title = "Plot 4", cex = 1.3,
              hatched = hatched, col = col)
 
 plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
-            groups = list(1, 2:3, 4), newdev = TRUE)
+            fmar = 0.03, groups = list(1, 2:3, 4), newdev = TRUE,
+            cex.main = 1.5)
 
 dev.off()
 
@@ -153,7 +149,7 @@ dev.off()
 
 plotPedList(list(halfCousinPed(4), cousinPed(7)),
             titles = c("Large", "Very large"),
-            dev.height = 8, dev.width = 5)
+            dev.height = 8, dev.width = 5, margins = 1.5)
 
 dev.off()
 

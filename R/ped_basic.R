@@ -231,14 +231,24 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), half = FALS
 #' @rdname ped_basic
 #' @export
 avuncularPed = function(top = c("uncle", "aunt"), bottom = c("nephew", "niece"),
-                        side = c("right", "left"), removal = 1, half = FALSE) {
+                        side = c("right", "left"), type = c("paternal", "maternal"),
+                        removal = 1, half = FALSE) {
   x = cousinPed(0, removal = removal, side = side, half = half)
 
-  # Swap sexes if aunt and/or niece
-  swp = c(match.arg(top) == "aunt",
-          match.arg(bottom) == "niece")
-  if(any(swp))
-    x = swapSex(x, leaves(x)[swp])
+  # Swap sexes if needed
+  swp = NULL
+  lvs = leaves(x)
+  if(match.arg(top) == "aunt")
+    swp = c(swp, lvs[1])
+  if(match.arg(bottom) == "niece")
+    swp = c(swp, lvs[2])
+  if(match.arg(type) == "maternal")
+    swp = c(swp, father(x, lvs[2]))
+
+  if(!is.null(swp)) {
+    x = swapSex(x, swp, verbose = FALSE)
+    x = relabel(x, "asPlot")
+  }
 
   x
 }
@@ -306,7 +316,7 @@ selfingPed = function(s, sex = 1) {
     stop2("`s` must be a nonnegative integer: ", s)
 
   if(s == 0)
-    return(singleton(1))
+    return(singleton(1, sex = sex))
 
   ped(id = 1:(s+1), fid = 0:s, mid = 0:s, sex = c(rep(0, s), sex),
       reorder = FALSE, validate = FALSE, verbose = FALSE)

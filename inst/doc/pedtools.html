@@ -12,7 +12,7 @@
 
 <meta name="author" content="Magnus Dehli Vigeland" />
 
-<meta name="date" content="2022-06-06" />
+<meta name="date" content="2022-11-03" />
 
 <title>Introduction to the pedtools package</title>
 
@@ -255,23 +255,23 @@ border: 0;
 </style>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -289,55 +289,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -346,13 +345,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -558,34 +564,32 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to the pedtools package</h1>
 <h4 class="author">Magnus Dehli Vigeland</h4>
-<h4 class="date">2022-06-06</h4>
+<h4 class="date">2022-11-03</h4>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#pedigrees"><span class="toc-section-number">1</span>
-Pedigrees</a>
+<li><a href="#pedigrees" id="toc-pedigrees"><span class="toc-section-number">1</span> Pedigrees</a>
 <ul>
-<li><a href="#the-ped-class"><span class="toc-section-number">1.1</span>
-The <code>ped</code> class</a></li>
-<li><a href="#basic-pedigree-plots"><span class="toc-section-number">1.2</span> Basic pedigree plots</a></li>
-<li><a href="#builtin"><span class="toc-section-number">1.3</span>
-Built-in pedigree structures</a></li>
-<li><a href="#examples-of-pedigree-construction"><span class="toc-section-number">1.4</span> Examples of pedigree
+<li><a href="#the-ped-class" id="toc-the-ped-class"><span class="toc-section-number">1.1</span> The <code>ped</code>
+class</a></li>
+<li><a href="#basic-pedigree-plots" id="toc-basic-pedigree-plots"><span class="toc-section-number">1.2</span> Basic pedigree plots</a></li>
+<li><a href="#builtin" id="toc-builtin"><span class="toc-section-number">1.3</span> Built-in pedigree
+structures</a></li>
+<li><a href="#examples-of-pedigree-construction" id="toc-examples-of-pedigree-construction"><span class="toc-section-number">1.4</span> Examples of pedigree
 construction</a></li>
-<li><a href="#pedigree-subsets"><span class="toc-section-number">1.5</span> Pedigree subsets</a></li>
+<li><a href="#pedigree-subsets" id="toc-pedigree-subsets"><span class="toc-section-number">1.5</span> Pedigree subsets</a></li>
 </ul></li>
-<li><a href="#markers"><span class="toc-section-number">2</span>
-Markers</a>
+<li><a href="#markers" id="toc-markers"><span class="toc-section-number">2</span> Markers</a>
 <ul>
-<li><a href="#creating-marker-objects"><span class="toc-section-number">2.1</span> Creating marker objects</a></li>
-<li><a href="#plotting-pedigrees-with-marker-data"><span class="toc-section-number">2.2</span> Plotting pedigrees with marker
+<li><a href="#creating-marker-objects" id="toc-creating-marker-objects"><span class="toc-section-number">2.1</span> Creating marker objects</a></li>
+<li><a href="#plotting-pedigrees-with-marker-data" id="toc-plotting-pedigrees-with-marker-data"><span class="toc-section-number">2.2</span> Plotting pedigrees with marker
 data</a></li>
-<li><a href="#markers-attached-to-ped-objects"><span class="toc-section-number">2.3</span> Markers attached to
+<li><a href="#markers-attached-to-ped-objects" id="toc-markers-attached-to-ped-objects"><span class="toc-section-number">2.3</span> Markers attached to
 <code>ped</code> objects</a></li>
-<li><a href="#accessing-and-modifying-individual-markers"><span class="toc-section-number">2.4</span> Accessing and modifying individual
+<li><a href="#accessing-and-modifying-individual-markers" id="toc-accessing-and-modifying-individual-markers"><span class="toc-section-number">2.4</span> Accessing and modifying individual
 markers</a></li>
-<li><a href="#gettingsettingmodifying-many-markers-simultaneously"><span class="toc-section-number">2.5</span> Getting/setting/modifying many
+<li><a href="#gettingsettingmodifying-many-markers-simultaneously" id="toc-gettingsettingmodifying-many-markers-simultaneously"><span class="toc-section-number">2.5</span> Getting/setting/modifying many
 markers simultaneously</a></li>
 </ul></li>
 </ul>
@@ -698,7 +702,7 @@ page <code>?ped_utils</code>.</p>
 plots</h2>
 <p>To plot a pedigree, simply use <code>plot()</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAADoAAGYAOpAAZrY6AAA6kNtmAABmADpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///8NKk6TAAAACXBIWXMAAA7DAAAOwwHHb6hkAAADAUlEQVR4nO2cC1PqMBSEQxWqKPVRC/r//6gNvRcVm6RNcrI5zu6MjlDYzde8O2PMh3IZdAFSRQC0CIAWAdAiAFoEQIsAaBEALQKg9ScBjE8Fi7YochZg5ecl9L3cXoRKAYz3ZegSHuBXirsSqgRYU6gaAeYzHMkVAqwoqeNtLMCq1q4KYP4KAXIrx6RFgBQRIOQhLmkAz7Ucn6+uCREgdK06gNomMgKELtQHsGrrogkAtB+ImbkXt3XX+2iAuS08bFMfuXa6/hruqUTs4u97ib0LpFoBLsWOerQYuVhc6r/8ywvypNf30P2DBn8CoP0JgPYnANqfAGh/b0BvzE7SP4s8Aac2ufhogL2ofx65A45bY5rXj25cESaAxAAct/ft2HptAWzyYHxNOVQD3e3YFzaHiGIE/Z06bsfA3t69fvwZRopTexsRYAFOdwdrGF8FcQC7y6/9+4O9+4PzHi7oA0NKG4oD2H/9mu6e+x6GAMahtHkuXgO/ANwDSgDgyytS6BoYxl507kaxSgZI7APW5tQmTMjJAImjkO0Dm0MXP46mA8TPA1nE1Sg6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAAKgAwiADiAAOoAA6AACoAMIgA4gADqAAOgAAqADCIAOIAA6gADoAN0Acf9+uTJD0Npc/pBMETM27ldZc0r5FgsSsxWqhIKuigAcpiWzZDyLhkl4KgHwWJZNE7AkQAlLr2PhuPyOBEA7EqCAo/pRiADZ0vJ7KlkL6QdQvx/QvyPTvyeesVX2VOLaV99zoZ9HrGl8Mnc2jzycblWGoHcREQAtAqBFALQIgBYBvLqca5TlxLRZFaoBAjglBNAZs3ncHKaD0h5N86IMoDufD/cPoL1501YD05Fe3X+AnbomdD5azB7sNQHs1QH02gHU18DUB3q9AFejkEIAOw80T82rXgCrqSdIS64PZDmyNyyZGrCnC6YcdLtC3A+gRQC0CIAWAdAiAFoEQIsAaKkH+AQ7KM57aNZRYQAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAATlBMVEUAAAAAADoAAGYAOpAAZrY6AAA6kNtmAABmADpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///8NKk6TAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAC/UlEQVR4nO2cDXOiMBiEI63SespdS9Hz///RI3KnbSUJJHmzeW92Z+qoyG4e8gkzjbkol0EXIFUEQIsAaBEALQKgRQC0CIAWAdAiAFr/JYDxqWDRFkXOAqz8vYQ+l9uLUCmA8X4MHcIDPKS4K6FKgDWFqhFgPsORXCHAipI6vsYCrGrtBBCQO2H2SHUAOSYtAqSIACEPcUkDeI7l+H11TYgAoWPVAdQ2kREgdIAAscVZfQrofiBm5l7c1l3fowFmb+FVATyehnsqEbv4+1pij0utAPczYxZ4kYvFpf5LT10UKL2+h94/aPAnANqfAGh/AqD9CYD29wb0xuwk/bPIE3Buk4uPBtiL+ueRO+C0NaZ5v3TjgjABJAbgtH1tx9ZrC2CTB+NryqEa6J7HvrA5RhQj6O/UaTsG9vbq9ePfMFKc2+eIAAtwfjlaw/gqiAPY3V72v3/Yqz84r+GCPjCktKE4gP39Zbp67msYAhiH0uZX8Rp4AHAPKAGAu1ek0DUwjL3o2o1ilQyQ2AeszblNmJCTARJHIdsHNscufhxNB4ifB7KIq1F0AAHQAQRABxAAHUAAdAAB0AEEQAcQAB1AAHQAAdABBEAHEAAdQAB0AAHQAQRABxAAHUAAdAAB0AEEQAcQAB1AAHQAAdABBEAHEAAaEPefWyszBK3N7Y1kipixcX/KmlPKt1iQmK1QJRR0VQTgMC2ZJeNZNEzCUwmAx7JsmoAlAUpYeh0Lx+V3JADakQAFHNWPQgTIlpbfU8laSD+A+vsBl6tyAFX3xDO2yp5KfPfV91zo685SGp/MXc0j97ValSHoXUQEQIsAaBEALQKgRQCvbluiZNlsaVaFaoAATgkBdMZsDpvjtMfSwTRvygC669ZSfwHapw9tNTDtBtT9A9ipa0LXXYnsnkATwF4dQK8dQH0NTH2g1wvwbRRSCGDngeZn864XwGrqCdKS6wNZdvsMS6YG7MZkKXtkrhDvB9AiAFoEQIsAaBEALQKgRQC0CIAWAdAiAFp/ABimzvgMA6zZAAAAAElFTkSuQmCC" style="display: block; margin: auto;" /></p>
 <p>Under the hood, <code>pedtools::plot()</code> is an elaborate wrapper
 of the excellent plotting functionality of the <code>kinship2</code>
 package. Most of the possibilities provided by kinship2 are available
@@ -706,8 +710,8 @@ from pedtools, and several features are added. An overview can be found
 in the documentation <code>?plot.ped</code>, but a quick example should
 get you started:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">deceased =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">starred =</span> <span class="st">&quot;mo&quot;</span>, <span class="at">hatched =</span> <span class="st">&quot;girl&quot;</span>, </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="at">title =</span> <span class="st">&quot;Trio 1&quot;</span>)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAjVBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYA/wA6AAA6AGY6ZrY6kJA6kNtmAABmADpmOgBmOjpmkLZmkNtmtrZmtv+QOgCQZgCQkGaQtpCQ2/+2ZgC2Zjq2tma225C229u22/+2/7a2///bkDrbkGbbtpDb29vb/9vb////AAD/tmb/25D//7b//9v///8XqFVOAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEYUlEQVR4nO2cDXPTMAyG1QKFASvjo2M0wGBhMNI2///nEddpujW2EidSVHF675ZukedXjz+SxpczlMoF0gmMlQFIywCkZQDSogHIoNHLw7ndNSweYsVjkXQJAOy+ggqAmO6v4PwAnKoW98nnMPtyBfPbugfu3wM8/9AknAPMLs4dwGnxxwP4v44Z5/DiNj470sUDsPhR/vZzYLNv7erUZV3s15sHZHqniwdgVR4mcQbzu7I8fDQlzxxgti7rNA+51ueakmoAtkt/svC90pRUA6C+B9TPgfZVqFQG0LoPlNoA/J3440nJcwQQkgFIawDAeTGnZ3Ne+aenc2b5B/N5hWjS/P86dZQJAiDFkRixDrl3IKQBAAZHqsdpo92QBABo71DqNOM4QgoAIDFSBdKlAAAkRqpgsjGC/gCAxEgVSTVyujcAIDFa8QAAEqNVdLSHAz0BAIkRK37JDEb6AQASoxYHACAxamH33VCsDwAgMXIxAAASoxc9wNMSwC5qAEBiPZT89Zu6B07j2gBaYWUA7agugECQHYDyRpb4uBmUJEDQWxAg9ctc2JofgOrrdMRZDUDMeAIAkkfKqO8UAAQP9XHbSQBGL6sgrhMBjFvYwkynAmjS7lodDRgAtrg7HUDpF3fTDWjXn9lXs1sGxI7TAyir3wCk6zcA6foNQLr+/xvg6WtK9PUnKY+8EowYbJej0ycDKGY3b5dBBBRgFQ/2FVUP7K4fvXTXz2BzAe5NPfde9wiQZIDNxadlNXSdu7MtwI/jYvE5PIa6eiCr/i1/9MpkqgYAVG65a7q8+ikqiq0bO9lq8zrYBR0A23drV+fwLhgAcNkcVrvrfetjDdhjDhRjxtAAgNXx4JsObcAugOpSOv8+bQ+0ANCrSQfAsbqBku6Bwl28CrEhNH4OuJq2yxE35HEAx6vQEIPDHJits+HX0ZEAzX2AziBR9m1U2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQNDEDawACkDQxA2sAApA0MQNrAAKQN4Bm3AV/Vz/baf/CZ8AH4rOsDIwMXwJP8m78ZxARwmr82gHb+bAgsAKH8myOxeACeHlhHEQdAtP05CBgAkPHDQMAEEMlfDUCs/bUARMePCgAkfw4CBgBs/qoAaA6B/LUARNtfA0CT5iT5swDEx78SgNPj8VdFAOH8dQAcx8oE+XM+D7THjx6A45E7f65HynKq/Nke6ttTmempnm1ZpTnoXFbZZzxF/sxLi2W9oMKWPvfibr08yin25W9uGYC0DEBaBiAtA5CWAaBqtrQg2SknqIl6wACiYgLIAGY3s7XfIOcG5j+VAWT7rYFqgOXiQVsP+N1csgPApbohtN9Sxu3p4gFW6gBy7QDqe8DPgVwvwMlVSCGAuw/Mv83v9AI4FZG9+WjFNwdItmrsFk8PuI2lxmxwmCB7HpCWAUjLAKRlANIyAGkZgLTUA/wDE+A2RMANi4sAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;green&quot;</span>, <span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="at">title =</span> <span class="st">&quot;Trio 1&quot;</span>, <span class="at">margins =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>))</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAkFBMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYA/wA6AAA6AGY6OgA6kJA6kNtmAABmADpmOgBmkLZmtrZmtttmtv+QOgCQOjqQZgCQkGaQttuQ2/+2ZgC2Zjq2kDq2tma2tpC225C2/7a2///bkDrbtmbbtpDb25Db2//b/9vb////AAD/tmb/25D//7b//9v////dYIyLAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEdklEQVR4nO2diZLaMAyGDWl3Q1voBS3d9E6v3XC8/9s1jiFctogdKUIz+mfqgTUb6bN8xNqYmq1wGW4H+koBuKUA3FIAbikAtxSAWwrALUSAwuw0bd6uJuOfvg9N8SxaDQzwy9wwwNY6PXoAqjefjQiA9Wy0nIy/NRFYvTHm+SdXu1mYZy9lANQNfffHAlSuU71vajcf3v5bCAG4f/xrx0DzavPFtKNhIwVg7gaxG8jufSMpALa0zldN2x95LQ1AfATEjoE9wH4W2gdAHsD299E6sL19AAYpALcUgFsKwC0F4FYCQI7vRQ/FA9yW//EAN+a/FyCHNJxrT3uBn/IChD8+IMDBbxAhDiAfqgedtTtAEAWQDzUELhwOByEGIAfqUOVzN0QQAZADdajy+tofIAfqUBVwNfDjzgA5UIeqYG/3V3QFyIE6XNEA5EAdssJTpremG0AO1GELmPN9VZ0AcqAOW9CqmwqQA3XoIgDIgTp84QOcvjPkwgaAwtFB0fsN7AhA46GLuAGgCamTmAGgFaGbeAGgJbmj4pMGiCsxdE/UVYgA0fdC0E1pZzECQLuC7kpInCHtB6BtWYRSUpd+VyMBoH1xjJJyrz5fI7eUUGIiSmnJ495ZCSgzFKfE7PcT+PaaASj9NhDASWYrPjOHmBvt8feH5Nwo6i0/+R9QLg3gblmGB0DecjFEQNb1FYD7+grAfX0F4L4+aKBEeFIbDaC8jzawniE8n4cEUI2Wr2ZeBBBgHq7sKqwIbBa+4xSggdXE2AdWi+PHPuMVDbCavJvVXddat2ar3YmD6u6jvw9di0BR/1oJnmqAlQBQWytt05XNg7Pz2o/ah2K+euENwRWA9evmEdb0ECQATNtivlk0rQ81YIcxUPXpQwkA80Phmg5swGsA9VQ6/j5sBC4AwNnkCsDhconijkBlJ6+KrQv1HwP2SutZjwW5H8BhFkoxsB8Do4cifR7tCdCuA3gGIqV3o9wGFIDbgAJwG1AAbgMKwG1AAbgNKAC3AQXgNqAA3AYUgNuAAnAbUABuAwrAbUABuA3IBsiyzNT/KE1QAljPM/eCkIEKwDntHM8cDI2IAJzDrf9tiS8aAJ//REEgAmiLo1IQQMB/EgIKgGD7UxBQAXj7jxCAoP8kBDQAIf+lAATbXwTAif/ZWf/BJyAAOPa/LciGMUUE2vLSfzEAofaXAuC/lctkdKF9Ow/jPwnAuf+HHwgBaIvAS1QR3QtdTEWS7oXOlrK2oNnS0O0HhvGfcEd24b+cDc1hFJy0v6At5cmgpew/W8K80HYY/+kyc9lZaotK1LlRJ0Ib5NljaikAtxSAWwrALQXglgKAao+woZyM9WqgCChAUEQAhTGj5ejBHYhdmvEPYQBFcxR4BzC7e5QWAXd6s9gDTMV1oeYIqT3D6QDm4gBK6QDiI+DGQCkX4GwWEghg14HxV/sfqkkFsKoC38WBK7oxgPLVLNdFE4HK9PtCkwjpfoBbCsAtBeCWAnBLAbilANxSAG4pALcUgFsKwK3/yPPTA3tUFfUAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
 <p>See Section 2.2 for how to add, and control the appearance of, marker
 genotypes to pedigree plots.</p>
 </div>
@@ -786,58 +790,63 @@ with <code>relabel()</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>trio2 <span class="ot">=</span> <span class="fu">nuclearPed</span>(<span class="at">nch =</span> <span class="dv">1</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>trio2 <span class="ot">=</span> <span class="fu">swapSex</span>(trio2, <span class="at">ids =</span> <span class="dv">3</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>trio2 <span class="ot">=</span> <span class="fu">relabel</span>(trio2, <span class="at">new =</span> <span class="fu">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>))</span></code></pre></div>
+<p>With the pipe operator <code>|&gt;</code> the above commands could be
+written in one chain, like this:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>trio2 <span class="ot">=</span> <span class="fu">nuclearPed</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">swapSex</span>(<span class="dv">3</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relabel</span>(<span class="at">new =</span> <span class="fu">c</span>(<span class="st">&quot;fa&quot;</span>, <span class="st">&quot;mo&quot;</span>, <span class="st">&quot;girl&quot;</span>))</span></code></pre></div>
 <p><strong>Alternative B (quickest and best)</strong><br />
-The previous approach can be condensed into a one-liner, since
-<code>nuclearPed()</code> allows an alternative syntax in which child
-genders and labels are specified directly:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>trio3 <span class="ot">=</span> <span class="fu">nuclearPed</span>(<span class="at">father =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">mother =</span> <span class="st">&quot;mo&quot;</span>, <span class="at">children =</span> <span class="st">&quot;girl&quot;</span>, <span class="at">sex =</span> <span class="dv">2</span>)</span></code></pre></div>
+Even quicker than the pipe version is the following one-liner, where all
+details are specified directly in the call to
+<code>nuclearPed()</code>.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>trio3 <span class="ot">=</span> <span class="fu">nuclearPed</span>(<span class="at">father =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">mother =</span> <span class="st">&quot;mo&quot;</span>, <span class="at">children =</span> <span class="st">&quot;girl&quot;</span>, <span class="at">sex =</span> <span class="dv">2</span>)</span></code></pre></div>
 <p><strong>Alternative C</strong><br />
 Here is another possibility. We start by creating the father as a
 singleton, and then add the daughter:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">singleton</span>(<span class="st">&quot;fa&quot;</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">addDaughter</span>(trio4, <span class="at">parent =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mother: Creating new individual with ID = NN_1</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">relabel</span>(trio4, <span class="at">old =</span> <span class="st">&quot;NN_1&quot;</span>, <span class="at">new =</span> <span class="st">&quot;mo&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">singleton</span>(<span class="st">&quot;fa&quot;</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">addDaughter</span>(trio4, <span class="at">parent =</span> <span class="st">&quot;fa&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mother: Creating new individual with ID = NN_1</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>trio4 <span class="ot">=</span> <span class="fu">relabel</span>(trio4, <span class="at">old =</span> <span class="st">&quot;NN_1&quot;</span>, <span class="at">new =</span> <span class="st">&quot;mo&quot;</span>)</span></code></pre></div>
 <p>Note that <code>addDaughter()</code> automatically created the mother
 as “NN_1”, so we needed to relabel her.</p>
 </div>
 <div id="example-2-an-inbred-child" class="section level3 unnumbered">
 <h3 class="unnumbered">Example 2: An inbred child</h3>
 <p>This time we will create this inbred family:</p>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 <p><strong>Alternative A</strong><br />
 One approach is to first create the pedigree consisting of individuals
 1-6, with <code>halfSibPed()</code>, and then use <code>addSon()</code>
 to add the inbred child.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">=</span> <span class="fu">halfSibPed</span>(<span class="at">nch1 =</span> <span class="dv">1</span>, <span class="at">nch2 =</span> <span class="dv">2</span>, <span class="at">sex1 =</span> <span class="dv">1</span>, <span class="at">sex2 =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">=</span> <span class="fu">addSon</span>(x1, <span class="at">parents =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">=</span> <span class="fu">halfSibPed</span>(<span class="at">nch1 =</span> <span class="dv">1</span>, <span class="at">nch2 =</span> <span class="dv">2</span>, <span class="at">sex1 =</span> <span class="dv">1</span>, <span class="at">sex2 =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addSon</span>(<span class="at">parents =</span> <span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>)</span></code></pre></div>
 <p><strong>Alternative B</strong><br />
 We could also view the half siblings 4 and 5 as half cousins of degree
 0. The <code>halfCousinPed()</code> function accepts an option
 <code>child = TRUE</code> adding an inbred child. The labels will be
-different with this approach, so you should plot the pedigree after each
-command to see who-is-who. Also, we must relabel in the end.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">halfCousinPed</span>(<span class="dv">0</span>, <span class="at">child =</span> T)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">addSon</span>(x2, <span class="at">parents =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">relabel</span>(x2, <span class="at">old =</span> <span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">6</span>), <span class="at">new =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>))</span></code></pre></div>
+different with this approach, so it might be useful to plot intermediate
+results to see who is who.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">halfCousinPed</span>(<span class="dv">0</span>, <span class="at">child =</span> T) <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addSon</span>(<span class="at">parents =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relabel</span>(<span class="at">old =</span> <span class="fu">c</span>(<span class="dv">7</span>,<span class="dv">6</span>), <span class="at">new =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>))</span></code></pre></div>
 <p><strong>A note about the order of pedigree members</strong></p>
 <p>Although both <code>x1</code> and <code>x2</code> reproduce exactly
 the plot shown above, they are not identical objects:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(x1, x2)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(x1, x2)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
 <p>The reason is the <em>order</em> in which the individuals are stored.
 For <code>x1</code> the ordering is the natural sequence
 <code>1,2,3,4,5,6,7</code>, but for <code>x2</code> our construction
 process has produced a slightly different order:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>x2</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  id fid mid sex</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1   *   *   2</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   2   *   *   1</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   3   *   *   2</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   4   2   1   1</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   5   2   3   2</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   7   4   5   1</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   6   2   3   1</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>x2</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  id fid mid sex</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1   *   *   2</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   2   *   *   1</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   3   *   *   2</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   4   2   1   1</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   5   2   3   2</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   7   4   5   1</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   6   2   3   1</span></span></code></pre></div>
 <p>The internal ordering is usually of little importance in
 applications.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> However, if you get annoyed by “wrong”
 orderings such as for <code>x2</code> above, you can use
@@ -845,9 +854,9 @@ orderings such as for <code>x2</code> above, you can use
 fact, the default action of this function is to permute into the natural
 order of the labels, which is exactly what we need to make
 <code>x2</code> identical to <code>x1</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">reorderPed</span>(x2)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(x1, x2)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">=</span> <span class="fu">reorderPed</span>(x2)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(x1, x2)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div id="example-3-a-complex-family-tree" class="section level3" number="1.4.1">
 <h3><span class="header-section-number">1.4.1</span> Example 3: A
@@ -856,23 +865,23 @@ complex family tree</h3>
 downwards from a single person. We will use this example to demonstrate
 the <code>mergePed()</code> function, which “glues” together two
 pedigrees by the indicated members.</p>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Top part</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">ancestralPed</span>(<span class="at">g =</span> <span class="dv">2</span>) <span class="co"># bottom person is &quot;7&quot;</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Bottom part</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">halfCousinPed</span>(<span class="at">degree =</span> <span class="dv">1</span>) <span class="co"># top person is &quot;2&quot;</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">swapSex</span>(y, <span class="dv">4</span>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Changing sex of spouses as well: 5</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>z <span class="ot">=</span> <span class="fu">mergePed</span>(x, y, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;7&quot;</span> <span class="ot">=</span> <span class="st">&quot;2&quot;</span>), <span class="at">relabel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Top part</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">ancestralPed</span>(<span class="at">g =</span> <span class="dv">2</span>) <span class="co"># bottom person is &quot;7&quot;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Bottom part</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">halfCousinPed</span>(<span class="at">degree =</span> <span class="dv">1</span>) <span class="co"># top person is &quot;2&quot;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">swapSex</span>(y, <span class="dv">4</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Changing sex of spouses as well: 5</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>z <span class="ot">=</span> <span class="fu">mergePed</span>(x, y, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;7&quot;</span> <span class="ot">=</span> <span class="st">&quot;2&quot;</span>), <span class="at">relabel =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>Note the argument <code>by = c(&quot;7&quot; = &quot;2&quot;)</code>, which means that
 individual “7” in <code>x</code> should be identified with “2” in
 <code>y</code>. As seen in the plot below, this individual ends up as
 “8” after relabelling in the final result.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotPedList</span>(<span class="fu">list</span>(x, y, z))</span></code></pre></div>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotPedList</span>(<span class="fu">list</span>(x, y, z))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="pedigree-subsets" class="section level2" number="1.5">
@@ -931,17 +940,17 @@ objects</h2>
 <p>Marker objects created with the <code>marker()</code> function. For
 example, the following command makes an empty marker associated with the
 <code>trio</code> pedigree:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marker</span>(trio)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   -/-</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   -/-</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl   -/-</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * * * * * *  </span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Position: NA </span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mutation: none </span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1   2</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marker</span>(trio)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   -/-</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   -/-</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl   -/-</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * * * * * *  </span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Position: NA </span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mutation: none </span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    1   2</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
 <p>As shown in the output, the marker is indeed empty: All pedigree
 members have missing genotypes, and there is no assigned name or
 position. By default, markers are diallelic, with alleles 1 and 2, with
@@ -949,41 +958,41 @@ equal frequencies. For a more interesting example, let us make a SNP
 named “snp1”, with alleles “A” and “B”. The father is homozygous “A/A”,
 while the mother is heterozygous. We store it in a variable
 <code>m1</code> for later use.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span> <span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">name =</span> <span class="st">&quot;snp1&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span> <span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">name =</span> <span class="st">&quot;snp1&quot;</span>)</span></code></pre></div>
 <p>This illustrates several points. Firstly, individual genotypes may be
 specified using the ID labels. The different alleles occurring in the
 genotypes is interpreted as the complete set of alleles for the marker.
 Finally, these are assigned equal frequencies. Of course, this behaviour
 can be overridden, by declaring alleles frequencies explicitly:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">afreq =</span> <span class="fu">c</span>(<span class="at">A =</span> .<span class="dv">2</span>, <span class="at">B =</span> .<span class="dv">3</span>, <span class="at">C =</span> .<span class="dv">5</span>))</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   A/A</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   A/B</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl   -/-</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * * * * * *  </span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Position: NA </span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mutation: none </span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    A   B   C</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.2 0.3 0.5</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">afreq =</span> <span class="fu">c</span>(<span class="at">A =</span> .<span class="dv">2</span>, <span class="at">B =</span> .<span class="dv">3</span>, <span class="at">C =</span> .<span class="dv">5</span>))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  &lt;NA&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   A/A</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   A/B</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl   -/-</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * * * * * *  </span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Position: NA </span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mutation: none </span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    A   B   C</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.2 0.3 0.5</span></span></code></pre></div>
 <p>The markers chromosome can be declared using the <code>chrom</code>
 argument, and similarly its position by <code>posMb</code> (megabases).
 Markers with unknown chromosome are treated as autosomal. To define an
 X-linked marker, put <code>chrom = &quot;X&quot;</code>. the fact that males are
 hemizygous on X (i.e. they have only one allele) is reflected in the
 printout of such markers:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">=</span> <span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">chrom =</span> <span class="st">&quot;X&quot;</span>, <span class="at">name =</span> <span class="st">&quot;snpX&quot;</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>m2</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  snpX</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa     A</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   A/B</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl   -/-</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * * * * * *  </span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Position: chr = X, Mb = NA </span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mutation: none </span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    A   B</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">=</span> <span class="fu">marker</span>(trio, <span class="at">fa =</span> <span class="st">&quot;A/A&quot;</span>, <span class="at">mo =</span> <span class="st">&quot;A/B&quot;</span>, <span class="at">chrom =</span> <span class="st">&quot;X&quot;</span>, <span class="at">name =</span> <span class="st">&quot;snpX&quot;</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>m2</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id  snpX</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa     A</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   A/B</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl   -/-</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * * * * * *  </span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Position: chr = X, Mb = NA </span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Mutation: none </span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Frequencies:</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    A   B</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.5 0.5</span></span></code></pre></div>
 <p>A side note: It may come as a surprise that you don’t need quotes
 around the ID labels (which are characters!) in the above commands. This
 is because <code>marker()</code> uses <em>non-standard evaluation
@@ -996,12 +1005,12 @@ you need quotes, as in <code>marker(trio, &quot;1&quot; = &quot;A/A&quot;)</code
 <h2><span class="header-section-number">2.2</span> Plotting pedigrees
 with marker data</h2>
 <p>Including marker data in a pedigree plot is straightforward:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">marker =</span> m1)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6Ojo6OpA6kNtmAABmADpmZjpmtrZmtv+QOgCQOjqQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///87oUNWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAD2UlEQVR4nO2cjXKbMBCEZddua7cljdU2FDt+/8csAmN+LNnWwbEo3Z0kE03M7X2SDiQyYM6Jy6ATGCsCoEUAtAiAFgHQIgBaBECLAGgRAK0PCWCCmjm3Z2y9ADEf1lPrdg9hsQD9pMPDsFSAG6vEADxOAfNlAniN/O6LBIjobAKoKHWAKH8CKEgRYCbpAYT+EJZk0AhAgHGHjF+4LRUAciH7PwEiFp4pAWCW08KL93I2NNLVx/A42J5YvHwabOqjDBYB0EWIvq0SvcqKi//8wU/Yaq+Q1VfgBADHJwA6PgHQ8QmAjv+RAXJjdprxJ1LQ4LSfIH0sQKYafyqFDI5bY9ZvZ1uuBUeByACO2x/7cga7JJx7YcLT+f4I2E1ZC6uDKIkH8e/quC1Nc9eDefldlBSn/SbSwAGcvh1csDFDIAXYXX9k7y+u94tAPz6sgWLcHJICZO2PugdD/XgfoDyVrn9DRuAGIHRSuQvQxhELOwJFWUFVCck1AcCIGnAhTvtRF+QJAEachVwNrA52zHl0CgDZdWAicTWKNiAA2oAAaAMCCA1sc+E4fv3bbU4V/6G6CdjqHnvUUuL4+btbBpUqNr1mtIQAvQTsJ9eJgY2V3yC/LqJt1mtGSwjQS6AGCNxl8Bq8v2zKr+q3n4duM14ygH4CDYC3D70Gbulaj1hVAm0zXjKAfgKXKeTvQq+BO6IesaoE2ma8ZAD9BOoiNhXGUwbVbvpsXRXZrNeMlwhgkEA9AoXxDoHPIL/8czCrS6BtCiQCGCRQAwS60GNwKR+3B3IzsNMUSAIwSKAByJ8FaHafZRW5GdhpCpKRAAwSuI6Atwg8Bs0Hy5nYzsBmYsZKAjBI4FoDT55G2/sXdvXl0G1KylgAMEigOQvF3pWYSFyNog0IgDYgANqAAGgDAqANCIA2IADagABoAwKgDQiANiAA2iBtAPFzHzEeepGvmasyqIU2d1p6PnpxZ+ooxbBa00gnrDfqjFY6URMC8AdNHmBWL5WgyQAEY85qphGTAOiYBEDHJMBMMZO/DnxUgITWQsmvRr1hk9rQeOKmtSO7DZzanvjc63LN+yqad51GvNEkwkQz+BwiAFoEQIsAaBEALQKgpQtwfXBnoveEeDTTCBAgKCUAa8zqdXWoXw/yatZ/EgOw1RtRLgD76pmqpADqZzBsA7BLbgpVL9Rwz/LUAFlyAHnqAMmPQF0DeboAg7NQggDuOrD+tX5LF8CpkD7GHiW9GpjoRXWPpDMChfjx3WhxP4AWAdAiAFoEQIsAaBEALQKgRQC0CIAWAdAiAFoEQIsAaBEALQKg9Q+DYYCBO07kAwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">marker =</span> m1)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAXVBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6Ojo6OpA6kNtmAABmADpmZjpmtrZmtv+QOgCQOjqQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///87oUNWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAD7ElEQVR4nO2cD3ebIBTFSZZsS7bZNWyrM2m//8ecaIx/IipP4MrOvaftKTW+y094CPaI+khcCl2BtSIAWgRAiwBoEQAtAqBFALQIgBYB0PovAdSUIlZtkeUogOPnQ6hb70mEjQKoyeLcITzAk4u9ETYJ4FKpLQKMe1icNwjgUFPLn7EATr2dAAFkdxg9sjkAHzctAqwRAeZiBFdogIljPj6/uS5EgLljmwPY2o2MAHMHCCCtjvMpoPWA5M69uK/b/o4GGF3CJwXwfBruqYR08tev8USUrQK0Z0omeMLJ4tL4S09dZBh6fg9dP6QQnwDo+ARAxycAOj4B0PEnDXKlTiHje9GEwe28uvpogCxofD+yG1yPSu3fPnQ5IVwBIgG4Hn+cy95rKmCcCzXVledaQB/KXNhdBNWYjW/V9Vga5ubq5eV3UVLczgeBgQG4fbuYgPImkAGcHj+y9xdz9QvrNVyQA8WaPiQDyNof9dWzX8M5gHIo3f+O3gJPAPYBZQagjSUUugWKMouqNJJqNcDKHDBhbucVN+TVACtHIZMDu4uWj6PrAeT3AS/ibBRtQAC0AQHQBjgA3Yy9169/u0Vf8SfVNdfVM2rnO/H183cziyhVHHpFR4kAeub6k7mA1jWJzSB/zEF11is6SgTQM68BrAt0i8H7y6H8qn77eekWXSUB6Js3AJbrZzEws7+61aoUaIuukgD0ze9dyHb5LAbmrLrVqhRoi66SAPTN6yRWFcZig2pB+qFNJumsV3SVAGBgXrdAoSxNMG6Q3//BltUp0BadJQAYmNcA1ss3anBPIbOMML2wU3SWO8DAvAHIXQCaBVyZSaYXdorO1XEHGJg/WsCSBKMGzYfL3tj2wqZzuskdYGD+yAGHYbR9BKB3Xy7donsaOwMMzJtRSLKo9yLORtEGBEAbEABtQAC0AQHQBgRAGxAAbUAAtAEB0AYEQBsQAG1AALQBAdAGBEAbpA0ge3PL0SNgaPX4JaRLsMDKXvLqEytuNKNgYQM1QsSoCQFYgsb0ChMzqlmImIkATISM6xYgJAFihJyMGNnOf0QCoCMSIELE5EchAnhz8x8zkblQ+gDJrwdsURMHSGpNPBI2sacSw7jpPRfq7yyV4pO5KrhwXysnj4Cxo4gAaBEALQKgRQC0CDCpxyucXjZbGlWkFiCAVYEAtFK7192l3mPpVe3/JAagq62l7gDn6u3apADqt/F0A3BKrgtVuxKZtzprgCw5gDx1gORboM6BPF2AwSiUIIC5D+x/7d/SBTAqZJuZOCpcDnjZ7XNeYVqgEG7iIBDXA2gRAC0CoEUAtAiAFgHQIgBaBECLAGgRAK1/aAx9VyMfF5kAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
 <p>The appearance of the genotypes can be tweaked in various ways, as
 documented in <code>?plot.ped</code>. Here’s an example:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">marker =</span> m1, <span class="at">showEmpty =</span> T, <span class="at">missing =</span> <span class="st">&quot;?&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6kNtmAABmADpmZjpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///9DYrSiAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEA0lEQVR4nO2cjXKbMBCEZdeu3daJSWuKHd7/PYv4EYqDsHXScVy6O2lGmca3+iQdnMggUyuXke5AqgAgLQBICwDSAoC0ACAtAEgLANICgLS+JIAJauG+PWM7CRDzy3wa3eYQVgvwsdPhaVgrwCcrZQATTgHzdQJMGk27rxIgYrABwCLtAFH+AGAQI8BC4gMI/UdYlEkDAADSPpJeuK0VQORG9n8CRBSemgBkymnizXs9Gxpq9XH/ObE9Mbl8utvURxmsAsBHiH6sEl1lxcV//sNP2HJXyOwVOACE4wNAOj4ApOMDQDr+VwYojTlwxs+koMHtmKH7sgAn1vi5FDK47o3ZXuqiqQWTQGgA1/2vY7OCbSese2XCy3l+BopdkwubM6kTD+LP6rpvTEs7gmXzr2oobsddpIEFuP0422ApU0AFOLhvp/cXO/pVYBwf5kCVtoaoAKfxWzeCoXGcB2gupdvfIjPwCSB0UZkFGOOQJTsDVZNBbQrRlQEgIQdsiNsx6YacASDhKmRzYHMuUq6jOQBo94FMQjUqbQAAaQMASBsAgGxQjLeOIuFeTAcYXIv2CXvwZhrckX3/aQuhu2a8yADOtfj2t57ZVoUMyrGMLlMqajKAc+0Ags8YAgbvL7vm675JEBVgdB0AAmMYMLDFaz9rXpMgKsDo2i+h0BAGDOyn+lnzmgRRAUbXLolNi/G0QbufrgubRV6TIiKA59rNQGWi9gNl/+fB04cmRUQAz7UDCA7hpEGfPnYX5DVJogH4rj1AGQMw7D+bLPKapK7QAHzXYQYCSTBpMPxysxK9JqkrNADfdciBiMvo+ASjGNc+MY1JAF4HthdiKZFLqEalDQAgbQAAaQMASBsAQNoAANIGAJA2AIC0AQCkDQAgbQAAaQPdAOT3PmI8+CK7nrMysIU2Mz/x+fDFXWigGMNyLSOesJNRF7TiiaoIYDqoeoBFvViCqgEIxlzUjCMmAKRjAkA6JgAWiqn+PvBVARTVQuqr0cmwqjY0E3F17cg+B9a2J64/DDnncxXOp04JJ5pEmHAGX0IAkBYApAUAaQFAWgCQFi+Ae3Un0zkhE1poBgAQFBNAYczmdXPujgd5Nds/ygCK9kSUHuDYvlGlCqB7A6MYAA7qllB7oIZ9k6cDOKkDKLUDqJ+BLgdKvQB3VyGFAPY+sH3bXvQCWFX0F9kjxJcDmQ6qeySeGagSXuCNFPYD0gKAtNgA3LlYcwdkZRAXgH2Z/LrfeQ0mMQG4s+HmD4nLICYAdzrf/DF9GcSaxG7g9c1AK7f0FeaA1XXvDlcIHYySQXwA7y99t12DRXwALnEZM7jmBFgig2uUEjPCDDwnAEgLANICgLQAIC0ASAsA0lIP8A/NNNZBHQKIFwAAAABJRU5ErkJggg==" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trio, <span class="at">marker =</span> m1, <span class="at">showEmpty =</span> T, <span class="at">missing =</span> <span class="st">&quot;?&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAAVFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6kNtmAABmADpmZjpmtrZmtv+QOgCQkGaQ2/+2ZgC2tma225C2/7a2///bkDrb////tmb/25D//7b//9v///9DYrSiAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEFklEQVR4nO2ci3KbMBBFZddu3NaJaRuKH///n0U8hOywwlqxXOTZO01GicNeHUkLkgqYW+Yy6AqkSgHQUgC0FAAtBUBLAdBSALQUAC0FQOslAUxAi9btGdNRgLg/l5Ff75DrWgHujQKdsE6ArxUmjVcJEFOpNQKMmxDDKB8Aiuv5ABMfzaeY0bJGgKh8VYD5FemuALNLGGAByQLQH810wNqGkAJMfbQ+gMAhuQNALmSc8+6q5kIKMPXrNQI839TEr+EAY6sv1JKSO3l6PA62qGfP/u46AbitkjB97ed14a25UQDWVPH5+BFHT1tKT/DFFxAKAI6vAOj4CoCOrwDo+C8NUBrzJhl/HtEGl0N69cEAR9H4M4k0OO+N2X7eino6mALCAjjvfx3q8WurYL0rExjMEz1Q7Opc2Jw4tZiKH9B5X1uWtv3K+quqKS6HXbSBBbj8ONlwCV3ABHhz347Xd9v6FdWK0zlQJY0hJsBx+Na2H9mKEwD1qXT7B9ADXwDIU0oYYIjEFbgHqjqHmiRiKx0gKQdskMsh5YKcDpB0FrI5sDkVCefRGQC414F5pLNRtIECoA0UAG0ABCiGc2/Bv5SxAXrPotmhpq9E9ILm+087j3goRosL4DyLb/9uoTUJaVAOs9AyYULKBXCeLQC9QKcMru+7+t9jMV5MgMGzB6BakDKws7+u37xivJgAg2c3hMgGpAzscV2/ecV4MQEGzzaJTYMRYdAsSG+FzSOvyBAPwPNse6AykdPpsvs/veNdkSEegOfZAtANOG7QJZBdRnhFjlgAvmcHUMYB9Au4Oo+8IqcuLADfs+8BKgnGDfo/r8eiV+TUhQXge/Y5EHUaHbYAimHs89KYA+DZbz/ZU4mZpLNRtIECoA0UAG2gAGgDBUAbKADUgHmnY5yHYGjjCpIuYoEN/dOsPkvFXcxILOxyTlJRF7SSCZoPABVzwcYSirmomUTMTAACIZd1EwipAOiQCoAOqQDokHkAZH8he12AbCZz2U+n81/QjEbNakk5EjazRf3jPkp+2yp321lZbmw1wRfYWxTffJWWAqClAGgpAFoKgJYCBOXuGJ7n2d4xLdQDCkBKCKAwZvOxObWP9H6Y7d/MAIrmOeYO4NDcyJ0VQHvjZ9EDvGU3hJqHYO0NxC3AMTuAMneA7HugzYEyX4CHs1CGAPY6sP29/cwXwKpiPz0XI7kcmOflMpOS6YGK/9RQrHQ9gJYCoCUG4N5mEXytRbqkAOwzbOf9zisISQjAvdFl4tUu6RICcO/UmXi5TrpEk9g1fH490MgN/QxzwOq8d890ks9jp0sO4PreVdsVRCQH4BJXMINvkgBLZPBNpxIBaQ88JwVASwHQUgC0FAAtBUBLAdBSALQUAC0FQEsB0FIAtP4D7BXWC2XGYRIAAAAASUVORK5CYII=" style="display: block; margin: auto;" /></p>
 </div>
 <div id="markers-attached-to-ped-objects" class="section level2" number="2.3">
 <h2><span class="header-section-number">2.3</span> Markers attached to
@@ -1020,24 +1029,24 @@ options:</p>
 replaces all existing markers, while <code>addMarkers()</code> appends
 <code>m</code> to the existing ones. In our <code>trio</code> example
 the two are equivalent since there are no existing markers.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>trio <span class="ot">=</span> <span class="fu">setMarkers</span>(trio, <span class="fu">list</span>(m1, m2))</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>trio</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  -/-</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>trio <span class="ot">=</span> <span class="fu">setMarkers</span>(trio, <span class="fu">list</span>(m1, m2))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>trio</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  -/-</span></span></code></pre></div>
 <p>There is a handy shortcut, <code>addMarker()</code> (without the
 ‘s’), allowing you to create and attach a single marker in one go. The
 command <code>addMarker(x, ...)</code> is essentially equivalent to
 <code>setMarkers(x, marker(x, ...))</code>. It is also well adapted to
 piping, as in this example:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nuclearPed</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addMarker</span>(<span class="at">name =</span> <span class="st">&quot;myMarker&quot;</span>, <span class="at">alleles =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setGenotype</span>(<span class="at">marker =</span> <span class="dv">1</span>, <span class="at">id =</span> <span class="dv">3</span>, <span class="at">geno =</span> <span class="st">&quot;a/c&quot;</span>)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  id fid mid sex myMarker</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1   *   *   1      -/-</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   2   *   *   2      -/-</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   3   1   2   1      a/c</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nuclearPed</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addMarker</span>(<span class="at">name =</span> <span class="st">&quot;myMarker&quot;</span>, <span class="at">alleles =</span> <span class="fu">c</span>(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setGenotype</span>(<span class="at">marker =</span> <span class="dv">1</span>, <span class="at">id =</span> <span class="dv">3</span>, <span class="at">geno =</span> <span class="st">&quot;a/c&quot;</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  id fid mid sex myMarker</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   1   *   *   1      -/-</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   2   *   *   2      -/-</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   3   1   2   1      a/c</span></span></code></pre></div>
 <p><strong>Selecting and removing attached markers</strong><br />
 Four closely related functions functions are useful for manipulating
 markers attached to a pedigree:</p>
@@ -1056,13 +1065,13 @@ detail in <code>?marker_select</code>. Let us do a couple of examples
 here. Recall that by now, our <code>trio</code> has two attached
 markers; the first is called “snp1”, and the other is on the X
 chromosome.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">whichMarkers</span>(trio, <span class="at">chrom =</span> <span class="st">&quot;X&quot;</span>)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">selectMarkers</span>(trio, <span class="at">markers =</span> <span class="st">&quot;snp1&quot;</span>)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex snp1</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   *   *   1  A/A</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2  A/B</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">whichMarkers</span>(trio, <span class="at">chrom =</span> <span class="st">&quot;X&quot;</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">selectMarkers</span>(trio, <span class="at">markers =</span> <span class="st">&quot;snp1&quot;</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex snp1</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   *   *   1  A/A</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2  A/B</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-</span></span></code></pre></div>
 </div>
 <div id="accessing-and-modifying-individual-markers" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Accessing and
@@ -1100,36 +1109,36 @@ sound a bit confusing, but a few examples will make it clear!</p>
 the variable <code>m1</code>, while the other is attached to
 <code>trio</code>. In both cases we can extract the allele frequencies
 with the function <code>afreq()</code>.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(m1)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   A   B </span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.5 0.5</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(trio, <span class="at">marker =</span> <span class="st">&quot;snp1&quot;</span>)</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   A   B </span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.5 0.5</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(m1)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   A   B </span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.5 0.5</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(trio, <span class="at">marker =</span> <span class="st">&quot;snp1&quot;</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   A   B </span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.5 0.5</span></span></code></pre></div>
 <p>We can also <em>modify</em> the frequencies using this syntax. To
 avoid confusion about the allele order, the frequencies must be named
 with the allele labels (just as in the output of <code>afreq()</code>
 above).</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(trio, <span class="at">marker =</span> <span class="st">&quot;snp1&quot;</span>) <span class="ot">=</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="fl">0.9</span>, <span class="at">B =</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">afreq</span>(trio, <span class="at">marker =</span> <span class="st">&quot;snp1&quot;</span>) <span class="ot">=</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="fl">0.9</span>, <span class="at">B =</span> <span class="fl">0.1</span>)</span></code></pre></div>
 <p>In addition to the functions getting and setting marker attributes,
 there is one more important marker accessor, namely
 <code>genotype()</code>. This returns the genotype of a specified
 individual, and can also be used to modify genotypes. As the others, it
 can be applied to marker objects directly, or to pedigrees with attached
 markers. Here we show a few examples of the latter type:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Girl is not genotyped</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NA NA</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set genotype</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>) <span class="ot">=</span> <span class="st">&quot;A/A&quot;</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the result</span></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>trio</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  A/A</span></span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Girl is not genotyped</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NA NA</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set genotype</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">genotype</span>(trio, <span class="st">&quot;snpX&quot;</span>, <span class="at">id =</span> <span class="st">&quot;girl&quot;</span>) <span class="ot">=</span> <span class="st">&quot;A/A&quot;</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the result</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>trio</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    id fid mid sex snp1 snpX</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    fa   *   *   1  A/A    A</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    mo   *   *   2  A/B  A/B</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  girl  fa  mo   2  -/-  A/A</span></span></code></pre></div>
 </div>
 <div id="gettingsettingmodifying-many-markers-simultaneously" class="section level2" number="2.5">
 <h2><span class="header-section-number">2.5</span>

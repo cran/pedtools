@@ -1,11 +1,11 @@
 #' Plot pedigrees with genotypes
 #'
 #' This is the main function for pedigree plotting, with many options for
-#' controlling the appearance of pedigree symbols and accompanying labels. It
-#' wraps the plotting functionality in the `kinship2` package.
-#'
-#' This plotting function is in essence an elaborate wrapper for
-#' [kinship2::plot.pedigree()].
+#' controlling the appearance of pedigree symbols and accompanying labels. The
+#' main pedigree layout is calculated with the `kinship2` package, see
+#' [kinship2::align.pedigree] for details. Unlike `kinship2`, the implementation
+#' here also supports plotting singletons. In addition, some minor adjustments
+#' have been made to improve scaling and avoid unneeded duplications.
 #'
 #' @param x A [ped()] object.
 #' @param marker Either a vector of names or indices referring to markers
@@ -23,14 +23,14 @@
 #'   individuals will be labelled. If the vector is named, then the (non-empty)
 #'   names are used instead of the ID label. (See Examples.)
 #'
-#'   * If `labs` is NULL, or has nonempty intersection with `labels(x)`, then no
+#'   * If `labs` is NULL, or has empty intersection with `labels(x)`, then no
 #'   labels are drawn.
 #'
 #'   * If `labs` is the word "num", then all individuals are numerically
 #'   labelled following the internal ordering.
 #'
-#'   * If `labs` is a function, it will be replaced with `labs(x)` and handled
-#'   as above. (See Examples.)
+#'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
+#'   above. (See Examples.)
 #'
 #' @param title The plot title. If NULL (default) or '', no title is added to
 #'   the plot.
@@ -47,49 +47,51 @@
 #'   to indicate unaffected carriers of the disease allele.)
 #' @param hatched A vector of labels identifying members whose plot symbols
 #'   should be hatched.
-#' @param shaded (Deprecated) synonym of `hatched`
 #' @param deceased A vector of labels indicating deceased pedigree members.
 #' @param starred A vector of labels indicating pedigree members that should be
 #'   marked with a star in the pedigree plot.
 #' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param hints A list with alignment hints passed on to
-#'   [kinship2::align.pedigree()]. Rarely necessary, but see Examples.
+#'   [kinship2::align.pedigree()]. Rarely necessary.
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
 #' @param textInside,textAbove Character vectors of text to be printed inside or
 #'   above pedigree symbols.
+#' @param arrows A logical (default = FALSE). If TRUE, the pedigree is plotted
+#'   as a DAG, i.e., with an arrow connecting each parent-child pair.
 #' @param margins A numeric of length 4 indicating the plot margins. For
 #'   singletons only the first element (the 'bottom' margin) is used.
 #' @param keep.par A logical (default = FALSE). If TRUE, the graphical
 #'   parameters are not reset after plotting, which may be useful for adding
 #'   additional annotation.
-#' @param yadj A tiny adjustment sometimes needed to fix the appearance of
-#'   singletons.
-#' @param \dots Arguments passed on to [kinship2::plot.pedigree()]. In
-#'   particular `symbolsize` and `cex` can be useful.
+#' @param \dots Arguments passed to internal methods. In particular `symbolsize`
+#'   and `cex` can be useful.
 #'
 #' @author Magnus Dehli Vigeland
 #' @seealso [kinship2::plot.pedigree()]
 #'
 #' @examples
 #'
-#' x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-#' m = marker(x, fa = "1/1", boy = "1/2", name = "SNP")
+#' x = nuclearPed(father = "fa", mother = "mo", child = "boy") |>
+#'   addMarker(fa = "1/1", boy = "1/2", name = "SNP")
 #'
-#' plot(x, marker = m)
+#' plot(x, marker = 1)
 #'
-#' # Markers attached to `x` may be called by name
-#' x = setMarkers(x, m)
+#' # or call marker by name
 #' plot(x, marker = "SNP")
 #'
+#' # Modify margins
+#' plot(x, margins = 6)
+#' plot(x, margins = c(0,0,6,6)) # b,l,t,r
+#'
 #' # Other options
-#' plot(x, marker = "SNP", hatched = typedMembers(x),
+#' plot(x, marker = 1, hatched = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
 #'
-#' # Filled symbols
-#' plot(x, aff = males(x))
+#' # Medical pedigree
+#' plot(x, aff = males(x), carrier = "mo")
 #'
 #' # Label only some members
 #' plot(x, labs = c("fa", "boy"))
@@ -110,313 +112,73 @@
 #' # ... but can be suppressed
 #' plot(x, fouInb = NULL)
 #'
+#' # Other text above and inside symbols
+#' plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+#'
 #' # Twins
 #' x = nuclearPed(children = c("tw1", "tw2", "tw3"))
 #' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
-#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # DZ
+#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
 #'
 #' # Triplets
 #' plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
 #'                            id2 = c("tw2", "tw3"),
 #'                            code = 2))
 #'
-#' #-----------------------------
-#' # In some cases, the plotting machinery of `kinship2` needs a hint
-#' # (see ?kinship2::align.pedigree)
-#'
-#' # Example with 3/4-siblings
-#' y = nuclearPed(2)
-#' y = addChildren(y, 3, mother = 5, nch = 1)
-#' y = addChildren(y, 4, mother = 5, nch = 1)
-#'
-#' plot(y) # bad
-#'
-#' hints = list(order = 1:7, spouse = rbind(c(3,5,0), c(5,4,0)))
-#' plot(y, hints = hints) # good
-#'
-#' @importFrom graphics points text
-#' @importFrom kinship2 plot.pedigree
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
-                    hatched = NULL, shaded = NULL, deceased = NULL,
-                    starred = NULL, twins = NULL, textInside = NULL, textAbove = NULL,
+                    hatched = NULL, deceased = NULL, starred = NULL, twins = NULL,
+                    textInside = NULL, textAbove = NULL, arrows = FALSE,
                     hints = NULL, fouInb = "autosomal",
-                    margins = c(0.6, 1, 4.1, 1), keep.par = FALSE, ...) {
+                    margins = 1, keep.par = FALSE, ...) {
 
-  if(hasSelfing(x))
-    stop2("Plotting of pedigrees with selfing is not yet supported")
-
-  nInd = pedsize(x)
-
-  # Labels
-  if(is.function(labs))
-    labs = labs(x)
-
-  if(identical(labs, "num"))
-    labs = setNames(labels(x), 1:nInd)
-
-  text = rep("", nInd) # Initialise
-
-  mtch = match(labels(x), labs, nomatch = 0L)
-  showIdx = mtch > 0
-  showLabs = labs[mtch]
-
-  if(!is.null(nms <- names(labs))) { # use names(labs) if present
-    newnames = nms[mtch]
-    goodIdx = newnames != "" & !is.na(newnames)
-    showLabs[goodIdx] = newnames[goodIdx]
+  if(hasSelfing(x) && !arrows) {
+    cat("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message\n")
+    arrows = TRUE
   }
 
-  text[showIdx] = showLabs
+  # Prepare annotations
+  annot = .prepAnnotation(x, marker = marker, sep = sep, missing = missing,
+                          showEmpty = showEmpty, labs = labs, starred = starred,
+                          textInside = textInside, textAbove = textAbove, fouInb = fouInb,
+                          col = col, aff = aff, hatched = hatched, carrier = carrier,
+                          deceased = deceased)
 
-  # Add stars to labels
-  if(is.function(starred))
-    starred = starred(x)
-  starred = internalID(x, starred, errorIfUnknown = FALSE)
-  starred = starred[!is.na(starred)]
-  text[starred] = paste0(text[starred], "*")
-
-  # Marker genotypes
-  if (length(marker) > 0) { # excludes NULL and empty vectors/lists
-    if (is.marker(marker))
-      mlist = list(marker)
-    else if (is.markerList(marker))
-      mlist = marker
-    else if (is.numeric(marker) || is.character(marker) || is.logical(marker))
-      mlist = getMarkers(x, markers = marker)
-    else
-      stop2("Argument `marker` must be either:\n",
-           "  * a n object of class `marker`\n",
-           "  * a list of `marker` objects\n",
-           "  * a character vector (names of attached markers)\n",
-           "  * an integer vector (indices of attached markers)",
-           "  * a logical vector of length `nMarkers(x)`")
-    checkConsistency(x, mlist)
-
-    gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
-    geno = apply(gg, 1, paste, collapse = "\n")
-    if (!showEmpty)
-      geno[rowSums(do.call(cbind, mlist)) == 0] = ""
-
-    text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
-  }
-
-  # Needed for centred title. Without, par() doesn't equal 'margins'...(why??)
-  opar = par(mar = margins)
-  if(!keep.par)
-    on.exit(par(opar))
-
-  # Colours
-  if(is.list(col)) {
-    cols = rep(1, nInd)
-    for(cc in names(col)) {
-      thiscol = col[[cc]]
-      if(is.function(thiscol))
-        idscol = thiscol(x)
-      else
-        idscol = intersect(labels(x), thiscol)
-      cols[internalID(x, idscol)] = cc
-    }
-  }
-  else {
-     cols = rep(col, length = nInd)
-  }
-
-  # Very soft deprecation of `shaded`
-  if(!is.null(shaded)) {
-    message("The argument `shaded` has been renamed to `hatched`; please use this instead.")
-    hatched = shaded
-    shaded = NULL
-  }
-
-  # Affected/hatched individuals
-  if(is.function(aff))
-    aff = aff(x)
-  if(is.function(hatched))
-    hatched = hatched(x)
-  if(!is.null(aff) && !is.null(hatched))
-    stop2("Both `aff` and `hatched` cannot both be used")
-
-  if(!is.null(aff)) {
-    density = -1
-    angle = 90
-  }
-  else if(!is.null(hatched)) {
-    aff = hatched
-    density = 25
-    angle = 45
-  } else {
-    density = angle = NULL
-  }
-
-  # Twin info
+  # Twin data: enforce data frame
   if(is.vector(twins))
     twins = data.frame(id1 = twins[1], id2 = twins[2], code = as.integer(twins[3]))
 
-# Convert to `kinship2` and generate plot object --------------------------
+  # Pedigree alignment calculations
+  plist = .alignPed(x, dag = arrows, hints = hints, twins = twins, ...)
 
+  # Calculate scaling parameters and prepare plot window
+  pdat = plotSetup(plist, textUnder = annot$textUnder, textAbove = annot$textAbove,
+                   hasTitle = !is.null(title), mar = margins, ...)
 
-  pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff,
-                                  twins = twins, hints = hints)
+  if(!keep.par)
+    on.exit(par(pdat$oldpar))
 
-  pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
-                                 density = density, angle = angle, keep.par = keep.par, ...)
+  # Main plot
+  .plotPed(pdat, dag = arrows, aff = annot$aff01, density = annot$density,
+           angle = annot$angle, col = annot$colvec, ...)
 
-
-# Add extra annotations ---------------------------------------------------
-
-  # Expand dots (needed in some commands below)
-  dotArgs.uneval = match.call(expand.dots = FALSE)$`...`
-  dotArgs = lapply(dotArgs.uneval, eval.parent, n = 2L)
-  cex = dotArgs[['cex']]
-  fam = dotArgs[['family']]
-
-  # Add title
-  if (!is.null(title))
-    title(title, cex.main = dotArgs$cex.main %||% cex, col.main = dotArgs$col.main,
-          font.main = dotArgs$font.main, fam = fam, xpd = NA)
-
-  # Add carrier dots
-  if(is.function(carrier))
-    carrier = carrier(x)
-  carrier = internalID(x, carrier, errorIfUnknown = FALSE)
-  points(pdat$x[carrier], pdat$y[carrier] + pdat$boxh/2, pch = 16, cex = cex, col = cols[carrier])
-
-  # Text inside symbols
-  if(!is.null(textInside)) {
-    text(pdat$x, pdat$y + pdat$boxh/2, labels = textInside, cex = cex, col = cols,
-         font = dotArgs[['font']], fam = fam)
-  }
-
-  # Text above pedigree symbols
-  if(!is.null(textAbove)) {
-    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = cols,
-         font = dotArgs[['font']], fam = fam, adj = c(0.5, -0.5), xpd = TRUE)
-  }
-  else if(!is.null(fouInb) && hasInbredFounders(x)) {
-    # Add founder inbreeding coefficients
-    finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
-    finb = finb[finb > 0]
-    idx = internalID(x, names(finb))
-    finb.txt = sprintf("f = %.4g", finb)
-
-    text(pdat$x[idx], pdat$y[idx], labels = finb.txt, cex = cex, font = 3,
-         fam = fam, adj = c(0.5, -0.5), xpd = TRUE)
-  }
+  # Annotate
+  .annotatePed(pdat, title = title, deceased = annot$deceasedTF, carrier = annot$carrierTF,
+                textUnder = annot$textUnder, textInside = annot$textInside,
+                textAbove = annot$textAbove, col = annot$colvec, ...)
 
   invisible(pdat)
 }
 
-#' @rdname plot.ped
-#' @export
-plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
-                          labs = labels(x), title = NULL, col = 1, aff = NULL,
-                          carrier = NULL, hatched = NULL, shaded = NULL,
-                          deceased = NULL, starred = NULL,
-                          textInside = NULL, textAbove = NULL, fouInb = "autosomal",
-                          margins = c(8, 0, 0, 0), yadj = 0, ...) {
-
-  # Tweak labels if necessary. After addParents, internal index is 3!
-  if(is.function(labs))
-    labs = labs(x)
-
-  if(identical(labs, "num"))
-    labs = c(`1` = labels(x))
-
-  if(is.function(aff))
-    aff = aff(x)
-
-  if(is.function(carrier))
-    carrier = carrier(x)
-
-  if(!is.null(shaded)) {
-    hatched = shaded
-    shaded = NULL
-    }
-
-  if(is.function(hatched))
-    hatched = hatched(x)
-
-  if(is.function(starred))
-    starred = starred(x)
-
-  if(!is.null(textInside))
-    textInside = c("", "", textInside)
-
-  if(!is.null(textAbove))
-    textAbove = c("", "", textAbove)
-
-  # Founder inbreeding (this must be extracted before addParents())
-  if(!is.null(fouInb) && hasInbredFounders(x))
-    finb = founderInbreeding(x, chromType = fouInb) #names unneccesary
-  else
-    finb = NULL
-
-  # Markers: Must be attached to `x` before addParents
-  if (length(marker) == 0)
-    mlist = NULL
-  else if (is.marker(marker))
-    mlist = list(marker)
-  else if (is.markerList(marker))
-    mlist = marker
-  else if (is.numeric(marker) || is.character(marker))
-    mlist = getMarkers(x, markers = marker)
-  else
-    stop2("Argument `marker` must be either:\n",
-         "  * an object of class `marker`\n",
-         "  * a list of `marker` objects\n",
-         "  * a character vector (names of attached markers)\n",
-         "  * an integer vector (indices of attached markers)")
-  x = setMarkers(x, mlist)
-
-  # Add parents!
-  y = suppressMessages(addParents(x, labels(x)[1], father = "__FA__", mother = "__MO__",
-                                  verbose = FALSE))
-
-  pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
-               showEmpty = showEmpty, labs = labs,
-               title = title, col = col, aff = aff, carrier = carrier,
-               hatched = hatched, shaded = shaded, deceased = deceased,
-               starred = starred, textInside = textInside, textAbove = textAbove,
-               margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
-
-  usr = par("usr")
-  rect(usr[1] - 0.1, pdat$y[3] - yadj, usr[2] + 0.1, usr[4], border = NA, col = "white")
-
-
-  # Expand dots (needed in some commands below)
-  dotArgs.uneval = match.call(expand.dots = FALSE)$`...`
-  dotArgs = lapply(dotArgs.uneval, eval.parent, n = 2L)
-  cex = dotArgs[['cex']]
-  fam = dotArgs$family
-
-  # Add title
-  if (!is.null(title))
-    title(title, cex.main = dotArgs$cex.main %||% cex, col.main = dotArgs$col.main, line = -2.8,
-          font.main = dotArgs$font.main, family = fam, xpd = NA)
-
-  # Text above pedigree symbols
-  if(!is.null(textAbove)) {
-    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = col,
-         font = dotArgs[['font']], family = fam, adj = c(0.5, -0.5), xpd = TRUE)
-  }
-  else if(!is.null(finb)) {
-    finb.txt = sprintf("f = %.4g", finb)
-    idx = 3 # the "child"
-
-    text(pdat$x[idx], pdat$y[idx], labels = finb.txt, family = fam,
-         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
-  }
-
-  invisible(pdat)
-}
 
 #' @rdname plot.ped
 #' @export
 as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, twins = NULL, hints = NULL) {
     ped = as.data.frame(x)  # not as.matrix()
-    ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
+
+    if(nrow(ped) > 1) # fails (in kinship2::pedigree) for singletons
+      ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
 
     affected = ifelse(ped$id %in% aff, 1, 0) # NULL => affected01 = c(0,0,..)
     status = ifelse(ped$id %in% deceased, 1, 0)
@@ -435,6 +197,7 @@ as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, twins = NULL, hi
 
     kinped
 }
+
 
 #' @rdname plot.ped
 #' @export
@@ -468,7 +231,6 @@ plot.pedList = function(x, ...) {
 #' @param frames A logical indicating if groups should be framed.
 #' @param fmar A single number in the interval \eqn{[0,0.5)} controlling the
 #'   position of the frames.
-#' @param frametitles Deprecated; use `titles` instead.
 #' @param source NULL (default), or the name or index of an element of `plots`.
 #'   If given, marker data is temporarily transferred from this to all the other
 #'   pedigrees. This may save some typing when plotting the same genotypes on
@@ -507,7 +269,7 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = w, groups = list(1, 2:3), titles = 1:2)
 #'
 #' # Parameters added in the main call are used in each sub-plot
-#' plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
+#' plotPedList(peds, widths = w, margins = c(6, 3, 6, 3), labs = leaves,
 #'             hatched = leaves, symbolsize = 1.3, col = list(red = 1))
 #'
 #' dev.off()
@@ -543,9 +305,7 @@ plot.pedList = function(x, ...) {
 #'              symbolsize = 1.2, labs = NULL)
 #'
 #' x3 = singleton("Mr. X")
-#' marg3 = c(10, 0, 0, 0)
-#' plot3 = list(x3, margins = marg3, title = "Plot 3",
-#'              symbolsize = 1, cex = 2)
+#' plot3 = list(x3, title = "Plot 3", cex = 2, carrier = "Mr. X")
 #'
 #' x4 = halfSibPed()
 #' hatched = 4:5
@@ -555,7 +315,8 @@ plot.pedList = function(x, ...) {
 #'              hatched = hatched, col = col)
 #'
 #' plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
-#'             groups = list(1, 2:3, 4), newdev = TRUE)
+#'             fmar = 0.03, groups = list(1, 2:3, 4), newdev = TRUE,
+#'             cex.main = 1.5)
 #'
 #' dev.off()
 #'
@@ -567,7 +328,7 @@ plot.pedList = function(x, ...) {
 #'
 #' plotPedList(list(halfCousinPed(4), cousinPed(7)),
 #'             titles = c("Large", "Very large"),
-#'             dev.height = 8, dev.width = 5)
+#'             dev.height = 8, dev.width = 5, margins = 1.5)
 #'
 #' dev.off()
 #'
@@ -575,15 +336,10 @@ plot.pedList = function(x, ...) {
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot
 #' @export
 plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
-                       frames = TRUE, fmar = NULL, frametitles = NULL,
-                       source = NULL, dev.height = NULL, dev.width = NULL,
+                       frames = TRUE, fmar = NULL, source = NULL,
+                       dev.height = NULL, dev.width = NULL,
                        newdev = !is.null(dev.height) || !is.null(dev.width),
                        verbose = FALSE, ...) {
-
-  if(!is.null(frametitles)) {
-    message("Argument `frametitles` is deprecated; use `titles` instead")
-    titles = frametitles
-  }
 
   if(!(isTRUE(frames) || isFALSE(frames))) {
     message("`frames` must be either TRUE or FALSE; use `groups` to specify framing groups")
@@ -649,20 +405,19 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   finalTitles = grouptitles %||% sapply(flatlist, function(p) p$title %||% "")
   hasTitles = any(nchar(finalTitles) > 0)
 
-  # Relative plot widths
-  if (is.null(widths))
-    widths = vapply(flatlist, function(p) ifelse(is.singleton(p[[1]]), 1, 2.5), 1)
-  else {
-    if(!is.numeric(widths) && !length(widths) %in% c(1,N))
-      stop2("`widths` must be a numeric of length either 1 or the total number of objects")
-    widths = rep_len(widths, N)
-  }
+  # Extract `plist$n` for each (contains width and #gen)
+  nvec = lapply(flatlist, function(arglist) .getPlist(arglist[[1]], ...)$n)
 
-  maxGen = max(vapply(flatlist, function(arglist) generations(arglist[[1]]), 1))
+  # Max number of generations
+  maxGen = max(lengths(nvec))
+
+  # Max width
+  maxWid = vapply(nvec, max, 1)
 
   extra.args = list(...)
 
-  defaultmargins = if (N > 2) c(0, 4, 0, 4) else c(0, 2, 0, 2)
+  # Default left/right margin
+  marLR = if (N > 2) 3 else 2
 
   # Prepare plot args for each ped
   plotlist = lapply(flatlist, function(arglist) {
@@ -678,28 +433,40 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     # Margins
     arglist$margins = arglist$margins %||% {
       g = generations(arglist$x)
-      addMar = 2 * (maxGen - g + 1)
-      defaultmargins + c(addMar, 0, addMar, 0)
+      if(g == 1) # singleton
+        rep(0, 4)
+      else {
+        marTB = 2*(maxGen - g) + 2
+        c(marTB, marLR, marTB, marLR)
+      }
     }
-
     arglist
   })
+
+  # Relative plot widths
+  if (is.null(widths))
+    widths = sqrt(maxWid - 1) + 1
+  else {
+    if(!is.numeric(widths) && !length(widths) %in% c(1,N))
+      stop2("`widths` must be a numeric of length either 1 or the total number of objects")
+    widths = rep_len(widths, N)
+  }
 
   # Layout of plot regions
   if (newdev) {
     dev.height = dev.height %||% {max(3, 1 * maxGen) + 0.3 * as.numeric(hasTitles)}
-    dev.width = dev.width %||% {3 * N}
+    dev.width = dev.width %||% sum(vapply(nvec, max, 1)) + 1
     dev.new(height = dev.height, width = dev.width, noRStudioGD = TRUE)
   }
 
   new.oma = if (hasTitles) c(0, 0, 3, 0) else c(0, 0, 0, 0)
-  opar = par(oma = new.oma, xpd = NA)
+  opar = par(oma = new.oma, xpd = NA, mfrow = c(1,1), mar = c(0,0,0,0)) # include mfrow to ensure layout is reverted on exit
   on.exit(par(opar))
 
   if(verbose) {
     message("Group structure: ", toString(groups))
     message("Relative widths: ", toString(widths))
-    message("Default margins: ", toString(defaultmargins))
+    message("Default margins: ", toString(marLR))
     message("Indiv. margins:")
     for(p in plotlist) message("  ", toString(p$margins))
     message("Input width/height: ", toString(c(dev.width, dev.height)))
@@ -722,8 +489,8 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
   # Draw frames
   if(frames) {
-    # Default margin: 5% of vertical height, but at most 0.25 inches.
-    fmar = fmar %||% min(0.05, 0.25/dev.size()[2])
+    # Default margin: 3% of vertical height, but at most 0.25 inches.
+    fmar = fmar %||% min(0.03, 0.25/dev.size()[2])
 
     margPix = grconvertY(0, from = "ndc", to = "device") * fmar
     margXnorm = grconvertX(margPix, from = "device", to = "ndc")
@@ -743,3 +510,299 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   }
 }
 
+
+#' @rdname plot.ped
+#' @export
+#' @importFrom graphics plot.default
+plot.list = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
+                     labs = unlist(labels(x), use.names = FALSE), col = 1, aff = NULL,
+                     carrier = NULL, hatched = NULL, deceased = NULL, starred = NULL,
+                     textInside = NULL, textAbove = NULL, arrows = FALSE, fouInb = "autosomal",
+                     title = NULL, margins = 1, keep.par = FALSE, ...) {
+
+  if(!is.pedList(x))
+    return(plot.default(x, ...))
+
+  if(hasSelfing(x) && !arrows) {
+    cat("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message\n")
+    arrows = TRUE
+  }
+
+  x1 = x[[1]]
+  x2 = x[[2]]
+
+  # Compute and merge plists
+  p1 = .getPlist(x1, dag = arrows)
+  p2 = .getPlist(x2, dag = arrows)
+
+  r1 = length(p1$n)
+  c1 = max(p1$n)
+  r2 = length(p2$n)
+  c2 = max(p2$n)
+
+  nid = pos = fam = sp = matrix(0, nrow = max(r1, r2), ncol = c1 + c2)
+
+  # n
+  n1 = p1$n
+  n2 = p2$n
+  nid1 = p1$nid
+  nid2 = p2$nid
+  pos1 = p1$pos
+  pos2 = p2$pos
+  fam1 = p1$fam
+  fam2 = p2$fam
+  sp1 = p1$spouse
+  sp2 = p2$spouse
+
+  nInd1 = max(nid1)
+  nInd2 = max(nid2)
+
+  # Merge n
+  n1pad = n2pad = integer(max(r1, r2))
+  n1pad[seq_along(n1)] = n1
+  n2pad[seq_along(n2)] = n2
+  n = n1pad + n2pad
+  n
+
+  # Merge matrices
+  for(i in seq_along(n)) {
+    if(i <= r1) {
+      seq1 = seq_len(n1[i])
+      nid[i, seq1] = nid1[i, seq1]
+      pos[i, seq1] = pos1[i, seq1]
+      if(i>1) fam[i, seq1] = fam1[i, seq1]
+      sp[i, seq1] = sp1[i, seq1]
+    }
+    if(i <= r2) {
+      seq2 = seq_len(n2[i])
+      nid[i, n1pad[i] + seq2] = nid2[i, seq2] + nInd1
+      pos[i, n1pad[i] + seq2] = pos2[i, seq2] + max(pos1) + 1
+      if(i>1) fam[i, n1pad[i] + seq2] = fam2[i, seq2] + n1pad[i-1] * (fam2[i, seq2] > 0)
+      sp[i, n1pad[i] + seq2] = sp2[i, seq2]
+    }
+  }
+
+  # Collect into plist
+  plist = list(n = n, nid = nid, pos = pos, fam = fam, spouse = sp)
+  plist2 = .extendPlist(plist, x)
+
+  # Adjust y positions
+  #idx = match(6:8, plist2$plotord)
+  #plist2$yall[idx] = plist2$yall[idx] + 0.5
+
+  # Merge annotations
+  annot1 = .prepAnnotation(x1, marker = marker, sep = sep, missing = missing,
+                           showEmpty = showEmpty, labs = labs, starred = starred,
+                           textInside = textInside, textAbove = textAbove, fouInb = fouInb,
+                           col = col, aff = aff, hatched = hatched, carrier = carrier,
+                           deceased = deceased)
+  annot2 = .prepAnnotation(x2, marker = marker, sep = sep, missing = missing,
+                           showEmpty = showEmpty, labs = labs, starred = starred,
+                           textInside = textInside, textAbove = textAbove, fouInb = fouInb,
+                           col = col, aff = aff, hatched = hatched, carrier = carrier,
+                           deceased = deceased)
+
+  mrg = function(a, def)
+    c(annot1[[a]] %||% rep(def, nInd1), annot2[[a]] %||% rep(def, nInd2))
+
+  annot = list(textUnder = mrg("textUnder", ""),
+               textAbove = mrg("textAbove", ""),
+               textInside = mrg("textInside", ""),
+               colvec = mrg("colvec", 1),
+               aff01 = mrg("aff01", 0),
+               density = annot1$density,
+               angle = annot1$angle,
+               carrierTF = mrg("carrierTF", FALSE),
+               deceasedTF = mrg("deceasedTF", FALSE))
+
+  # Calculate scaling parameters and prepare plot window
+  pdat = plotSetup(plist2, textUnder = annot$textUnder, textAbove = annot$textAbove,
+                   hasTitle = !is.null(title), mar = margins, ...)
+
+  if(!keep.par)
+    on.exit(par(pdat$oldpar))
+
+  # Main plot
+  .plotPed(pdat, dag = arrows, aff = annot$aff01, density = annot$density,
+           angle = annot$angle, col = annot$colvec, ...)
+
+  # Annotate
+  .annotatePed(pdat, title = title, deceased = annot$deceasedTF, carrier = annot$carrierTF,
+               textUnder = annot$textUnder, textInside = annot$textInside,
+               textAbove = annot$textAbove, col = annot$colvec, ...)
+
+  invisible(pdat)
+}
+
+
+
+
+# Function for preparing various plot annotations
+.prepAnnotation = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
+                           labs = labels(x), col = 1, aff = NULL, carrier = NULL,
+                           hatched = NULL, deceased = NULL, starred = NULL,
+                           textInside = NULL, textAbove = NULL, fouInb = "autosomal") {
+
+  res = list()
+  nInd = pedsize(x)
+
+  # Labels ------------------------------------------------------------------
+
+  if(is.function(labs))
+    labs = labs(x)
+
+  if(identical(labs, "num"))
+    labs = setNames(x$ID, 1:nInd)
+
+  text = .prepLabs(x, labs)
+
+  # Add stars to labels
+  if(is.function(starred))
+    starred = starred(x)
+  starred = internalID(x, starred, errorIfUnknown = FALSE)
+  starred = starred[!is.na(starred)]
+  text[starred] = paste0(text[starred], "*")
+
+  # Marker genotypes
+  if (length(marker) > 0) { # excludes NULL and empty vectors/lists
+    if (is.marker(marker))
+      mlist = list(marker)
+    else if (is.markerList(marker))
+      mlist = marker
+    else if (is.numeric(marker) || is.character(marker) || is.logical(marker))
+      mlist = getMarkers(x, markers = marker)
+    else
+      stop2("Argument `marker` must be either:\n",
+            "  * a n object of class `marker`\n",
+            "  * a list of `marker` objects\n",
+            "  * a character vector (names of attached markers)\n",
+            "  * an integer vector (indices of attached markers)",
+            "  * a logical vector of length `nMarkers(x)`")
+    checkConsistency(x, mlist)
+
+    gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
+    geno = apply(gg, 1, paste, collapse = "\n")
+    if (!showEmpty)
+      geno[rowSums(do.call(cbind, mlist)) == 0] = ""
+
+    text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
+  }
+
+  res$textUnder = trimws(text, "right", whitespace = "[\t\r\n]")
+
+
+  # Text above symbols ------------------------------------------------------
+
+  showFouInb = !is.null(fouInb) && hasInbredFounders(x)
+
+  if(is.function(textAbove))
+    textAbove = textAbove(x)
+  else if(showFouInb) {
+    finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
+    finb = finb[finb > 0]
+    textAbove = sprintf("f = %.4g", finb)
+    names(textAbove) = names(finb)
+  }
+  if(!is.null(textAbove))
+    mode(textAbove) = "character"
+
+  nmsAbove = names(textAbove)
+  if(!is.null(nmsAbove)) {
+    tmp = character(nInd)
+    tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
+    textAbove = tmp
+  }
+
+  res$textAbove = textAbove
+
+  # Text inside symbols ------------------------------------------------------
+
+  if(is.function(textInside))
+    textInside = textInside(x)
+  if(!is.null(textInside))
+    mode(textInside) = "character"
+
+  nmsInside = names(textInside)
+  if(!is.null(nmsInside)) {
+    tmp = character(nInd)
+    tmp[internalID(x, nmsInside, errorIfUnknown = FALSE)] = textInside
+    textInside = tmp
+  }
+
+  res$textInside = textInside
+
+  # Colours -----------------------------------------------------------------
+
+  if(!is.list(col))
+    colvec = rep(col, length = nInd)
+  else { # E.g. list(red = 1:2, blue = 3:4)
+    colvec = rep(1, nInd)
+    for(cc in names(col)) {
+      thiscol = col[[cc]]
+      if(is.function(thiscol))
+        idscol = thiscol(x)
+      else
+        idscol = intersect(x$ID, thiscol)
+      colvec[internalID(x, idscol)] = cc
+    }
+  }
+
+  res$colvec = colvec
+
+  # Affected/hathced --------------------------------------------------------
+
+  if(is.function(aff))
+    aff = aff(x)
+  if(is.function(hatched))
+    hatched = hatched(x)
+  if(!is.null(aff) && !is.null(hatched))
+    stop2("Both `aff` and `hatched` cannot both be used")
+
+  # filling density and angle
+  density = if(!is.null(aff)) -1 else if(!is.null(hatched)) 25 else NULL
+  angle = if(!is.null(aff)) 90 else if(!is.null(hatched)) 45 else NULL
+
+  if(!is.null(hatched))
+    aff = hatched # for kinship2
+
+  res$aff01 = ifelse(x$ID %in% aff, 1, 0)
+  res$density = density
+  res$angle = angle
+
+  # Carriers ----------------------------------------------------------------
+
+  if(is.function(carrier))
+    carrier = carrier(x)
+
+  # Convert to T/F
+  res$carrierTF = x$ID %in% carrier
+
+  # Deceased ----------------------------------------------------------------
+
+  if(is.function(deceased))
+    deceased = deceased(x)
+
+  # Convert to T/F
+  res$deceasedTF = x$ID %in% deceased
+
+  # Return list -------------------------------------------------------------
+  res
+}
+
+# Convert `labs` to full vector with "" for unlabels indivs
+.prepLabs = function(x, labs) {
+  id = rep("", length(x$ID)) # Initialise
+
+  mtch = match(x$ID, labs, nomatch = 0L)
+  showIdx = mtch > 0
+  showLabs = labs[mtch]
+
+  if(!is.null(nms <- names(labs))) { # use names(labs) if present
+    newnames = nms[mtch]
+    goodIdx = newnames != "" & !is.na(newnames)
+    showLabs[goodIdx] = newnames[goodIdx]
+  }
+
+  id[showIdx] = showLabs
+  id
+}

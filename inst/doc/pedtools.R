@@ -26,24 +26,22 @@ trio
 ## -----------------------------------------------------------------------------
 unclass(trio)
 
-## ----eval=FALSE---------------------------------------------------------------
-#  plot(trio)
+## ---- fig.dim = c(2,2)--------------------------------------------------------
+plot(trio)
 
-## ----echo=FALSE, fig.dim = c(2,2)---------------------------------------------
-plot(trio, margins = c(1,1,1,1))
-
-## ----eval=FALSE---------------------------------------------------------------
-#  plot(trio, deceased = "fa", starred = "mo", hatched = "girl",
-#       col = c("green", "red", "blue"), title = "Trio 1")
-
-## ----echo=FALSE, fig.dim = c(2,2)---------------------------------------------
+## ----fig.dim = c(2,2)---------------------------------------------------------
 plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
-     col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,1.5,1))
+     col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,2,1))
 
 ## -----------------------------------------------------------------------------
 trio2 = nuclearPed(nch = 1)
 trio2 = swapSex(trio2, ids = 3)
 trio2 = relabel(trio2, new = c("fa", "mo", "girl"))
+
+## -----------------------------------------------------------------------------
+trio2 = nuclearPed(1) |> 
+  swapSex(3) |> 
+  relabel(new = c("fa", "mo", "girl"))
 
 ## -----------------------------------------------------------------------------
 trio3 = nuclearPed(father = "fa", mother = "mo", children = "girl", sex = 2)
@@ -54,18 +52,18 @@ trio4 = addDaughter(trio4, parent = "fa", id = "girl")
 trio4 = relabel(trio4, old = "NN_1", new = "mo")
 
 ## ----echo=FALSE---------------------------------------------------------------
-x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
-x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
-plot(x1, margin = c(1,1,1,1))
+x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |> 
+  addSon(parents = 4:5)
+plot(x1)
 
 ## -----------------------------------------------------------------------------
-x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
-x1 = addSon(x1, parents = 4:5)
+x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |> 
+  addSon(parents = 4:5)
 
 ## -----------------------------------------------------------------------------
-x2 = halfCousinPed(0, child = T)
-x2 = addSon(x2, parents = 2:3)
-x2 = relabel(x2, old = c(7,6), new = c(6,7))
+x2 = halfCousinPed(0, child = T) |> 
+  addSon(parents = 2:3) |> 
+  relabel(old = c(7,6), new = c(6,7))
 
 ## -----------------------------------------------------------------------------
 identical(x1, x2)
@@ -89,7 +87,7 @@ y = swapSex(y, 4)
 z = mergePed(x, y, by = c("7" = "2"), relabel = TRUE)
 
 ## ----merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7--------------
-plot(z, margins = c(1,1,1,1))
+plot(z)
 
 ## ---- label = "merge-example"-------------------------------------------------
 # Top part
@@ -118,17 +116,11 @@ marker(trio, fa = "A/A", mo = "A/B", afreq = c(A = .2, B = .3, C = .5))
 m2 = marker(trio, fa = "A/A", mo = "A/B", chrom = "X", name = "snpX")
 m2
 
-## ---- eval=FALSE--------------------------------------------------------------
-#  plot(trio, marker = m1)
+## ---- fig.dim=c(2,2)----------------------------------------------------------
+plot(trio, marker = m1)
 
-## ---- echo=FALSE, fig.dim=c(2,2)----------------------------------------------
-plot(trio, marker = m1, margins = c(1,1,1,1))
-
-## ---- eval=FALSE--------------------------------------------------------------
-#  plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
-
-## ---- echo=FALSE, fig.dim=c(2,2)----------------------------------------------
-plot(trio, marker = m1, sep = "", showEmpty = T, missing = "?", margins = c(1,1,1,1))
+## ---- fig.dim=c(2,2)----------------------------------------------------------
+plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
 
 ## -----------------------------------------------------------------------------
 trio = setMarkers(trio, list(m1, m2))
