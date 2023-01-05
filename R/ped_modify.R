@@ -15,9 +15,10 @@
 #' parents can be given in any order. If only one parent is supplied, the other
 #' is created as a new individual.
 #'
-#' In `removeIndividuals()` all descendants of `ids` are also removed. Any
-#' individuals (spouses) left unconnected to the remaining pedigree are also
-#' removed.
+#' `removeIndividuals()` removes the individuals indicated with `ids` along with
+#' all of their ancestors OR descendants, depending on the `remove` argument.
+#' Leftover spouses disconnected to the remaining pedigree are also removed. An
+#' error is raised if result is a disconnected pedigree.
 #'
 #' The `branch()` function extracts the sub-pedigree formed by `id` and all
 #' his/her spouses and descendants.
@@ -32,7 +33,12 @@
 #'   `addChildren` the (optional) `ids` argument is used to specify labels for
 #'   the created children. If given, its length must equal `nch`. If not given,
 #'   labels are assigned automatically as explained in Details.
-#' @param id The ID label of some existing pedigree member.
+#' @param remove Either "ancestors" or "descendants" (default), dictating the
+#'   method of removing pedigree members. Abbreviations are allowed.
+#' @param returnLabs A logical, by default FALSE. If TRUE, `removeIndividuals()`
+#'   returns only the labels of all members to be removed, instead of actually
+#'   removing them.
+#' @param id The ID label of a pedigree member.
 #' @param father,mother Single ID labels. At least one of these must belong to
 #'   an existing pedigree member. The other label may either: 1) belong to an
 #'   existing member, 2) not belong to any existing member, or 3) be missing
@@ -52,12 +58,16 @@
 #'
 #' @examples
 #'
-#' x = nuclearPed(1)
+#' x = nuclearPed(1) |>
+#'   addSon(3) |>
+#'   addParents(4, father = 6, mother = 7) |>
+#'   addChildren(father = 6, mother = 7, nch = 3, sex = c(2,1,2))
 #'
-#' # To see the effect of each command below, use plot(x) in between.
-#' x = addSon(x, 3)
-#' x = addParents(x, id = 4, father = 6, mother = 7)
-#' x = removeIndividuals(x, 4)
+#' # Remove 6 and 7 and their descendants
+#' y1 = removeIndividuals(x, 6:7)
+#'
+#' # Remove 8-10 and their parents
+#' y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 #'
 #' @name ped_modify
 NULL
@@ -303,44 +313,71 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
 
 #' @rdname ped_modify
 #' @export
-removeIndividuals = function(x, ids, verbose = TRUE) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
-  # Remove individuals 'ids' and all their descendants.
-  # Spouse-founders are removed as well.
+removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
+                             returnLabs = FALSE, verbose = TRUE) {
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object")
+
   if(!length(ids))
     return(x)
 
-  ids_int = internalID(x, ids)
-  labs = labels(x)
+  if(anyDuplicated.default(ids))
+    ids = unique.default(ids)
 
-  # Founders without children after 'id' and 'desc' indivs are removed.
-  # The redundancy in 'desc' does not matter.
-  desc = numeric(0)
-  for (id in ids_int) {
-    dd = descendants(x, id, internal = TRUE)
-    desc = c(desc, dd)
+  ids_int = internalID(x, ids, errorIfUnknown = TRUE)
+  labs = x$ID
 
-    if (verbose) {
-      if(length(dd)) {
-        hisher = switch(x$SEX[id] + 1, "its", "his", "her")
-        message("Removing ", labs[id], " and ", hisher, " descendants: ", toString(labs[dd]))
-      }
-      else message("Removing ", labs[id], " (no descendants)")
+  remove = match.arg(remove)
+
+  if(verbose)
+    message(sprintf("Removing individual(s) and their %s: %s", remove, toString(ids)))
+
+  # Descendants OR ancestors.
+  remov = switch(remove,
+                ancestors = ancestors(x, ids_int, inclusive = TRUE, internal = TRUE),
+                descendants = descendants(x, ids_int, inclusive = TRUE, internal = TRUE))
+
+  makeFounderIdx = integer(0)
+
+  if(remove == "descendants") {
+    # Remove founders that are NOT parents of any remaining
+    FOU = founders(x, internal = TRUE)
+    leftovers = .mysetdiff(FOU, c(remov, x$FIDX[-remov], x$MIDX[-remov]))
+
+    if(length(leftovers))
+      remov = unique.default(c(remov, leftovers))
+  }
+  else if(remove == "ancestors") {
+    while(TRUE) {
+      # Remaining parents (idx) - includes zeroes
+      remainFidx = x$FIDX[-remov]
+      remainMidx = x$MIDX[-remov]
+
+      # Remaining individuals for which at least 1 parent is removed
+      makeFounder = remainFidx %in% remov | remainMidx %in% remov
+      makeFounderIdx = seq_along(x$ID)[-remov][makeFounder]
+
+      # Remove spouses who become unattached
+      sp = .mysetdiff(c(remainFidx[makeFounder], remainMidx[makeFounder]), remov)
+      isParent = sp %in% c(remainFidx[!makeFounder], remainMidx[!makeFounder])
+      isChild = !x$FIDX[sp] %in% c(0, remov) & !x$MIDX[sp] %in% c(0, remov)
+      leftovers = sp[!isParent & !isChild]
+
+      if(length(leftovers))
+        remov = unique.default(c(remov, leftovers))
+      else
+        break
     }
   }
+  if(returnLabs)
+    return(labs[.mysortInt(remov)])
 
-  # Keep: parents of remaining indivs (includes harmless zeroes)
-  parents_of_remain = c(x$FIDX[-c(ids_int, desc)], x$MIDX[-c(ids_int, desc)])
-
-  # But remove founders that are NOT among the above
-  FOU = founders(x, internal = TRUE)
-  leftover_spouses = setdiff(FOU, c(ids_int, parents_of_remain))
-
-  if (verbose && length(leftover_spouses))
-    message("Removing leftover spouses: ", toString(labs[leftover_spouses]))
-
-  # These are the ones to be removed (redundancy harmless)
-  remov = c(ids_int, desc, leftover_spouses)
+  if(verbose) {
+    message(sprintf("Total number to be removed: %d. (Remaining: %d)",
+                    length(remov), length(labs) - length(remov)))
+    if(length(makeFounderIdx))
+      message("Converting to founder: ", toString(labs[makeFounderIdx]))
+  }
 
   # The actual reduction. Using the as.matrix trick anticipating marker data a.s.o.
   xmatr = as.matrix(x)
@@ -350,6 +387,9 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
     if(verbose) message("Remaining pedigree is empty!")
     return(NULL)
   }
+
+  if(length(makeFounderIdx))
+    new[match(makeFounderIdx, new[,1]), 2:3] = 0
 
   attrs = attributes(xmatr)
 

@@ -27,7 +27,13 @@ addDaughter(x, parents, id = NULL, verbose = TRUE, parent = NULL)
 
 addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
 
-removeIndividuals(x, ids, verbose = TRUE)
+removeIndividuals(
+  x,
+  ids,
+  remove = c("descendants", "ancestors"),
+  returnLabs = FALSE,
+  verbose = TRUE
+)
 
 branch(x, id)
 
@@ -58,9 +64,16 @@ labels are assigned automatically as explained in Details.}
 \item{parents}{A vector of 1 or 2 ID labels, of which at least one must be an
 existing member of \code{x}.}
 
-\item{id}{The ID label of some existing pedigree member.}
+\item{id}{The ID label of a pedigree member.}
 
 \item{parent}{Deprecated; renamed to \code{parents}.}
+
+\item{remove}{Either "ancestors" or "descendants" (default), dictating the
+method of removing pedigree members. Abbreviations are allowed.}
+
+\item{returnLabs}{A logical, by default FALSE. If TRUE, \code{removeIndividuals()}
+returns only the labels of all members to be removed, instead of actually
+removing them.}
 
 \item{subset}{A character vector (or coercible to such) with ID labels
 forming a connected sub-pedigree.}
@@ -87,9 +100,10 @@ already exists, the numbers are adjusted accordingly.
 parents can be given in any order. If only one parent is supplied, the other
 is created as a new individual.
 
-In \code{removeIndividuals()} all descendants of \code{ids} are also removed. Any
-individuals (spouses) left unconnected to the remaining pedigree are also
-removed.
+\code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
+all of their ancestors OR descendants, depending on the \code{remove} argument.
+Leftover spouses disconnected to the remaining pedigree are also removed. An
+error is raised if result is a disconnected pedigree.
 
 The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
 his/her spouses and descendants.
@@ -101,12 +115,16 @@ may lead to obscure errors.)
 }
 \examples{
 
-x = nuclearPed(1)
+x = nuclearPed(1) |>
+  addSon(3) |>
+  addParents(4, father = 6, mother = 7) |>
+  addChildren(father = 6, mother = 7, nch = 3, sex = c(2,1,2))
 
-# To see the effect of each command below, use plot(x) in between.
-x = addSon(x, 3)
-x = addParents(x, id = 4, father = 6, mother = 7)
-x = removeIndividuals(x, 4)
+# Remove 6 and 7 and their descendants
+y1 = removeIndividuals(x, 6:7)
+
+# Remove 8-10 and their parents
+y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 
 }
 \seealso{

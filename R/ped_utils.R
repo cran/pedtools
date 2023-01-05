@@ -125,7 +125,15 @@ hasUnbrokenLoops = function(x) {
   if(is.pedList(x))
     return(any(vapply(x, hasUnbrokenLoops, logical(1))))
 
-  isTRUE(x$UNBROKEN_LOOPS)
+  unbrokenLoops = x$UNBROKEN_LOOPS
+  if(length(unbrokenLoops) == 1 && is.na(unbrokenLoops)) {
+    # Detect loop by trying to find a peeling order
+    nucs = peelingOrder(x)
+    lastnuc_link = nucs[[length(nucs)]]$link
+    unbrokenLoops = is.null(lastnuc_link)
+  }
+
+  isTRUE(unbrokenLoops)
 }
 
 
@@ -203,6 +211,7 @@ subnucs = function(x) {
     return(list())
 
   n = pedsize(x)
+  labs = labels(x)
   seqn = seq_len(n)
 
   FIDX = x[["FIDX"]]
@@ -211,12 +220,11 @@ subnucs = function(x) {
   # Indices of unique parent couples
   p_pairs_idx = seqn[FIDX + MIDX > 0 & !duplicated.default(FIDX*(n+1) + MIDX)]
 
-  # List all nucs: Format = c(father, mother, children)
-  lapply(rev(p_pairs_idx), function(j) {
-    nuc = list(father = FIDX[j], mother = MIDX[j],
-               children = seqn[FIDX == FIDX[j] & MIDX == MIDX[j]])
+  # List all nucs
+  lapply(rev.default(p_pairs_idx), function(j) {
+    nuc = list(father = FIDX[j], mother = MIDX[j], children = seqn[FIDX == FIDX[j] & MIDX == MIDX[j]])
     class(nuc) = "nucleus"
-    attr(nuc, "labels") = labels(x)
+    attr(nuc, "labels") = labs
     nuc
   })
 }

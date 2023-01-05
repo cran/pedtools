@@ -2,7 +2,9 @@
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.align = "center"
+  fig.align = "center",
+  out.width = "100%",
+  dpi = 300
 )
 library(kableExtra)
 
@@ -10,7 +12,6 @@ library(kableExtra)
 #  install.packages("pedtools")
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  # install.packages("devtools") # install devtools if needed
 #  devtools::install_github("magnusdv/pedtools")
 
 ## ----message=FALSE------------------------------------------------------------
@@ -26,10 +27,10 @@ trio
 ## -----------------------------------------------------------------------------
 unclass(trio)
 
-## ---- fig.dim = c(2,2)--------------------------------------------------------
+## ---- fig.dim = c(2,2), out.width = "40%"-------------------------------------
 plot(trio)
 
-## ----fig.dim = c(2,2)---------------------------------------------------------
+## ----fig.dim = c(2,2), out.width = "40%"--------------------------------------
 plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
      col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,2,1))
 
@@ -47,11 +48,11 @@ trio2 = nuclearPed(1) |>
 trio3 = nuclearPed(father = "fa", mother = "mo", children = "girl", sex = 2)
 
 ## -----------------------------------------------------------------------------
-trio4 = singleton("fa")
-trio4 = addDaughter(trio4, parent = "fa", id = "girl")
-trio4 = relabel(trio4, old = "NN_1", new = "mo")
+trio4 = singleton("fa") |> 
+  addDaughter("fa", id = "girl") |> 
+  relabel(old = "NN_1", new = "mo")
 
-## ----echo=FALSE---------------------------------------------------------------
+## ----echo = FALSE, out.width = "45%", fig.height = 3--------------------------
 x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |> 
   addSon(parents = 4:5)
 plot(x1)
@@ -63,16 +64,9 @@ x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |>
 ## -----------------------------------------------------------------------------
 x2 = halfCousinPed(0, child = T) |> 
   addSon(parents = 2:3) |> 
-  relabel(old = c(7,6), new = c(6,7))
+  relabel()
 
 ## -----------------------------------------------------------------------------
-identical(x1, x2)
-
-## -----------------------------------------------------------------------------
-x2
-
-## -----------------------------------------------------------------------------
-x2 = reorderPed(x2)
 identical(x1, x2)
 
 ## ----merge-example, echo = FALSE, message=FALSE-------------------------------
@@ -86,7 +80,7 @@ y = swapSex(y, 4)
 # Merge
 z = mergePed(x, y, by = c("7" = "2"), relabel = TRUE)
 
-## ----merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7--------------
+## ----merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7, out.width = "50%"----
 plot(z)
 
 ## ---- label = "merge-example"-------------------------------------------------
@@ -116,10 +110,10 @@ marker(trio, fa = "A/A", mo = "A/B", afreq = c(A = .2, B = .3, C = .5))
 m2 = marker(trio, fa = "A/A", mo = "A/B", chrom = "X", name = "snpX")
 m2
 
-## ---- fig.dim=c(2,2)----------------------------------------------------------
+## ---- fig.dim=c(2,2), out.width = "40%"---------------------------------------
 plot(trio, marker = m1)
 
-## ---- fig.dim=c(2,2)----------------------------------------------------------
+## ---- fig.dim=c(2,2), out.width = "40%"---------------------------------------
 plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
 
 ## -----------------------------------------------------------------------------

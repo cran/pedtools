@@ -2,14 +2,25 @@
 #'
 #' Functions for getting or changing the ID labels of pedigree members.
 #'
+#' By default, `relabel(x)` relabels everyone as 1, 2, ..., in the order given
+#' by the plot (top to bottom; left to right).
+#'
+#' Alternatively, `relabel(x, "generations")` labels the members in the top
+#' generation I-1, I-2, ..., in the second generation II-1, II-2, ..., etc.
+#'
 #' @param x A `ped` object or a list of such.
 #' @param new Either a character vector containing new labels, or one of the
-#'   special words "asPlot" or "generations". Default: "asPlot", which produces
-#'   numeric labels following the plot (top to bottom; left to right).
+#'   special words "asPlot" (default) or "generations". See Details and
+#'   Examples.
 #' @param old A vector of ID labels, of the same length as `new`. (Ignored if
 #'   `new` is one of the special words.)
 #' @param reorder A logical. If TRUE, [reorderPed()] is called on `x` after
 #'   relabelling. Default: FALSE.
+#' @param returnLabs A logical. If TRUE, the new labels are returned as a named
+#'   character vector.
+#' @param .alignment A list of alignment details for `x`, used if `new` equals
+#'   "asPlot" or "generations". If not supplied, this is computed internally
+#'   with [.pedAlignment()].
 #'
 #' @return
 #'
@@ -17,10 +28,10 @@
 #' pedigree members. If the input is a list of ped objects, the output is a list
 #' of character vectors.
 #'
-#' * `relabel()` returns `ped` object similar to the input except for the
-#' labels.
+#' * `relabel()` by default returns a `ped` object similar to `x`, but with
+#'   modified labels. If `returnLabs` is TRUE, the new labels are returned as a
+#'   named character vector
 #'
-#' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
 #'
 #' @examples
@@ -36,17 +47,26 @@
 #' z = relabel(y)
 #' stopifnot(identical(x,z))
 #'
-#' @importFrom kinship2 align.pedigree
+#' # Generation labels
+#' relabel(x, "generations")
+#'
 #' @importFrom utils as.roman
 #' @export
-relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE) {
+relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
+                   returnLabs = FALSE, .alignment = NULL) {
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 
   if(identical(new, "asPlot") || identical(new, "generations")) {
+
     if(is.pedList(x))
       stop2("`asPlot` cannot be used with ped lists")
-    p = .alignPed(x)$plist
+
+    # Always reorder in this case
+    reorder = TRUE
+
+    p = .alignment$plist %||% .pedAlignment(x)$plist
+
     oldIdx = unlist(lapply(seq_along(p$n), function(i) p$nid[i, 1:p$n[i]]))
 
     # Remove duplicates
@@ -54,7 +74,13 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE) {
     if(any(dups))
       oldIdx = oldIdx[!dups]
 
-    old = labels(x)[oldIdx]
+    # Check for misalignment
+    if(length(oldIdx) != length(x$ID)) {
+      warning("Alignment error; cannot relabel this pedigree according to plot order")
+      return(x)
+    }
+
+    old = x$ID[oldIdx]
 
     if(identical(new, "generations")) {
       gen = rep(seq_along(p$n), p$n)
@@ -66,10 +92,12 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE) {
       new = paste(as.roman(gen), idx, sep = "-")
     }
     else {
-      new = seq_along(old)
+      new = as.character(seq_along(old))
     }
 
-    reorder = TRUE
+    names(new) = old
+    if(returnLabs)
+      return(new)
   }
 
   if(length(new) != length(old))
@@ -92,7 +120,7 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE) {
     stop2("Input is not a `ped` object or a list of such")
 
   # Build new ID vector
-  id = labels.ped(x)
+  id = x$ID
   old_int = internalID(x, old)
   id[old_int] = new
 
