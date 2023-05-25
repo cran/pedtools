@@ -4,7 +4,15 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(n, f = 2, selfing = FALSE, seed = NULL, g = NULL, founders = NULL)
+randomPed(
+  n,
+  f = 2,
+  maxDirectGap = 1,
+  selfing = FALSE,
+  seed = NULL,
+  g = NULL,
+  founders = NULL
+)
 }
 \arguments{
 \item{n}{A positive integer: the total number of individuals. Must be at
@@ -12,6 +20,11 @@ least 3.}
 
 \item{f}{A positive integer: the number of founders. Must be at least 2
 unless selfing is allowed.}
+
+\item{maxDirectGap}{An integer; the maximum distance between direct
+descendants allowed to mate. For example, the default value of 1 allows
+parent-child mating, but not grandparent-grandchild. Set to \code{Inf} or \code{NULL}
+to remove all restrictions.}
 
 \item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
@@ -32,7 +45,18 @@ matings is performed. The sampling of parents in each mating is set up to
 ensure that the final result is connected.
 }
 \examples{
-randomPed(8, f = 3, seed = 11)
-randomPed(8, f = 3, seed = 11, selfing = TRUE)
+plot(randomPed(7, f = 2, seed = 12))
+
+# Disallow mating between direct discendants
+plot(randomPed(7, f = 2, seed = 12, maxDirectGap = 0))
+
+# No restrictions on mating between direct discendants
+plot(randomPed(7, f = 2, seed = 12, maxDirectGap = Inf))
+
+# Allow selfing
+y = randomPed(5, f = 2, seed = 2, selfing = TRUE)
+hasSelfing(y)
+y
+plot(y, arrows = TRUE)
 
 }

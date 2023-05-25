@@ -12,6 +12,7 @@
 #'   markers, the first 5 are displayed.
 #' @param verbose If TRUE, a message is printed if only the first 5 markers are
 #'   printed. (See above).
+#'
 #' @export
 print.ped = function(x, ..., markers, verbose = TRUE) {
   nm = nMarkers(x)
@@ -39,7 +40,7 @@ print.ped = function(x, ..., markers, verbose = TRUE) {
   if(showmess && verbose)
     message("Only 5 (out of ", nm, ") markers are shown.")
 
-  invisible(datafr)
+  invisible(x)
 }
 
 
@@ -78,7 +79,7 @@ summary.ped = function(object, ...) {
   cat(sprintf("Pedigree with %d members (%d males, %d females, %d unknown).\n",
               pedsize(x), sum(x$SEX == 1), sum(x$SEX == 2), sum(x$SEX == 0)))
   cat(sprintf("%d generations, %d founders, %d leaves.\n",
-              generations(x, maxOnly = TRUE), length(founders(x)), length(leaves(x))))
+              generations(x, "max"), length(founders(x)), length(leaves(x))))
   nm = nMarkers(x)
   na = nAlleles.ped(x)
   if(nm == 0)

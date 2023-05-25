@@ -187,7 +187,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
 allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0, sep = NULL, validate = TRUE) {
 
   if(!is.matrix(alleleMatrix) && !is.data.frame(alleleMatrix))
-    stop2("Argument `alleleMatrix` must be either a matrix or a data.frame")
+    stop2("Argument `alleleMatrix` must be either a matrix or a data frame")
 
   m = as.matrix(alleleMatrix)
 
@@ -207,8 +207,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     m = tmp
   }
-  else {  # If no rownames - dimensions must be correct
-    if(nrow(m) != pedsize(x))
+  else if(nrow(m) != pedsize(x)) {   # If no rownames - dimensions must be correct
     stop2(sprintf("Incompatible input.\n  Pedigree size = %d\n  Allele matrix rows = %d",
                   pedsize(x), nrow(m)))
   }

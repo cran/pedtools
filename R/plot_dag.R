@@ -2,8 +2,9 @@
 .alignDAG = function(x) {
 
   # Generation number of each
-  gvec = generations(x, maxOnly = FALSE)
-  gvec = as.integer(gvec) # remove names
+  # TODO: Change to `what = "indiv"` when this gets a proper implementation
+  gvec = generations(x, what = "depth")
+  gvec = as.integer(unlist(gvec)) # remove names
 
   # Founders: Place with earliest spouse
   fou = founders(x, internal = TRUE)
@@ -36,23 +37,17 @@
 
 .plotDAG = function(alignment, annotation, scaling) {
 
-  aff = annotation$aff01
-  density = annotation$density
-  angle = annotation$angle
-  col = annotation$colvec
-
-  # Colour vector
-  if (length(col) == 1)
-    col = rep(col, n)
-
-  branch = 0.6
-  pconnect = .5
-
   n = alignment$nInd
   sex = alignment$sex
   plotord = alignment$plotord
   xall = alignment$xall
   yall = alignment$yall
+
+  COL = annotation$colvec %||% rep(1, n)
+  FILL = annotation$fillvec %||% rep(NA, n)
+  LTY = annotation$ltyvec %||% rep(1, n)
+  DENS = annotation$densvec %||% rep(0, n)
+  LWD = annotation$lwdvec %||% rep(1, n)
 
   # Set user coordinates
   par(mar = scaling$mar, usr = scaling$usr, xpd = TRUE)
@@ -73,9 +68,12 @@
   for(k in seq_along(plotord)) {
     id = plotord[k]
     poly = POLYS[[sex[id] + 1]]
-    polygon(xall[k] + poly$x * boxw, yall[k] + poly$y * boxh,
-            col = if(aff[id]) col[id] else NA, border = col[id],
-            density = if(aff[id]) density else NULL, angle = angle)
+    dens = if(DENS[id] == 0) NULL else DENS[id]
+    polygon(xall[k] + poly$x * boxw,
+            yall[k] + poly$y * boxh,
+            border = COL[id], col = FILL[id],
+            lty = LTY[id], lwd = LWD[id],
+            angle = 45, density = dens)
   }
 
   # Arrows
@@ -91,8 +89,8 @@
 
 #' @importFrom graphics arrows
 shortArrows = function(x0, y0, x1, y1, sex0, sex1, rx, ry, sex, length = 0.1, ...) {
-  # NB: Points are given for top center of symbol!
-  # Adjusting to mid center
+  # NB: Points are given for top centre of symbol!
+  # Adjusting to mid centre
   y0 = y0 + ry
   y1 = y1 + ry
 

@@ -63,7 +63,19 @@
 #' plot(x, labs = c(FATHER = "fa", "boy"))
 #'
 #' # Colours
-#' plot(x, col = list(red = "fa", blue = "boy"), hatched = "boy")
+#' plot(x, col = c(fa = "red"), fill = c(mo = "green", boy = "blue"))
+#'
+#' # Non-black hatch colours are specified with the `fill` argument
+#' plot(x, hatched = labels, fill = c(boy = "red"))
+#'
+#' # Use functions to specify colours
+#' plot(x, fill = list(red = leaves, blue = ancestors(x, "boy")))
+#'
+#' # Line type and width
+#' plot(x, lty = 2, lwd = 3, cex = 2)
+#'
+#' # Detailed line type and width
+#' plot(x, lty = list(dashed = founders), lwd = c(boy = 4))
 #'
 #' # Include genotypes
 #' x = addMarker(x, fa = "1/1", boy = "1/2", name = "SNP")
@@ -111,6 +123,8 @@
 #' @export
 plot.ped = function(x, draw = TRUE, keep.par = FALSE, ...) {
 
+  if(!(is.logical(draw) && length(draw) == 1))
+    stop2("Illegal plot command.\n\nNote: As of version 2.0.0, plot arguments must be named, e.g. `plot(x, marker = ...)` to include genotypes")
 
   # Alignment parameters
   alignment = .pedAlignment(x, ...)
@@ -281,11 +295,11 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = w, frames = FALSE)
 #'
 #' # Non-default grouping
-#' plotPedList(peds, widths = w, groups = list(1, 2:3), titles = 1:2)
+#' plotPedList(peds, widths = w, groups = list(1, 2:3, 4), titles = 1:3)
 #'
 #' # Parameters added in the main call are used in each sub-plot
-#' plotPedList(peds, widths = w, margins = c(6, 3, 6, 3), labs = leaves,
-#'             hatched = leaves, symbolsize = 1.3, col = list(red = 1))
+#' plotPedList(peds, widths = w, labs = leaves, hatched = leaves,
+#'             col = list(blue = males, red = females), symbolsize = 1.3)
 #'
 #' dev.off()
 #'
@@ -308,27 +322,23 @@ plot.pedList = function(x, ...) {
 #' # For more control of individual plots, each plot and all
 #' # its parameters can be specified in its own list.
 #'
-#' x1 = nuclearPed(nch = 3)
-#' m1 = marker(x1, `3` = "1/2")
-#' marg1 = c(7, 4, 7, 4)
-#' plot1 = list(x1, marker = m1, margins = marg1, title = "Plot 1",
-#'              deceased = 1:2, cex = 1.3)
+#' x1 = nuclearPed(nch = 3) |>
+#'   addMarker(`3` = "1/2")
+#' plot1 = list(x1, title = "Plot 1", marker = 1, deceased = 1:2, cex = 1.3,
+#'              margins = c(7, 4, 7, 4))
 #'
-#' x2 = cousinPed(2)
-#' m2 = marker(x2, `11` = "A/A", `12` = "A/A")
-#' marg2 = c(3, 4, 2, 4)
-#' plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2",
-#'              symbolsize = 1.2, labs = NULL)
+#' x2 = cousinPed(2) |>
+#'   addMarker(`11` = "A/A", `12` = "A/A")
+#' plot2 = list(x2, title = "Family", marker = 1, symbolsize = 1.2, labs = NULL,
+#'              margins = c(3, 4, 2, 4))
 #'
-#' x3 = singleton("Mr. X")
-#' plot3 = list(x3, title = "Plot 3", cex = 2, carrier = "Mr. X")
+#' x3 = singleton("NN")
+#' plot3 = list(x3, cex = 2, carrier = "NN", lty = c(NN = 2))
 #'
 #' x4 = halfSibPed()
-#' hatched = 4:5
-#' col = list(red = founders(x4), blue = leaves(x4))
-#' marg4 = marg1
-#' plot4 = list(x4, margins = marg4, title = "Plot 4", cex = 1.3,
-#'              hatched = hatched, col = col)
+#' plot4 = list(x4, title = "Half sibs", cex = 1.3, hatched = leaves,
+#'              col = list(red = founders), fill = list(blue = leaves),
+#'              margins = c(7, 4, 7, 4))
 #'
 #' plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
 #'             fmar = 0.03, groups = list(1, 2:3, 4), newdev = TRUE,
@@ -343,8 +353,8 @@ plot.pedList = function(x, ...) {
 #' # Important to set device dimensions here
 #'
 #' plotPedList(list(halfCousinPed(4), cousinPed(7)),
-#'             titles = c("Large", "Very large"),
-#'             dev.height = 8, dev.width = 5, margins = 1.5)
+#'             titles = c("Large", "Very large"), widths = c(1, 1.3),
+#'             dev.height = 8, dev.width = 6, margins = 1.5)
 #'
 #' dev.off()
 #'
@@ -363,14 +373,21 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     frames = TRUE
   }
 
+  # Check each entry for explicit plot args
+  hasArgs = function(p) !is.ped(p) && !is.pedList(p)
+
   # If explicit source given, transfer marker data to all
   if(!is.null(source)) {
     srcPed = plots[[source]]
+    if(hasArgs(srcPed))
+      srcPed = srcPed[[1]]
     if(is.null(srcPed))
       stop2("Unknown source pedigree: ", source)
     if(nMarkers(srcPed) == 0)
       stop2("The source pedigree has no attached markers")
-    plots = lapply(plots, transferMarkers, from = srcPed)
+    plots = lapply(plots, function(p)
+      if(hasArgs(p)) {p[[1]] = transferMarkers(from = srcPed, to = p[[1]]); p}
+      else transferMarkers(from = srcPed, to = p))
   }
 
   deduceGroups = is.null(groups)
