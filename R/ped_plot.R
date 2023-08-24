@@ -1,16 +1,16 @@
 #' Plot pedigree
 #'
-#' This is the main function for pedigree plotting, with many options for
-#' controlling the appearance of pedigree symbols and accompanying labels. The
-#' main pedigree layout is calculated with the `kinship2` package, see
+#' This is the main function for plotting pedigrees. Many options are available
+#' for controlling the appearance of pedigree symbols and accompanying labels.
+#' The most important ones are illustrated in the Examples section below; for a
+#' complete overview, see the separate page [internalplot], which also explains
+#' the plotting procedure in more detail.
+#'
+#' The main pedigree layout is calculated with the `kinship2` package, see
 #' [kinship2::align.pedigree] for details. Unlike `kinship2`, the implementation
 #' here also supports singletons, and plotting pedigrees as DAGs. In addition,
 #' some minor adjustments have been made to improve scaling and avoid unneeded
 #' duplications.
-#'
-#' For an overview of all plotting options, see the separate page
-#' [internalplot], which documents the internal plotting procedure in more
-#' detail.
 #'
 #' @param x A [ped()] object.
 #' @param draw A logical, by default TRUE. If FALSE, no plot is produced, only
@@ -47,7 +47,7 @@
 #' # Enlarge symbols only
 #' plot(x, symbolsize = 1.5)
 #'
-#' # Other options
+#' # Various annotations
 #' plot(x, hatched = "boy", starred = "fa", deceased = "mo", title = "Fam 1")
 #'
 #' # Medical pedigree
@@ -61,6 +61,12 @@
 #'
 #' # Rename some individuals
 #' plot(x, labs = c(FATHER = "fa", "boy"))
+#'
+#' # By default, labels are trimmed for initial/trailing line breaks ...
+#' plot(x, labs = c("\nFA" = "fa"))
+#'
+#' # ... but this can be overridden
+#' plot(x, labs = c("\nFA" = "fa"), trimLabs = FALSE)
 #'
 #' # Colours
 #' plot(x, col = c(fa = "red"), fill = c(mo = "green", boy = "blue"))
@@ -139,7 +145,7 @@ plot.ped = function(x, draw = TRUE, keep.par = FALSE, ...) {
   scaling = .pedScaling(alignment = alignment, annotation = annotation, ...)
 
   if(!keep.par)
-    on.exit(par(scaling$oldpar))
+    on.exit(par(scaling$oldpar), add = TRUE)
 
   if(draw) {
     # Symbols and connectors
@@ -175,7 +181,7 @@ drawPed = function(alignment, annotation = NULL, scaling = NULL, keep.par = FALS
     scaling = .pedScaling(alignment, annotation, ...)
 
   if(!keep.par)
-    on.exit(par(scaling$oldpar))
+    on.exit(par(scaling$oldpar), add = TRUE)
 
   # Symbols and connectors
   .drawPed(alignment, annotation, scaling)
@@ -307,7 +313,7 @@ plot.pedList = function(x, ...) {
 #' # Example of automatic grouping #
 #' #################################
 #' H1 = nuclearPed()
-#' H2 = list(singleton(1), singleton(3))  # grouped!
+#' H2 = singletons(id = c(1,3))
 #'
 #' plotPedList(list(H1, H2), dev.height = 3, dev.width = 4,
 #'             titles = c(expression(H[1]), expression(H[2])),
@@ -494,7 +500,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
   new.oma = if (hasTitles) c(0, 0, 3, 0) else c(0, 0, 0, 0)
   opar = par(oma = new.oma, xpd = NA, mfrow = c(1,1), mar = c(0,0,0,0)) # include mfrow to ensure layout is reverted on exit
-  on.exit(par(opar))
+  on.exit(par(opar), add = TRUE)
 
   if(verbose) {
     message("Group structure: ", toString(groups))
@@ -502,7 +508,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     message("Default margins: ", toString(marLR))
     message("Indiv. margins:")
     for(p in plotlist) message("  ", toString(p$margins))
-    message("Input width/height: ", toString(c(dev.width, dev.height)))
+    message("Input width/height: ", toString(c(dev.width %||% NA, dev.height %||% NA)))
     message("Actual dimensions: ", toString(round(dev.size(),3)))
   }
 
@@ -621,11 +627,15 @@ plot.list = function(x, ...) {
   mrg = function(a, def)
     c(annot1[[a]] %||% rep(def, nInd1), annot2[[a]] %||% rep(def, nInd2))
 
-  annot = list(textUnder = mrg("textUnder", ""),
+  annot = list(title = annot1$title,
+               textUnder = mrg("textUnder", ""),
                textAbove = mrg("textAbove", ""),
                textInside = mrg("textInside", ""),
                colvec = mrg("colvec", 1),
-               aff01 = mrg("aff01", 0),
+               densvec = mrg("densvec", 0),
+               fillvec =  mrg("fillvec", NA),
+               ltyvec =  mrg("ltyvec", 1),
+               lwdvec =  mrg("lwdvec", 1),
                density = annot1$density,
                angle = annot1$angle,
                carrierTF = mrg("carrierTF", FALSE),

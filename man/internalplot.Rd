@@ -29,6 +29,7 @@
   missing = "-",
   showEmpty = FALSE,
   labs = labels(x),
+  trimLabs = TRUE,
   col = 1,
   fill = NA,
   lty = 1,
@@ -124,6 +125,9 @@ labelled following the internal ordering.
 above. (See Examples.)
 }}
 
+\item{trimLabs}{A logical, by default TRUE. Removes line breaks and tabs from
+both ends of the labels (after adding genotypes, if \code{marker} is not NULL).}
+
 \item{col}{A vector or list specifying outline colours for the pedigree
 members. See Details for valid formats.}
 
@@ -189,9 +193,9 @@ explicitly. Rarely needed by end users.}
 \item{cex.main, col.main, font.main}{Parameters passed on to \code{\link[=title]{title()}}.}
 }
 \description{
-The main purpose of this page is to document the procedure and options for
-plotting pedigrees. Most of the arguments shown here may be supplied directly
-in \code{plot(x, ...)}, when \code{x} is a pedigree. See \code{\link[=plot.ped]{plot.ped()}} for many
+The main purpose of this page is to document the many options for pedigree
+plotting. Most of the arguments shown here may be supplied directly
+in \code{plot(x, ...)}, where \code{x} is a pedigree. See \code{\link[=plot.ped]{plot.ped()}} for many
 examples.
 }
 \details{

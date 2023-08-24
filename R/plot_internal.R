@@ -26,9 +26,9 @@
 
 #' Internal plot methods
 #'
-#' The main purpose of this page is to document the procedure and options for
-#' plotting pedigrees. Most of the arguments shown here may be supplied directly
-#' in `plot(x, ...)`, when `x` is a pedigree. See [plot.ped()] for many
+#' The main purpose of this page is to document the many options for pedigree
+#' plotting. Most of the arguments shown here may be supplied directly
+#' in `plot(x, ...)`, where `x` is a pedigree. See [plot.ped()] for many
 #' examples.
 #'
 #' The workflow of `plot.ped(x, ...)` is approximately as follows:
@@ -89,6 +89,8 @@
 #'
 #'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
 #'   above. (See Examples.)
+#' @param trimLabs A logical, by default TRUE. Removes line breaks and tabs from
+#'   both ends of the labels (after adding genotypes, if `marker` is not NULL).
 #' @param cex Expansion factor controlling font size. This also affects symbol
 #'   sizes, which by default have the width of 2.5 characters. Default: 1.
 #' @param symbolsize Expansion factor for pedigree symbols. Default: 1.
@@ -249,7 +251,7 @@ NULL
 #' @rdname internalplot
 #' @export
 .pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
-                          labs = labels(x), col = 1, fill = NA, lty = 1, lwd = 1,
+                          labs = labels(x), trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
                           hatched = NULL, hatchDensity = 25, aff = NULL, carrier = NULL,
                           deceased = NULL, starred = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal", ...) {
@@ -300,13 +302,21 @@ NULL
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
-    if (!showEmpty)
-      geno[rowSums(do.call(cbind, mlist)) == 0] = ""
+    if(is.logical(showEmpty) && length(showEmpty) == 1)
+      showEmpty = if(showEmpty) x$ID else NULL
+    hideEmpty = match(x$ID, showEmpty, nomatch = 0L) == 0
+    if (any(hideEmpty)) {
+      isEmpty = rowSums(do.call(cbind, mlist)) == 0
+      geno[isEmpty & hideEmpty] = ""
+    }
 
     textu = if (!any(nzchar(textu))) geno else paste(textu, geno, sep = "\n")
   }
 
-  res$textUnder = trimws(textu, "right", whitespace = "[\t\r\n]")
+  if(trimLabs)
+    textu = trimws(textu, which = "both", whitespace = "[\t\r\n]")
+
+  res$textUnder = textu
 
 
   # Text above symbols ------------------------------------------------------
@@ -321,33 +331,34 @@ NULL
     textAbove = sprintf("f = %.4g", finb)
     names(textAbove) = names(finb)
   }
-  if(!is.null(textAbove))
-    mode(textAbove) = "character"
+  # if(!is.null(textAbove))
+  #   mode(textAbove) = "character"
+  #
+  # nmsAbove = names(textAbove)
+  # if(!is.null(nmsAbove)) {
+  #   tmp = character(nInd)
+  #   tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
+  #   textAbove = tmp
+  # }
 
-  nmsAbove = names(textAbove)
-  if(!is.null(nmsAbove)) {
-    tmp = character(nInd)
-    tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
-    textAbove = tmp
-  }
-
-  res$textAbove = textAbove
+  res$textAbove = .prepLabs2(x, textAbove)
 
   # Text inside symbols ------------------------------------------------------
 
   if(is.function(textInside))
     textInside = textInside(x)
-  if(!is.null(textInside))
-    mode(textInside) = "character"
+  # if(!is.null(textInside))
+  #   mode(textInside) = "character"
+  #
+  # nmsInside = names(textInside)
+  # if(!is.null(nmsInside)) {
+  #   tmp = character(nInd)
+  #   tmp[internalID(x, nmsInside, errorIfUnknown = FALSE)] = textInside
+  #   textInside = tmp
+  # }
 
-  nmsInside = names(textInside)
-  if(!is.null(nmsInside)) {
-    tmp = character(nInd)
-    tmp[internalID(x, nmsInside, errorIfUnknown = FALSE)] = textInside
-    textInside = tmp
-  }
+  res$textInside = .prepLabs2(x, textInside)
 
-  res$textInside = textInside
 
 
   # Affected/hathced --------------------------------------------------------
@@ -431,7 +442,8 @@ NULL
   showIdx = mtch > 0
   showLabs = labs[mtch]
 
-  if(!is.null(nms <- names(labs))) { # use names(labs) if present
+  # Use names(labs) if present
+  if(!is.null(nms <- names(labs))) {
     newnames = nms[mtch]
     goodIdx = newnames != "" & !is.na(newnames)
     showLabs[goodIdx] = newnames[goodIdx]
@@ -439,6 +451,21 @@ NULL
 
   id[showIdx] = showLabs
   id
+}
+
+# Alternative to .prepLabs (used above/inside): If vector has names, match these to x$ID.
+.prepLabs2 = function(x, labs) {
+  mode(labs) = "character"
+
+  if(is.null(names(labs)) && length(labs) == length(x$ID))
+    return(labs)
+
+  ids = names(labs) %||% labs
+  mtch = match(x$ID, ids, nomatch = 0L)
+
+  txt = rep("", length(x$ID)) # Initialise
+  txt[mtch > 0] = labs[mtch]
+  txt
 }
 
 
