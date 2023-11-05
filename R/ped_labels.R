@@ -9,11 +9,15 @@
 #' generation I-1, I-2, ..., in the second generation II-1, II-2, ..., etc.
 #'
 #' @param x A `ped` object or a list of such.
-#' @param new Either a character vector containing new labels, or one of the
-#'   special words "asPlot" (default) or "generations". See Details and
-#'   Examples.
+#' @param new The following values are valid (see Details and Examples):
+#'   * a character vector containing new labels. If named, interpreted as
+#'   `old = new`
+#'   * a function, which should take the old labels as input and output a
+#'   character of the same length
+#'   * one of the special keywords "asPlot" (default) or "generations"
 #' @param old A vector of ID labels, of the same length as `new`. (Ignored if
-#'   `new` is one of the special words.)
+#'   `new` is one of the special words.) If not given, taken from the names of
+#'   `new` if these exist.
 #' @param reorder A logical. If TRUE, [reorderPed()] is called on `x` after
 #'   relabelling. Default: FALSE.
 #' @param returnLabs A logical. If TRUE, the new labels are returned as a named
@@ -29,8 +33,8 @@
 #' of character vectors.
 #'
 #' * `relabel()` by default returns a `ped` object similar to `x`, but with
-#'   modified labels. If `returnLabs` is TRUE, the new labels are returned as a
-#'   named character vector
+#' modified labels. If `returnLabs` is TRUE, the new labels are returned as a
+#' named character vector
 #'
 #' @seealso [ped()]
 #'
@@ -54,6 +58,10 @@
 #' @export
 relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
                    returnLabs = FALSE, .alignment = NULL) {
+
+  # Missing explicit `old`? (Must check before modifying defaults)
+  missingOld = missing(old)
+
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 
@@ -100,6 +108,12 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
       return(new)
   }
 
+  if(missingOld && !is.null(names(new)))
+    old = names(new)
+
+  if(is.function(new))
+    new = new(old)
+
   if(length(new) != length(old))
     stop2("Arguments `new` and `old` must have the same length")
 
@@ -142,7 +156,7 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
 
   # Replace `pedmembers` attribute of each marker
   if(hasMarkers(x))
-    x$MARKERS = lapply(x$MARKERS, `attr<-`, 'pedmembers', id)
+    x$MARKERS[] = lapply(x$MARKERS, `attr<-`, 'pedmembers', id)
 
   if(reorder)
     x = reorderPed(x)
