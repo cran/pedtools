@@ -27,12 +27,21 @@ trio
 ## -----------------------------------------------------------------------------
 unclass(trio)
 
-## ----fig.dim = c(2,2), out.width = "40%"--------------------------------------
+## ----trio1, fig.dim = c(2,2), out.width = "40%"-------------------------------
 plot(trio)
 
-## ----fig.dim = c(2,2), out.width = "40%"--------------------------------------
-plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
-     col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,2,1))
+## ----trio2, fig.dim = c(2,2), out.width = "40%"-------------------------------
+plot(trio, hatched = "fa", hatchDensity = 15, 
+     fill = c(mo = "pink", girl = "lightblue"), 
+     col = c("green", "red", "blue"), 
+     lwd = 3:1, lty = 1:3)
+
+## ----trio3, fig.dim = c(2.5,2), out.width = "45%"-----------------------------
+plot(trio, margin = c(1,3,1,1), 
+     textAnnot = list(
+       topright = list(1:3, cex = 0.8, col = 2, font = 2, offset = 0.1),
+       left     = list(c(girl = "comment"), cex = 1.5, col = 4, offset = 1, srt = 20),
+       inside   = c("?", "?", "!")))
 
 ## -----------------------------------------------------------------------------
 trio2 = nuclearPed(nch = 1)
@@ -50,7 +59,7 @@ trio3 = nuclearPed(father = "fa", mother = "mo", children = "girl", sex = 2)
 ## -----------------------------------------------------------------------------
 trio4 = singleton("fa") |> 
   addDaughter("fa", id = "girl") |> 
-  relabel(old = "NN_1", new = "mo")
+  relabel(old = "1", new = "mo")
 
 ## ----echo = FALSE, out.width = "45%", fig.height = 3--------------------------
 x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |> 
@@ -110,10 +119,10 @@ marker(trio, fa = "A/A", mo = "A/B", afreq = c(A = .2, B = .3, C = .5))
 m2 = marker(trio, fa = "A/A", mo = "A/B", chrom = "X", name = "snpX")
 m2
 
-## ----fig.dim=c(2,2), out.width = "40%"----------------------------------------
+## ----trio-mark1, fig.dim=c(2,2), out.width = "40%"----------------------------
 plot(trio, marker = m1)
 
-## ----fig.dim=c(2,2), out.width = "40%"----------------------------------------
+## ----trio-mark2, fig.dim=c(2,2), out.width = "40%"----------------------------
 plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
 
 ## -----------------------------------------------------------------------------
@@ -123,7 +132,7 @@ trio
 ## -----------------------------------------------------------------------------
 nuclearPed(1) |> 
   addMarker(name = "myMarker", alleles = c("a", "b", "c")) |>
-  setGenotype(marker = 1, id = 3, geno = "a/c")
+  setGenotype(id = 3, geno = "a/c")
 
 ## -----------------------------------------------------------------------------
 whichMarkers(trio, chrom = "X")

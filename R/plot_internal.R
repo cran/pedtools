@@ -50,20 +50,45 @@
 #'
 #' ```
 #'
+#' The `labs` argument control the individual ID labels printed below the
+#' pedigree symbols. By default the output of `labels(x)` is used, but there are
+#' several alternative forms:
+#'
+#'   * If `labs` is a vector with nonempty intersection with `labels(x)`, only
+#' these individuals will be labelled. If the vector is named, then the names
+#' are used instead of the ID label. (See Examples.)
+#'
+#'   * If `labs` is the word "num", then all individuals are numerically
+#' labelled following the internal ordering.
+#'
+#'   * Use `labs = NULL` to remove all labels.
+#'
+#'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
+#' above. (See Examples.)
+#'
+#' The argument `textAnnot` allows customised annotation around and inside each
+#' symbol. This takes a list of lists, whose names may include "topleft",
+#' "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
+#' "inside". Each inner list should contain a character vector as its first
+#' element (with the text to printed), followed by further arguments passed to
+#' [text()]. For example, `textAnnot = list(left = list(c(A = "1"), cex = 2))`
+#' prints a large number "1" to the left of individual A (if such an individual
+#' exists in the pedigree. See Examples.
+#'
 #' The arguments `col`, `fill`, `lty` and `lwd` can all be indicated in a number
 #' of ways:
 #'
-#' * An unnamed vector. This will be recycled and applied to all members. For
+#'   * An unnamed vector. This will be recycled and applied to all members. For
 #' example, `lty = 2` gives everyone a dashed outline.
 #'
-#' * A named vector. Only pedigree members appearing in the names are affected.
+#'   * A named vector. Only pedigree members appearing in the names are affected.
 #' Example: `fill = c("1" = "red", foo = "blue")` fills individual `1` red and
 #' `foo` blue.
 #'
-#' * A list of ID vectors, where the list names indicate the parameter values.
+#'   * A list of ID vectors, where the list names indicate the parameter values.
 #' Example: `col = list(red = 1:2, blue = 3:5)`.
 #'
-#' * List entries may also be functions, taking the pedigree `x` as input and
+#'   * List entries may also be functions, taking the pedigree `x` as input and
 #' producing a vector of ID labels. The many built-in functions in
 #' [ped_subgroups] are particularly handy here, e.g.: `fill = list(red =
 #' founders, blue = leaves)`.
@@ -73,21 +98,12 @@
 #'   [kinship2::align.pedigree()].
 #' @param arrows A logical (default = FALSE). If TRUE, the pedigree is plotted
 #'   as a DAG, i.e., with arrows connecting parent-child pairs.
-#' @param labs A vector or function controlling the individual labels included
-#'   in the plot. Alternative forms:
-#'
-#'   * If `labs` is a vector with nonempty intersection with `labels(x)`, these
-#'   individuals will be labelled. If the vector is named, then the (non-empty)
-#'   names are used instead of the ID label. (See Examples.)
-#'
-#'   * If `labs` is NULL, or has empty intersection with `labels(x)`, then no
-#'   labels are drawn.
-#'
-#'   * If `labs` is the word "num", then all individuals are numerically
-#'   labelled following the internal ordering.
-#'
-#'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
-#'   above. (See Examples.)
+#' @param labs A vector or function controlling the individual labels in the
+#'   plot. By default, `labels(x)` are used. See Details for valid formats.
+#' @param foldLabs A number or function controlling the folding of long labels.
+#'   If a number, line breaks are inserted at roughly this width, trying to
+#'   break at break-friendly characters. If a function, this is applied to each
+#'   label.
 #' @param trimLabs A logical, by default TRUE. Removes line breaks and tabs from
 #'   both ends of the labels (after adding genotypes, if `marker` is not NULL).
 #' @param cex Expansion factor controlling font size. This also affects symbol
@@ -144,7 +160,9 @@
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
 #' @param textInside,textAbove Character vectors of text to be printed inside or
-#'   above pedigree symbols.
+#'   above pedigree symbols. \[Soft deprecated; replaced by `textAnnot`.\]
+#' @param textAnnot A list specifying further text annotation around or inside
+#'   the pedigree symbols. See Details for more information.
 #' @param font,fam Arguments passed on to [text()].
 #' @param colUnder,colInside,colAbove Colour vectors.
 #' @param cex.main,col.main,font.main Parameters passed on to [title()].
@@ -254,9 +272,9 @@ NULL
 #' @rdname internalplot
 #' @export
 .pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
-                          labs = labels(x), trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
+                          labs = labels(x), foldLabs = 12, trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
                           hatched = NULL, hatchDensity = 25, aff = NULL, carrier = NULL,
-                          deceased = NULL, starred = NULL,
+                          deceased = NULL, starred = NULL, textAnnot = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal", ...) {
 
   res = list()
@@ -278,6 +296,12 @@ NULL
     labs = setNames(x$ID, 1:nInd)
 
   textu = .prepLabs(x, labs)
+
+  # Fold
+  if(isCount(foldLabs))
+    textu = vapply(textu, function(s) smartfold(s, width = foldLabs), FUN.VALUE = "")
+  else if(is.function(foldLabs))
+    textu = vapply(textu, foldLabs, FUN.VALUE = "")
 
   # Add stars to labels
   if(is.function(starred))
@@ -320,6 +344,17 @@ NULL
     textu = trimws(textu, which = "both", whitespace = "[\t\r\n]")
 
   res$textUnder = textu
+
+  # Further text annotation
+
+  if(!is.null(textAnnot)) {
+    res$textAnnot = lapply(textAnnot, function(b) {
+      if(is.atomic(b))
+        b = list(as.character(b))
+      b[[1]] = .prepLabs2(x, b[[1]])
+      b
+    })
+  }
 
 
   # Text above symbols ------------------------------------------------------
@@ -546,9 +581,6 @@ NULL
   else
     ht1 = psize[2] - abovetop_in - belowlast_in
 
-  if (ht1 <= 0)
-    stop2("Labels leave no room for the graph, reduce cex")
-
   # Height restriction 2
   ht2 = psize[2]/(maxlev + (maxlev-1)/2)
 
@@ -574,6 +606,9 @@ NULL
                        margins = margins, addSpace = addSpace, xlim = xlim,
                        ylim = ylim, vsep2 = vsep2, autoScale = TRUE, minsize = minsize))
   }
+
+  if (ht1 <= 0)
+    stop2("Labels leave no room for the graph, reduce cex")
 
   # Horizontal scaling factor
   if(is.null(xlim)) {
@@ -752,7 +787,7 @@ NULL
         temp1 = (pos[i, who][who2] + target[who2])/2
         temp2 = (pos[i, who][who2+1] + target[who2])/2
         yy = rep(i, length(who2)) - legh/2
-        text((temp1+temp2)/2, yy, '?')
+        text.default((temp1+temp2)/2, yy, '?')
       }
 
       # Add the horizontal line
@@ -806,7 +841,7 @@ NULL
 
 
 #' @rdname internalplot
-#' @importFrom graphics segments points text
+#' @importFrom graphics segments points text.default
 #' @export
 .annotatePed = function(alignment, annotation, scaling, font = NULL, fam = NULL,
                         col = NULL, colUnder = 1, colInside = 1, colAbove = 1,
@@ -826,6 +861,7 @@ NULL
   deceased = annotation$deceasedTF
   carrier = annotation$carrierTF
   textUnder = annotation$textUnder
+  textAnnot = annotation$textAnnot
   textInside = annotation$textInside
   textAbove = annotation$textAbove
   col = annotation$colvec
@@ -856,12 +892,12 @@ NULL
     col = rep(col, nInd)
 
   # Main labels
-  text(xall, yall + boxh + labh * 0.7, textUnder[plotord], col = colUnder,
+  text.default(xall, yall + boxh + labh * 0.7, textUnder[plotord], col = colUnder,
        cex = cex, adj = c(.5, 1), font = font, family = fam, xpd = NA)
 
   # Text inside symbols
   if(!is.null(textInside)) {
-    text(xall, yall + boxh/2, labels = textInside[plotord], cex = cex, col = colInside,
+    text.default(xall, yall + boxh/2, labels = textInside[plotord], cex = cex, col = colInside,
          font = font, family = fam)
   }
 
@@ -871,12 +907,30 @@ NULL
       fontAbove = 3
     else
       fontAbove = font
-    text(xall, yall, labels = textAbove[plotord], cex = cex, col = colAbove,
+    text.default(xall, yall, labels = textAbove[plotord], cex = cex, col = colAbove,
          family = fam, font = fontAbove, pos = 3, offset = 0.5, xpd = NA)
+  }
+
+  if(!is.null(textAnnot)) {
+    .addTxt(textAnnot[["topleft"]],     xall-boxw/2, yall,        pos = 2, plotord)
+    .addTxt(textAnnot[["top"]],         xall,        yall,        pos = 3, plotord)
+    .addTxt(textAnnot[["topright"]],    xall+boxw/2, yall,        pos = 4, plotord)
+    .addTxt(textAnnot[["left"]],        xall-boxw/2, yall+boxh/2, pos = 2, plotord)
+    .addTxt(textAnnot[["right"]],       xall+boxw/2, yall+boxh/2, pos = 4, plotord)
+    .addTxt(textAnnot[["bottomleft"]],  xall-boxw/2, yall+boxh,   pos = 2, plotord)
+    .addTxt(textAnnot[["bottom"]],      xall,        yall+boxh,   pos = 1, plotord)
+    .addTxt(textAnnot[["bottomright"]], xall+boxw/2, yall+boxh,   pos = 4, plotord)
+    .addTxt(textAnnot[["inside"]],      xall,        yall+boxh/2, pos = NULL, plotord)
   }
 }
 
 
+.addTxt = function(args, x, y, pos, plotord) {
+  if(is.null(args))
+    return()
+  txt = args[[1]][plotord]
+  do.call(text.default, c(list(x=x,y=y,labels=txt,pos=pos), args[-1]))
+}
 
 # Function fixing pedigree alignment of 3/4-siblings and similar
 # Founders with two (or more) spouses on the same level should be placed between

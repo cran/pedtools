@@ -84,99 +84,131 @@ test_that("swapSex() ingores indivs of unknown sex", {
 
 test_that("addChildren works with num labels", {
   # start with male singleton
-  m = singleton(4)
-  expect_equal(addChildren(m, father=4, nch=2),
-               nuclearPed(father=4, mother=5, children=6:7))
-  expect_equal(addChildren(m, father=4, mother=1, nch=2, ids=2:3),
-               nuclearPed(father=4, mother=1, children=2:3))
+  m = singleton(4) |> addChildren(father=4, nch=2)
+  expect_equal(m, nuclearPed(father=4, mother=1, children=2:3))
 
   # start with female singleton
-  f = singleton(4, sex=2)
-
-  f1 = addChildren(f, mother=4, nch=2)
-  expect_equal(reorderPed(f1, c(2,1,3,4)),
-               nuclearPed(mother=4, father=5, children=6:7))
-
-  f2 = addChildren(f, mother=4, father=1, nch=2, ids=2:3)
-  expect_equal(reorderPed(f2, c(2,1,3,4)),
-               nuclearPed(mother=4, father=1, children=2:3))
+  f = singleton(4, sex=2) |> addChildren(mother=4, nch=2) |> reorderPed(c(2,1,3,4))
+  expect_equal(f, nuclearPed(mother=4, father=1, children=2:3))
 
   # inbreeding example
-  x = nuclearPed(1, sex=2)
-  y = addChildren(x, father=1, mother=3, nch=2, sex=2)
-  expect_equal(spouses(y, 1), c("2", "3"))
-  expect_equal(children(y, 1), c("3","4","5"))
-  expect_equal(getSex(y, 4:5), c(2,2))
+  x = nuclearPed(1) |> addSon(2:3) |> addDaughter(2:3) |> addSon(2)
+  expect_equal(spouses(x, 2), c("1", "3", "6"))
+  expect_equal(children(x, 2), c("3","4","5","7"))
+  expect_equal(getSex(x, leaves(x)), c(1,2,1))
 })
 
 test_that("addChildren works with char labels", {
-  m = singleton("fa")
-  expect_equal(addChildren(m, father="fa", nch=2),
-               nuclearPed(father="fa", mother="NN_1", children=c("NN_2","NN_3")))
-  expect_equal(addChildren(m, father="fa", mother="mo", nch=2, ids=c("b1", "b2")),
-               nuclearPed(father="fa", mother="mo", children=c("b1", "b2")))
+  m = singleton("fa") |> addChildren(father="fa", nch=2)
+  expect_equal(m, nuclearPed(father="fa", mother="1", children=2:3))
 
   # start with female singleton
-  f = singleton("mo", sex=2)
-
-  f1 = addChildren(f, mother="mo", nch=2)
-  expect_equal(reorderPed(f1, c(2,1,3,4)),
-               nuclearPed(father="NN_1", mother="mo", children=c("NN_2","NN_3")))
-
-  f2 = addChildren(f, mother="mo", father="fa", nch=2, ids=c("b1", "b2"))
-  expect_equal(reorderPed(f2, c(2,1,3,4)),
-               nuclearPed(father="fa", mother="mo", children=c("b1", "b2")))
-
-  # inbreeding example
-  x = nuclearPed(father="fa", mother="mo", children="da", sex=2)
-  y = addChildren(x, father="fa", mother="da", nch=2, ids=c("g1", "g2"), sex=2)
-  expect_equal(spouses(y, "fa"), c("mo", "da"))
-  expect_equal(children(y, "fa"), c("da","g1","g2"))
-  expect_equal(getSex(y, c("g1", "g2")), c(2,2))
+  f = singleton("mo", sex=2) |> addChildren(mother="mo", nch=2) |> reorderPed(c(2,1,3,4))
+  expect_equal(f, nuclearPed(father="1", mother="mo", children=2:3))
 })
-
 
 test_that("addChildren with nch=2 gives same result as twice with nch=1", {
   x = singleton(1)
-  expect_equal(addChildren(addChildren(x, fa=1, mo=2), fa=1, mo=2),
+  expect_equal(x |> addSon(1:2) |> addSon(1:2),
                addChildren(x, fa=1, mo=2, nch=2))
+
+  expect_equal(x |> addSon(1:2, id = "B") |> addSon(1:2, id = "A"),
+               addChildren(x, fa=1, mo=2, nch=2, ids = c("B", "A")))
 })
 
 test_that("adding and removing child restores original", {
   x = nuclearPed(1)
-  y = addChildren(x, father=3, verbose=F)
-  z = removeIndividuals(y, 5, verbose=F)
-  expect_identical(x, z)
+  y = x |> addSon(3, id = 5, verbose = F) |> removeIndividuals(5, verbose=F)
+  expect_identical(x, y)
 
   x1 = fullSibMating(1)
-  y1 = addChildren(x1, father=3, ids="99", verbose=F)
-  z1 = removeIndividuals(y1, "99", verbose=F)
-  expect_identical(x1, z1)
+  y1 = x1 |> addDaughter(3, id = "99", verbose=F) |> removeIndividuals("99", verbose=F)
+  expect_identical(x1, y1)
 
   x2 = relabel(nuclearPed(1), c("F", "M", "C"))
-  y2 = addChildren(x2, father="C", ids="baby", verbose=F)
-  z2 = removeIndividuals(y2, "baby", verbose=F)
-  expect_identical(x2, z2)
+  y2 = x2 |> addSon("C", id="baby", verbose=F) |> removeIndividuals("baby", verbose=F)
+  expect_identical(x2, y2)
 
+  # With marker
+  xx = nuclearPed(1) |> addMarker('3' = "1/2")
+  yy = xx |> addDaughter(3, id = 5, verbose=F) |> removeIndividuals(5, verbose=F)
+  expect_equal(xx, yy)
+
+})
+
+test_that("addSon(), addDaughter(), addChild() creates children with correct sex", {
+  x = singleton(1)
+  expect_identical(x |> addSon(1, id = "A") |> getSex("A"), 1L)
+  expect_identical(x |> addDaughter(1:2, id = 3) |> getSex(3), 2L)
+  expect_identical(x |> addChild(c(1,"Mo"), id = "Ch", sex = 0) |> getSex("Ch"), 0L)
 })
 
 test_that("addSon() works with unordered parents", {
   x = nuclearPed(1)
   expect_identical(addSon(x, 1:2), addSon(x, 2:1))
   expect_identical(addSon(x, 3:4), addSon(x, 4:3))
+
+  expect_identical(addDaughter(x, 1:2), addDaughter(x, 2:1))
+  expect_identical(addDaughter(x, 3:4), addDaughter(x, 4:3))
 })
 
-test_that("addSon() cathces errors", {
+test_that("addChildren() catches errors", {
   x = nuclearPed(1)
+  expect_error(addChildren(x), "At least one parent must be an existing pedigree member")
+  expect_error(addChildren(x, fa = 4), "At least one parent must be an existing pedigree member")
+  expect_error(addChildren(x, mo = 4), "At least one parent must be an existing pedigree member")
+
+  expect_error(addChildren(x, fa = 1:2), "More than one father indicated")
+  expect_error(addChildren(x, mo = 1:2), "More than one mother indicated")
+
+  expect_error(addChildren(x, 1, 2, nch = 0), "Argument `nch` must be a positive integer")
+  expect_error(addChildren(x, 1, 2, nch = "a"), "Argument `nch` must be a positive integer")
+  expect_error(addChildren(x, 1, 2, nch = 1:2), "Argument `nch` must be a positive integer")
+  expect_error(addChildren(x, 1, 2, nch = list(1)), "Argument `nch` must be a positive integer")
+
+  expect_error(addChildren(x, 1, 2, id = 3), "Individual already exist")
+  expect_error(addChildren(x, 1, 2, id = 1:2), "Individual already exist")
+
+  expect_error(addChildren(x, 1, 2, nch = 2, id = 1), "Length of `ids` must equal the number of children")
+  expect_error(addChildren(x, 1, 2, nch = 1, id = 4:5), "Length of `ids` must equal the number of children")
+
+  expect_error(addChildren(x, 1, 2, sex = -1), "Illegal value of `sex`")
+  expect_error(addChildren(x, 1, 2, sex = NA), "Illegal value of `sex`")
+
+  expect_error(addChildren(x, 1, 2, nch = 2, ids = c(4,4)), "Duplicated ID label")
+})
+
+test_that("addSon() and addDaughter() catches errors", {
+  x = nuclearPed(1)
+  expect_error(addSon(x, c(1,1)), "Duplicated parent")
   expect_error(addSon(x, c(1,3)), "Assigned mother is male")
   expect_error(addSon(x, 4:5), "At least one parent must be an existing pedigree member")
+
+  expect_error(addDaughter(x, c(1,1)), "Duplicated parent")
+  expect_error(addDaughter(x, c(1,3)), "Assigned mother is male")
+  expect_error(addDaughter(x, 4:5), "At least one parent must be an existing pedigree member")
 })
 
-test_that("adding and removing child restores original - with markers", {
-  x = nuclearPed(1) |> addMarker('3' = "1/2")
-  y = addChildren(x, father=3, verbose=F)
-  z = removeIndividuals(y, 5, verbose=F)
-  expect_equal(x, z)
+test_that("adding children across components", {
+  x1 = singletons(1:3, sex = c(1,2,1)) |> addSon(1:2)
+  x2 = list(nuclearPed(ch=4), singleton(3))
+  expect_identical(x1, x2)
+
+  y1 = singletons(c("a", "b", "d"), sex = c(1,2,2)) |>
+    addSon(c("a", "b"), id = "c") |> addChildren("c", "d", id = "e", sex = 2)
+  y2 = linearPed(2, sex = 1:2) |> relabel(letters[1:5])
+  expect_identical(y1, y2)
+})
+
+test_that("modifaction chains give identical result", {
+  x = singleton(3) |> addSon(3, id = "aa") |> addMarker(aa="1/1") |>
+    addChild(c("aa", "bb"), id = "cc", sex = 0) |> setAlleleLabels(1, "A") |>
+    relabel(c(cc = "c", bb = "b", aa = "a")) # |> plot(mark = 1)
+
+  y = linearPed(2) |> setSex(5, sex = 0) |> addMarker(`3` = "A/-") |>
+    relabel(c(3,1,"a","b","c")) |> setAlleles(ids = "a", marker = 1, alleles = "A")
+
+  expect_identical(x,y)
 })
 
 test_that("adding and removing parents restores original - with markers", {
@@ -186,24 +218,19 @@ test_that("adding and removing parents restores original - with markers", {
   expect_equal(x, z)
 })
 
-test_that("addParents() to nonfounder gives error", {
+test_that("addParents() catches errors", {
   x = nuclearPed(1)
-  expect_error(addParents(x,3), "Individual 3 already has parents in the pedigree")
+  expect_error(addParents(x,3),
+               "Individual '3' already has parents in the pedigree")
 
-  y = relabel(x, letters[1:3])
-  expect_error(addParents(y,'c'), "Individual c already has parents in the pedigree")
-})
+  expect_error(x |> relabel(c("3" = "fa")) |> addParents("fa"),
+               "Individual 'fa' already has parents in the pedigree")
 
-test_that("addParents() to multiple indivs gives error", {
-  x = nuclearPed(1)
-  expect_error(addParents(x, 1:2),
-               "Parents cannot be added to multiple individuals at once: 1, 2")
-})
+  expect_error(addParents(x, 1:2), "Cannot add parents to multiple individuals")
 
-test_that("addParents() gives error if parent is impossible", {
-  x = nuclearPed(1)
   expect_error(addParents(x, 1, father=3), "Assigned father is a descendant")
   expect_error(addParents(x, 1, mother=3), "Assigned mother is a descendant")
+
   y = addSon(x, 3, verbose=F)
   expect_error(addParents(y, 4, father=2), "Assigned father is female")
   expect_error(addParents(y, 4, mother=1), "Assigned mother is male")
@@ -211,13 +238,13 @@ test_that("addParents() gives error if parent is impossible", {
 
 test_that("addParents() gives message about new parents", {
   x = addSon(nuclearPed(1), 3, verbose=F)
-  expect_message(addParents(x, 4, father=1), "Mother: Creating new individual with ID = 6")
-  expect_message(addParents(x, 4, father=1, mother=123), "Mother: Creating new individual with ID = 123")
-  expect_message(addParents(x, 4, father="1", mother="123"), "Mother: Creating new individual with ID = 123")
+  expect_message(addParents(x, 4, father=1), "Creating new mother: 6")
+  expect_message(addParents(x, 4, father=1, mother=123), "Creating new mother: 123")
+  expect_message(addParents(x, 4, father="1", mother="123"), "Creating new mother: 123")
 
-  expect_message(addParents(x, 4, mother=2), "Father: Creating new individual with ID = 6")
-  expect_message(addParents(x, 4, father=123, mother=2), "Father: Creating new individual with ID = 123")
-  expect_message(addParents(x, 4, father="123", mother="2"), "Father: Creating new individual with ID = 123")
+  expect_message(addParents(x, 4, mother=2), "Creating new father: 6")
+  expect_message(addParents(x, 4, father=123, mother=2), "Creating new father: 123")
+  expect_message(addParents(x, 4, father="123", mother="2"), "Creating new father: 123")
 })
 
 test_that("addParents() creates parents with correct labels", {
@@ -228,13 +255,8 @@ test_that("addParents() creates parents with correct labels", {
 
   y = nuclearPed(fa="fa", mo="mo", nch=1)
   y1 = addParents(y, "fa", verbose=F)
-  y2 = addParents(y, "fa", father="NN_1", mother="NN_2", verbose=F)
+  y2 = addParents(y, "fa", father="1", mother="2", verbose=F)
   expect_identical(y1, y2)
-
-  z = nuclearPed(fa="NN1", mo="NN2", nch=1)
-  z1 = addParents(z, "NN1", verbose=F)
-  z2 = addParents(z, "NN1", father="NN_3", mother="NN_4", verbose=F)
-  expect_identical(z1, z2)
 })
 
 

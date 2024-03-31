@@ -1,3 +1,37 @@
+# pedtools 2.6.0
+
+This is a large release with several new features, including a few (relatively minor) breaking changes.
+
+## Breaking changes
+
+* In pedigree plots, long labels are now automatically folded to an approximate width of 12 characters by default. Use the new argument `foldLabs` to adjust the folding width, or to switch off folding (`foldLabs = FALSE`).
+
+* When adding children or parents to a pedigree, the default labelling of new individuals has been simplified. The new labels are now always the smallest integers not already in use. (Previous versions used "NN_1", "NN_2", etc for pedigrees with non-numeric labels.)
+
+* `labels(x)` now always returns a character vector, also when `x` is a list of pedigrees. Use `labels(x, unlist = FALSE)` to retain the old behaviour.
+
+## New features
+
+* `addChildren(x, ...)`, and its companions `addSon()` and `addDaughter()`, now works across components of `x`, when `x` is a list of pedigrees. For instance, this now works as expected: `singletons(1:2, sex = 1:2) |> addSon(1:2)`.
+
+* New function `addChild()` is similar to `addSon()` and `addDaughter()`, but allows the sex to be set programmatically, also to `sex = 0`.
+
+* `plot.ped()` gains argument `textAnnot` allowing highly customisable text annotations around and inside pedigree symbols.
+
+* `ancestors()`, `descendants()`, `commonAncestors()` and `commonDescendants()` gain a new argument `maxGen` limiting the analysis to the given number of generations.
+
+* `transferMarkers()` gains the argument `checkAttrs` for checking consistency of marker attributes across pedigree components.
+
+* New function `.setSNPfreqs()` for modifying allele frequencies when all markers are biallelic. (Experimental; not yet exported.)
+
+
+## Bug fixes
+
+* `addSon()` and `addDaughter()` now fail more gracefully if a parent ID is duplicated.
+
+* Fixed regression error in `selectMarkers()`.
+
+
 # pedtools 2.5.0
 
 ## New features
@@ -205,7 +239,7 @@ The main theme of this version is to make `pedtools` more adapted to piping, e.g
 
 * `readPed()` gains the argument `colSep`, which fixes the previous inability to handle names with spaces.
 
-* New function `descentPaths()`, mostly intended for use in other ped suite packages.
+* New function `descentPaths()`, mostly intended for use in other pedsuite packages.
 
 * `relabel(x, new = "generations")` now gives automatic, generation-aware labelling: I-1, I-2, II-1, ...
 
@@ -224,7 +258,7 @@ The main theme of this version is to make `pedtools` more adapted to piping, e.g
 
 * `father()` and `mother()` now accepts ped lists as input.
 
-* Added info and links to **ped suite** in README.
+* Added info and links to **pedsuite** in README.
 
 ## Bug fixes
 
