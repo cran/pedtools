@@ -24,6 +24,7 @@
 #' replaced by other single-character letters or numbers, e.g., "snp-12" gives
 #' alleles 1 and 2.
 #'
+#' @inheritParams as.ped.data.frame
 #' @param pedfile A file name
 #' @param colSep A column separator character, passed on as the `sep` argument
 #'   of [read.table()]. The default is to separate on white space, that is, one
@@ -69,25 +70,31 @@
 #' ### Two trios in the same file
 #' trio2 = cbind(famid = rep(c("trio1", "trio2"), each = 3), rbind(trio, trio))
 #'
-#' # Without column names
-#' write.table(trio2, file = tf, row.names = FALSE)
+#' # With column names
+#' write.table(trio2, file = tf, col.names = TRUE, row.names = FALSE)
 #' readPed(tf)
 #'
-#' # With column names
+#' # Without column names
 #' write.table(trio2, file = tf, col.names = FALSE, row.names = FALSE)
-#' readPed(tf, famid = 1, id = 2, fid = 3, mid = 4, sex = 5)
+#' readPed(tf)
+#'
+#' ### With non-standard `sex` codes
+#' trio3 = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2),
+#'                    sex = c("male","female","?"))
+#' write.table(trio3, file = tf, row.names = FALSE)
+#' readPed(tf, sexCodes = list(male = "male", female = "female", unknown = "?"))
 #'
 #' # Cleanup
 #' unlink(tf)
 #'
-#' @inheritParams as.ped.data.frame
 #' @importFrom utils read.table
 #' @export
 readPed = function(pedfile, colSep = "", header = NA,
                    famid_col = NA, id_col = NA, fid_col = NA,
                    mid_col = NA, sex_col = NA, marker_col = NA,
                    locusAttributes = NULL, missing = 0,
-                   sep = NULL, colSkip = NULL, validate = TRUE, ...) {
+                   sep = NULL, colSkip = NULL, sexCodes = NULL,
+                   addMissingFounders = FALSE, validate = TRUE, ...) {
 
   # If header = NA, check first line
   if(is.na(header)) {
@@ -107,27 +114,30 @@ readPed = function(pedfile, colSep = "", header = NA,
       ped.df = ped.df[, -colSkip[colSkip > 0], drop = FALSE]
   }
 
+  nc = ncol(ped.df)
+
+  # TODO: Clean this up and make smarter
   # guess columns if no header info
   if(!header && isTRUE(all(is.na(c(famid_col, id_col, fid_col, mid_col, sex_col, marker_col))))) {
-    hasFamid = anyDuplicated(ped.df[,1]) || (ncol(ped.df) >=5 && isTRUE(all(0 == ped.df[,3:4])))
+    hasFamid = anyDuplicated(ped.df[,1]) || (nc >=4 && isTRUE(all(0 == ped.df[,3:4])))
     if(hasFamid) {
       famid_col = 1
       id_col = 2
       fid_col = 3
       mid_col = 4
-      sex_col = 5
+      sex_col = if(nc > 4) 5 else NA
     }
     else {
       id_col = 1
       fid_col = 2
       mid_col = 3
-      sex_col = 4
+      sex_col = if(nc > 3) 4 else NA
     }
   }
 
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
          locusAttributes = locusAttributes, missing = missing,
-         sep = sep, validate = validate)
-
+         sep = sep, sexCodes = sexCodes, addMissingFounders = addMissingFounders,
+         validate = validate)
 }

@@ -18,6 +18,8 @@ readPed(
   missing = 0,
   sep = NULL,
   colSkip = NULL,
+  sexCodes = NULL,
+  addMissingFounders = FALSE,
   validate = TRUE,
   ...
 )
@@ -52,9 +54,9 @@ If this is not found, genders of parents are deduced from the data, leaving
 the remaining as unknown.}
 
 \item{marker_col}{Index vector indicating columns with marker alleles. If NA,
-all columns to the right of all pedigree columns are used. If \code{sep}
-(see below) is non-NULL, each column is interpreted as a genotype column
-and split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}.}
+all columns to the right of all pedigree columns are used. If \code{sep} (see
+below) is non-NULL, each column is interpreted as a genotype column and
+split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}.}
 
 \item{locusAttributes}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
@@ -66,7 +68,16 @@ and split into separate alleles with \code{strsplit(..., split = sep, fixed = TR
 names. If given, these columns are removed directly after \code{read.table()},
 before any other processing.}
 
-\item{validate}{A logical indicating if the pedigree structure should be validated.}
+\item{sexCodes}{A list with optional entries "male", "female" and "unknown",
+indicating how non-default entries in the \code{sex} column should be
+interpreted. Default values: male = 1, female = 2, unknown = 0.}
+
+\item{addMissingFounders}{A logical. If TRUE, any parent not included in the
+\code{id} column is added as a founder of corresponding sex. By default, missing
+founders result in an error.}
+
+\item{validate}{A logical indicating if the pedigree structure should be
+validated.}
 
 \item{...}{Further parameters passed on to \code{\link[=read.table]{read.table()}}, e.g.
 \code{comment.char} and \code{quote}.}
@@ -125,13 +136,19 @@ readPed(tf)
 ### Two trios in the same file
 trio2 = cbind(famid = rep(c("trio1", "trio2"), each = 3), rbind(trio, trio))
 
-# Without column names
-write.table(trio2, file = tf, row.names = FALSE)
+# With column names
+write.table(trio2, file = tf, col.names = TRUE, row.names = FALSE)
 readPed(tf)
 
-# With column names
+# Without column names
 write.table(trio2, file = tf, col.names = FALSE, row.names = FALSE)
-readPed(tf, famid = 1, id = 2, fid = 3, mid = 4, sex = 5)
+readPed(tf)
+
+### With non-standard `sex` codes
+trio3 = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2),
+                   sex = c("male","female","?"))
+write.table(trio3, file = tf, row.names = FALSE)
+readPed(tf, sexCodes = list(male = "male", female = "female", unknown = "?"))
 
 # Cleanup
 unlink(tf)
