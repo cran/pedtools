@@ -33,21 +33,14 @@
 #' The workflow of `plot.ped(x, ...)` is approximately as follows:
 #'
 #' ```
-#'
 #' # Calculate plot parameters
-#'
 #' align = .pedAlignment(x, ...)
-#'
 #' annot = .pedAnnotation(x, ...)
-#'
 #' scale = .pedScaling(align, annot, ...)
 #'
 #' # Produce plot
-#'
 #' .drawPed(align, annot, scale)
-#'
-#' .annotatePed(align, annot, scale)
-#'
+#' .annotatePed(align, annot, scale)  # if `annot` contains text annotation etc
 #' ```
 #'
 #' The `labs` argument control the individual ID labels printed below the
@@ -168,7 +161,7 @@
 #'   the pedigree symbols. See Details for more information.
 #' @param font,fam Arguments passed on to [text()].
 #' @param colUnder,colInside,colAbove Colour vectors.
-#' @param cex.main,col.main,font.main Parameters passed on to [title()].
+#' @param cex.main,line.main,col.main,font.main Parameters passed on to [title()].
 #' @param alignment List of alignment details, as returned by [.pedAlignment()].
 #' @param annotation List of annotation details as returned by
 #'   [.pedAnnotation()].
@@ -182,7 +175,6 @@
 #' annot = .pedAnnotation(x)
 #' scale = .pedScaling(align, annot)
 #'
-#' frame()
 #' drawPed(align, annot, scale)
 #'
 #' @name plotmethods
@@ -859,7 +851,7 @@ NULL
 #' @export
 .annotatePed = function(alignment, annotation, scaling, font = NULL, fam = NULL,
                         col = NULL, colUnder = 1, colInside = 1, colAbove = 1,
-                        cex.main = NULL, font.main = NULL, col.main = NULL, ...) {
+                        cex.main = NULL, font.main = NULL, col.main = NULL, line.main = NA, ...) {
 
   nInd = alignment$nInd
   xall = alignment$xall
@@ -883,7 +875,7 @@ NULL
   # Add title
   if(!is.null(title)) {
     title(title, cex.main = cex.main, col.main = col.main,
-          font.main = font.main, family = fam, xpd = NA)
+          font.main = font.main, line = line.main, family = fam, xpd = NA)
   }
 
   # Deceased

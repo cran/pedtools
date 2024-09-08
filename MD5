@@ -1,6 +1,6 @@
-614e88ddb48095b67fe7aba1b0494285 *DESCRIPTION
-21d8c5af126687f314854f35c5c50adb *NAMESPACE
-eaeaa48ceef618d8bf37ca02527b910f *NEWS.md
+40ed3d17e973d0886413b921567570ae *DESCRIPTION
+ab31a3f0b4cd6abc6eca17004d2e944c *NAMESPACE
+d72c2463a502e4acb37feb2f0a98bd17 *NEWS.md
 561651245511d03772b4f6fa9fe79d4f *R/getMap.R
 ff56ca6bc301cd038a9e4e19590d5a9e *R/is.ped.R
 c9e01f6391da704699e667378830d3c5 *R/marker.R
@@ -18,11 +18,11 @@ efbf2a6621e2e371151360df5d82af84 *R/marker_select.R
 cb690fb09c9b1efebc4325d75c7b7f86 *R/marker_setattr_inplace.R
 37231d417a702dfb7f313042588d062c *R/marker_sort.R
 1c8e00087122d1b546144ea3291dfdd2 *R/marker_transfer.R
-5bea151994886eaaa7c415715d91e27d *R/marker_utils.R
+aa24109e1327aacb8bc2fc33ec2b6b03 *R/marker_utils.R
 09fd95e1c6c7cce8f99a7c6b123b7a15 *R/mendelianCheck.R
 6781404f7fd05bf5bc11d7b933952fc9 *R/mergePed.R
 2c66990f20077bb9d7c310a6ec2087c1 *R/ped.R
-57959ee786c915509b8c89b6d67f1e63 *R/ped_basic.R
+07e914003cd2cf927ba8075b10db3090 *R/ped_basic.R
 62ce7ef79e4bb8ba114a9dfc45702246 *R/ped_complex.R
 73fa3ce437ffedc419ce06509c575d40 *R/ped_connected.R
 87778123e3338236965fc43ed2d90117 *R/ped_convert.R
@@ -33,13 +33,13 @@ cb690fb09c9b1efebc4325d75c7b7f86 *R/marker_setattr_inplace.R
 d22bff7c4cfd69592a138e21eed62208 *R/ped_mask.R
 e476f63a401415f5f7b91d7c52e37aa5 *R/ped_methods.R
 c28bb21cfe82228d9b4eb780496b7702 *R/ped_modify.R
-ea3a8c35e34ca4c49d13664a8d9c3f06 *R/ped_plot.R
+c68153578bb69372dfe33e01272edaee *R/ped_plot.R
 bb3b6131795b506fe0155ace03ebfcc0 *R/ped_sex.R
 aee563ead1ebc4fc16f8d8e49f4504fd *R/ped_subgroups.R
 819d3c3080604812026d58e4668c260b *R/ped_utils.R
 1b54137d4ae82b40a266122de6d1201b *R/pedtools-package.R
 7cfbf849c71464ec22991e268b0742e2 *R/plot_dag.R
-8e16b2d3866c1bd595679a92c5e2c129 *R/plot_methods.R
+108b1c2cc8cf0588d4fb36f4f99bca17 *R/plot_methods.R
 2121b6d8fddd5fedde37d81c692d5f54 *R/randomPed.R
 d4b80f879366ac04154481ae465fe2a8 *R/readPed.R
 d6167f2f0073f801e5375612a00b8205 *R/setMutmod.R
@@ -51,7 +51,7 @@ c4b10827d26baf376a69c606a7fec494 *README.md
 0980c5290aefb761b6c1bc389a3bf658 *inst/WORDLIST
 3b55c48024a29fab77a6c01649aed7f7 *inst/doc/pedtools.R
 1c6d433dbe7069425fda6788f82134ec *inst/doc/pedtools.Rmd
-49e12a5714659d6058bca050ed54d395 *inst/doc/pedtools.html
+a599e1772306caf6ba1d0ea876b7c08b *inst/doc/pedtools.html
 4c20705b14c3412d9dcdf982bcf18b2e *man/addAllele.Rd
 191b560656ed0cfc0073a38d63f19b5e *man/as.data.frame.ped.Rd
 55db0dbe20db0f77bf05f4beec9b66d2 *man/as.matrix.ped.Rd
@@ -87,7 +87,7 @@ ee831ac28e2101b74a61954fe7c91c0a *man/nMarkers.Rd
 20d3d84bab3c6bc888d6f1953d179f89 *man/newMarker.Rd
 0930db16ae8af44c72ccf3748541c838 *man/newPed.Rd
 71d667fc9cf7e145e65c69ad1918f06d *man/ped.Rd
-748b8df5cdc004c7f8f26d417a308953 *man/ped_basic.Rd
+2e86bf64bcac6a2fc6832ea7b4c21634 *man/ped_basic.Rd
 b6818bbf844e7d8d729c4c8796875a37 *man/ped_complex.Rd
 6e7ab206c3916ca86a1991e17ee5175c *man/ped_internal.Rd
 dc95e08b64d7ed12a2ac893d001bc67d *man/ped_modify.Rd
@@ -95,8 +95,8 @@ dc95e08b64d7ed12a2ac893d001bc67d *man/ped_modify.Rd
 701f47e3756bab321f3f801b6028d850 *man/ped_utils.Rd
 c3bbb81b6fc7da3195834d562cb42bb0 *man/pedtools-package.Rd
 c30292a616657b122b291c13949304c5 *man/plot.ped.Rd
-c78e924311d14ce6f6547b8e0f0a1c69 *man/plotPedList.Rd
-697a5b573413f9026882187adf54309a *man/plotmethods.Rd
+7ccf0fd0c6d3aa4ae63c4e8d39cd1778 *man/plotPedList.Rd
+906437b6f05f8cfaeafa3003edbb9fb4 *man/plotmethods.Rd
 439eae035ed43a4c013d12aa8cdf5c8a *man/print.nucleus.Rd
 eafd34a71dc3576b38c16d63a01462a8 *man/print.ped.Rd
 3491bd093ec00cb39ea0749da3fceaea *man/randomPed.Rd
@@ -105,6 +105,7 @@ bce43f7c937c495c321d2f7d55704047 *man/readPed.Rd
 3834ed0effb77b85e3cbc53b41662e20 *man/setMutmod.Rd
 5c00ee056c138f2ed3ee5ba3feffdf67 *man/setSNPs.Rd
 39cc251ded202316dc791cf6f8cc0c50 *man/sortGenotypes.Rd
+2a6b0bb03c601c3f716b913f07a79cfd *man/swapGenotypes.Rd
 555bb3469ab0611b7ac7d083c6453238 *man/transferMarkers.Rd
 e89d14e06e2ed497aa696da703dcb932 *man/validatePed.Rd
 d3b0f6760f7a6cfac55bc4e04d94e137 *man/writePed.Rd
