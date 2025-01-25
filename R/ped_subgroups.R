@@ -5,7 +5,7 @@
 #'
 #' @param x A [ped()] object or a list of such.
 #' @param id,ids A character (or coercible to such) with one or several ID
-#'   labels.
+#'   labels. If `internal` is TRUE, `id` and `ids` should be positive integers.
 #' @param maxGen The number of generations to include. Default: Inf (no limit).
 #' @param inclusive A logical indicating whether an individual should be counted
 #'   among his or her own ancestors/descendants
@@ -21,10 +21,10 @@
 #'   wanted property. (Recall that a founder is a member without parents in the
 #'   pedigree, and that a leaf is a member without children in the pedigree.)
 #'
-#'   The functions `father`, `mother`, `cousins`, `grandparents`,
-#'   `nephews_nieces`, `children`, `parents`, `siblings`, `spouses`,
-#'   `unrelated`, each returns a vector containing the IDs of all pedigree
-#'   members having the specified relationship with `id`.
+#'   The functions `father`, `mother`, `parents`, `children`, `siblings`,
+#'   `grandparents`, `spouses`, `niblings` (nephews + nieces), `piblings`
+#'   (aunts + uncles) and `unrelated`, each returns a vector containing the
+#'   IDs of all pedigree members having the specified relationship with `id`.
 #'
 #'   The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
 #'   containing the IDs of all ancestors (resp. descendants) of the individual
@@ -58,6 +58,12 @@
 #'
 #' siblings(x, 4, half = FALSE) # none
 #' siblings(x, 4, half = TRUE)  # 9
+#'
+#' niblings(x, 9) # 6, 7
+#' niblings(x, 9, half = FALSE) # none
+#'
+#' piblings(x, 6) # 9
+#' piblings(x, 6, half = FALSE) # none
 #'
 #' ancestors(x, 6)                               # 2, 3, 4, 5
 #' ancestors(x, 6, maxGen = 2, inclusive = TRUE) # 4, 5, 6
@@ -187,60 +193,95 @@ untypedMembers = function(x, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 father = function(x, id, internal = FALSE) {
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
-    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-    return(father(x[[comp]], id, internal = FALSE))
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(internal && !is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
+
+  idInt = if(!internal) internalID(x, id) else id
+
+  if(discon) { # in this case idInt is a data frame
+    res = character(length(id))
+    for(co in unique.default(idInt$comp)) {
+      rw = idInt$comp == co
+      fai = father(x[[co]], id = idInt$int[rw], internal = TRUE)
+      fai[fai == 0] = NA
+      res[rw] = x[[co]]$ID[fai]
+    }
+    # For back compatibility. TODO: Remove in future version?
+    if(length(res) == 1 && is.na(res))
+      res = character(0)
+
+    return(res)
   }
 
-  if(!internal)
-    id = internalID(x, id)
+  # TODO: `nuclearPed() |> father(1)` now returns char(0). Better with NA?
 
-  fa = x$FIDX[id]
-  if(internal) fa else labels.ped(x)[fa]
+  fa = x$FIDX[idInt]
+  if(internal) fa else x$ID[fa]
 }
 
 #' @rdname ped_subgroups
 #' @export
 mother = function(x, id, internal = FALSE) {
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
-    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-    return(mother(x[[comp]], id, internal = FALSE))
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(internal && !is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
+
+  idInt = if(!internal) internalID(x, id) else id
+
+  if(discon) { # in this case idInt is a data frame
+    res = character(length(id))
+    for(co in unique.default(idInt$comp)) {
+      rw = idInt$comp == co
+      moi = mother(x[[co]], id = idInt$int[rw], internal = TRUE)
+      moi[moi == 0] = NA
+      res[rw] = x[[co]]$ID[moi]
+    }
+    # For back compatibility. TODO: Remove in future version?
+    if(length(res) == 1 && is.na(res))
+      res = character(0)
+
+    return(res)
   }
 
-  if(!internal)
-    id = internalID(x, id)
-
-  mo = x$MIDX[id]
-  if(internal) mo else labels.ped(x)[mo]
+  mo = x$MIDX[idInt]
+  if(internal) mo else x$ID[mo]
 }
+
 
 #' @rdname ped_subgroups
 #' @export
 children = function(x, id, internal = FALSE) {
-  if(length(id) != 1)
-    stop2("`id` must have length 1")
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
 
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
-    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-    return(children(x[[comp]], id, internal = FALSE))
+  if(internal && !is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
+
+  idInt = if(!internal) internalID(x, id) else id
+
+  if(discon) { # in this case idInt is a data frame
+    chList = lapply(unique.default(idInt$comp), function(co) {
+      chi = children(x[[co]], id = idInt$int[idInt$comp == co], internal = TRUE)
+      x[[co]]$ID[chi]
+    })
+    return(unlist(chList, use.names = FALSE))
   }
 
-  if(!internal)
-    id = internalID(x, id)
+  if(length(idInt) == 1)
+    ch = (x$FIDX == idInt | x$MIDX == idInt)
+  else
+    ch = (x$FIDX %in% idInt | x$MIDX %in% idInt)
 
-  ch = (x$FIDX == id | x$MIDX == id)
-  if(internal) which(ch) else labels.ped(x)[ch]
+  if(internal) which(ch) else x$ID[ch]
 }
-
-#' @rdname ped_subgroups
-#' @export
-offspring = children
 
 #' @rdname ped_subgroups
 #' @export
@@ -248,23 +289,26 @@ spouses = function(x, id, internal = FALSE) {
   if(length(id) != 1)
     stop2("`id` must have length 1")
 
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(discon) {
     comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
     return(spouses(x[[comp]], id, internal = FALSE))
   }
 
-  # Returns a vector containing all individuals sharing offspring with <id>.
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   spous = switch(x$SEX[id] + 1,
                 c(x$MIDX[x$FIDX == id], x$FIDX[x$MIDX == id]), # sex = 0
                 x$MIDX[x$FIDX == id],                        # sex = 1
                 x$FIDX[x$MIDX == id])                        # sex = 2
   spous_uniq = unique.default(spous)
-  if(internal) spous_uniq else labels.ped(x)[spous_uniq]
+  if(internal) spous_uniq else x$ID[spous_uniq]
 }
 
 
@@ -287,6 +331,8 @@ unrelated = function(x, id, internal = FALSE) {
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   ancs = ancestors(x, id, inclusive = TRUE, internal = TRUE)
   rel = lapply(ancs, function(a) descendants(x, a, inclusive = TRUE, internal = TRUE))
@@ -308,6 +354,8 @@ parents = function(x, id, internal = FALSE) {
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   par = c(x$FIDX[id], x$MIDX[id])
   if(internal) par else labels.ped(x)[par]
@@ -325,6 +373,8 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   nextgen = id
   for(i in seq_len(degree))
@@ -336,15 +386,26 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 siblings = function(x, id, half = NA, internal = FALSE) {
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
+  if(length(id) != 1)
+    stop2("`id` must have length 1")
+
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(discon) {
     comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
     return(siblings(x[[comp]], id, half = half, internal = FALSE))
   }
 
   if(!internal)
     id = internalID(x, id)
+  else {
+    if(!is.numeric(id))
+      stop2("Argument `id` must be numeric when `internal` is TRUE")
+    if(is.na(id) || id <= 0)
+      stop2("Argument `id` must be a positive integer when `internal` is TRUE")
+  }
 
   fa = x$FIDX[id]
   mo = x$MIDX[id]
@@ -389,6 +450,29 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
+niblings = function(x, id, half = NA, internal = FALSE) {
+  # Returns vector of all children of all siblings of `id`
+  sibs = siblings(x, id, half = half, internal = internal)
+  children(x, sibs, internal = internal)
+}
+
+#' @rdname ped_subgroups
+#' @export
+piblings = function(x, id, half = NA, internal = FALSE) {
+  # Returns vector of all siblings of the parents of `id`
+  pr = parents(x, id, internal = internal)
+  if(internal)
+    pr = unique.default(pr[pr > 0])
+
+  if(!length(pr))
+    return(if(internal) integer(0) else character(0))
+
+  pibList = lapply(pr, function(p) siblings(x, p, half = half, internal = internal))
+  unique.default(unlist(pibList))
+}
+
+#' @rdname ped_subgroups
+#' @export
 ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   if(is.pedList(x)) {
     if(internal)
@@ -402,9 +486,10 @@ ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
     return(unlist(ancList))
   }
 
-  # climbs upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   FIDX = x$FIDX
   MIDX = x$MIDX
@@ -413,6 +498,8 @@ ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
 
   up1 = c(FIDX[id], MIDX[id])
   up1 = up1[up1 > 0]
+
+  # Climb upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
 
   while (g < maxGen && length(up1)) {
     ancest = c(ancest, up1)
@@ -423,6 +510,7 @@ ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   ancest = .mysortInt(unique.default(ancest))
   if(internal) ancest else labels.ped(x)[ancest]
 }
+
 
 #' @rdname ped_subgroups
 #' @export
@@ -458,6 +546,8 @@ descendants = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   FIDX = x$FIDX
   MIDX = x$MIDX

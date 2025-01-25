@@ -1,3 +1,29 @@
+
+# pedtools 2.8.0
+
+## Breaking changes
+
+* Pedtools previously included `igraph` in the Suggests field, for the sole purpose of finding loop breakers in pedigrees with marriage loops (in `breakLoops()`). This functionality has now been replaced with a custom implementation, allowing to drop the `igraph` dependency. The new method is slightly faster than the previous, but it may select different loop breakers in some cases.
+
+## New features
+
+* New plot argument `miscarriage` for indicating miscarriages as triangles.
+
+*	New function `harmoniseMarkers()`.
+
+*	New functions `niblings()` (= nephews & nieces) and `piblings()` (= aunts & uncles, i.e. siblings of parents).
+
+*	`getLocusAttributes()` gains argument `simplify`.
+
+*	In `getGenotypes()`, allow `ids` to be a function.
+
+## Other
+
+*	Improved error messages in `father()`, `mother()` etc.
+* Better handling of ped lists in `father()`, `mother()` etc.
+*	Remove deprecated `offspring()`. Use `children()` instead.
+
+
 # pedtools 2.7.1
 
 ## New features

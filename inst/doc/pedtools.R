@@ -9,10 +9,10 @@ knitr::opts_chunk$set(
 library(kableExtra)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  install.packages("pedtools")
+# install.packages("pedtools")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  devtools::install_github("magnusdv/pedtools")
+# devtools::install_github("magnusdv/pedtools")
 
 ## ----message=FALSE------------------------------------------------------------
 library(pedtools)

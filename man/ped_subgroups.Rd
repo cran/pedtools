@@ -12,13 +12,14 @@
 \alias{father}
 \alias{mother}
 \alias{children}
-\alias{offspring}
 \alias{spouses}
 \alias{unrelated}
 \alias{parents}
 \alias{grandparents}
 \alias{siblings}
 \alias{nephews_nieces}
+\alias{niblings}
+\alias{piblings}
 \alias{ancestors}
 \alias{commonAncestors}
 \alias{descendants}
@@ -46,8 +47,6 @@ mother(x, id, internal = FALSE)
 
 children(x, id, internal = FALSE)
 
-offspring(x, id, internal = FALSE)
-
 spouses(x, id, internal = FALSE)
 
 unrelated(x, id, internal = FALSE)
@@ -59,6 +58,10 @@ grandparents(x, id, degree = 2, internal = FALSE)
 siblings(x, id, half = NA, internal = FALSE)
 
 nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
+
+niblings(x, id, half = NA, internal = FALSE)
+
+piblings(x, id, half = NA, internal = FALSE)
 
 ancestors(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
@@ -77,7 +80,7 @@ descentPaths(x, ids = founders(x), internal = FALSE)
 internal order.}
 
 \item{id, ids}{A character (or coercible to such) with one or several ID
-labels.}
+labels. If \code{internal} is TRUE, \code{id} and \code{ids} should be positive integers.}
 
 \item{degree, removal}{Non-negative integers.}
 
@@ -96,10 +99,10 @@ each return a vector containing the IDs of all pedigree members with the
 wanted property. (Recall that a founder is a member without parents in the
 pedigree, and that a leaf is a member without children in the pedigree.)
 
-The functions \code{father}, \code{mother}, \code{cousins}, \code{grandparents},
-\code{nephews_nieces}, \code{children}, \code{parents}, \code{siblings}, \code{spouses},
-\code{unrelated}, each returns a vector containing the IDs of all pedigree
-members having the specified relationship with \code{id}.
+The functions \code{father}, \code{mother}, \code{parents}, \code{children}, \code{siblings},
+\code{grandparents}, \code{spouses}, \code{niblings} (nephews + nieces), \code{piblings}
+(aunts + uncles) and \code{unrelated}, each returns a vector containing the
+IDs of all pedigree members having the specified relationship with \code{id}.
 
 The commands \code{ancestors(x, id)} and \code{descendants(x, id)} return vectors
 containing the IDs of all ancestors (resp. descendants) of the individual
@@ -135,6 +138,12 @@ mother(x, 4)       # 3
 
 siblings(x, 4, half = FALSE) # none
 siblings(x, 4, half = TRUE)  # 9
+
+niblings(x, 9) # 6, 7
+niblings(x, 9, half = FALSE) # none
+
+piblings(x, 6) # 9
+piblings(x, 6, half = FALSE) # none
 
 ancestors(x, 6)                               # 2, 3, 4, 5
 ancestors(x, 6, maxGen = 2, inclusive = TRUE) # 4, 5, 6
