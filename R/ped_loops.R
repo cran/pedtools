@@ -13,16 +13,15 @@
 #' labels (see examples).
 #'
 #' The function `breakLoops` breaks the loops of the input pedigree by
-#' duplicating the *loop breakers*. These may be given by the user; otherwise
-#' they are selected automatically. In the current implementation, only
-#' nonfounders can act as loop breakers. For automatic selection of loop
-#' breakers, `breakLoops` first calls `findLoopBreakers`, which identifies a set
-#' of individuals breaking all *inbreeding loops* and breaks at the returned
-#' individuals. If the resulting ped object still has loops, `findLoopBreakers2`
-#' is called to handle *marriage loops*. In earlier versions of pedtools this
-#' required the `igraph` package, but now uses a custom implementation using a
-#' depth-first search algorithm to find a cycle in the marriage node graph of
-#' the pedigree.
+#' duplicating the loop breakers. These may be given by the user; otherwise they
+#' are selected automatically. In the current implementation, only nonfounders
+#' can act as loop breakers. For automatic selection of loop breakers,
+#' `breakLoops` first calls `findLoopBreakers`, which identifies and breaks all
+#' *inbreeding loops*. If the resulting pedigree still has loops,
+#' `findLoopBreakers2` is called to handle *marriage loops*. In earlier versions
+#' this required the `igraph` package, but now uses a custom implementation
+#' using a depth-first search algorithm to find a cycle in the marriage node
+#' graph.
 #'
 #' @param x a [ped()] object.
 #' @param loopBreakers either NULL (resulting in automatic selection of loop
@@ -37,7 +36,7 @@
 #'   `LOOP_BREAKERS` entry, namely a matrix with the IDs of the original loop
 #'   breakers in the first column and the duplicates in the second. If loop
 #'   breaking fails, then depending on `errorIfFail` either an error is raised,
-#'   or the input pedigree is returned, still containing unbroken loops.
+#'   or the input pedigree (with loops intact) is returned.
 #'
 #'   For `tieLoops`, a `ped` object in which any duplicated individuals (as
 #'   given in the `x$LOOP_BREAKERS` entry) are merged. For any ped object `x`,
@@ -72,14 +71,36 @@
 #'
 #' @export
 inbreedingLoops = function(x) {
+
+  # TODO: This is very slow for large pedigrees
+  # More efficient implementation possible! (DFS?)
+
+  if(pedsize(x)[1] > 30) {
+    # Identify unneeded sib leaves
+    pars = x$FIDX * 1000 + x$MIDX
+    sibships = unname(split(seq_along(pars), pars))
+    sibships = sibships[lengths(sibships) > 1]
+
+    lvsInt = leaves(x, TRUE)
+    remov = unlist(lapply(sibships, function(s) {
+      lvs = s %in% lvsInt
+      if(all(lvs)) s[-1] else s[lvs]
+    }))
+
+    # Remove sib leaves
+    x = x |> setMarkers(NULL) |> removeIndividuals(remov, verbose = FALSE)
+  }
+
+  # Start main algorithm
   n = pedsize(x)
   dls = descentPaths(x, 1:n, internal = TRUE)
   dls = dls[lengths(dls) > 1]
 
-  loops = list()
-  for (dl in dls) {
+  loops = lapply(dls, function(dl) {
     top = dl[[1]][1]
     pairs = .comb2(length(dl))
+    loopsA = vector("list", length = nrow(pairs))
+    i = 1
     for (p in 1:nrow(pairs)) {
       p1 = dl[[pairs[p, 1]]][-1]
       p2 = dl[[pairs[p, 2]]][-1]
@@ -91,11 +112,16 @@ inbreedingLoops = function(x) {
       bottom = inters[1]
       pathA = p1[seq_len(match(bottom, p1)-1)]  #without top and bottom. Seq_len to deal with the 1:0 problem.
       pathB = p2[seq_len(match(bottom, p2)-1)]
-      loops = c(loops, list(list(top = top, bottom = bottom, pathA = pathA, pathB = pathB)))
+      loopsA[[i]] = list(top = top, bottom = bottom, pathA = pathA, pathB = pathB)
+      i = i + 1
     }
-  }
-  unique(loops)
+    length(loopsA) = i - 1
+    unique.default(loopsA)
+  })
+
+  unlist(loops, recursive = FALSE)
 }
+
 
 #' @export
 #' @rdname inbreedingLoops
@@ -229,6 +255,7 @@ tieLoops = function(x, verbose = TRUE) {
 #' @rdname inbreedingLoops
 findLoopBreakers = function(x) {
   loopdata = inbreedingLoops(x)
+
   # write each loop as vector excluding top/bottom
   loops = lapply(loopdata, function(lo) c(lo$pathA, lo$pathB))
   bestbreakers = numeric()

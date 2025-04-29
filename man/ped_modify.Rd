@@ -8,6 +8,7 @@
 \alias{addDaughter}
 \alias{addParents}
 \alias{removeIndividuals}
+\alias{trim}
 \alias{branch}
 \alias{subset.ped}
 \title{Add/remove pedigree members}
@@ -37,6 +38,8 @@ removeIndividuals(
   returnLabs = FALSE,
   verbose = TRUE
 )
+
+trim(x, uninformative, verbose = TRUE)
 
 branch(x, id)
 
@@ -72,6 +75,10 @@ method of removing pedigree members. Abbreviations are allowed.}
 returns only the labels of all members to be removed, instead of actually
 removing them.}
 
+\item{uninformative}{A vector naming individuals considered "uninformative",
+or a function (typically a helper function like \code{\link[=untypedMembers]{untypedMembers()}}).
+Uninformative leaves are removed iteratively until no more can be found.}
+
 \item{subset}{A character vector (or coercible to such) with ID labels
 forming a connected sub-pedigree.}
 
@@ -95,11 +102,15 @@ is supplied, the other is created as a new individual.
 
 \code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
 all of their ancestors OR descendants, depending on the \code{remove} argument.
-Leftover spouses disconnected to the remaining pedigree are also removed. An
-error is raised if result is a disconnected pedigree.
+Leftover spouses disconnected from the remaining pedigree are also removed.
 
 The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
 his/her spouses and descendants.
+
+The \code{trim()} function iteratively removes uninformative leaves (i.e., members
+without children) from the pedigree. Note that the definition of
+"uninformative" is entirely user-defined. For example, \code{trim(x, untypedMembers)}, will remove untyped individuals from the bottom until the
+process stops.
 
 Finally, \code{subset()} can be used to extract any connected sub-pedigree. (Note
 that in the current implementation, the function does not actually check that
