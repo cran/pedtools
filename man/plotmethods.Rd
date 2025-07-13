@@ -17,7 +17,8 @@
   miscarriage = NULL,
   packed = TRUE,
   width = 10,
-  align = c(1.5, 2),
+  straight = FALSE,
+  align = NULL,
   spouseOrder = NULL,
   hints = NULL,
   ...
@@ -43,6 +44,7 @@
   carrier = NULL,
   deceased = NULL,
   starred = NULL,
+  proband = NULL,
   textAnnot = NULL,
   textInside = NULL,
   textAbove = NULL,
@@ -62,6 +64,7 @@
   vsep2 = FALSE,
   autoScale = FALSE,
   minsize = 0.15,
+  debug = FALSE,
   ...
 )
 
@@ -101,6 +104,9 @@ triangles in the pedigree plot.}
 
 \item{packed, width, align}{Parameters passed on to
 \code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Can usually be left untouched.}
+
+\item{straight}{A logical, indicating if the plot should (attempt to) use
+straight lines everywhere. Default: FALSE.}
 
 \item{spouseOrder}{An optional vector (or list of vectors) indicating plot
 ordering for spouses. (This is converted into a matrix and forward as
@@ -167,6 +173,9 @@ to indicate unaffected carriers of the disease allele.)}
 \item{starred}{A vector of labels indicating pedigree members that should be
 marked with a star in the pedigree plot.}
 
+\item{proband}{A vector of labels indicating proband individuals, to be
+marked with an arrow in the plot.}
+
 \item{textAnnot}{A list specifying further text annotation around or inside
 the pedigree symbols. See Details for more information.}
 
@@ -202,6 +211,8 @@ explicitly. Rarely needed by end users.}
 that the symbol dimensions are at least \code{minsize} inches. Default: FALSE.}
 
 \item{minsize}{A positive number, by default 0.15. (See \code{autoScale}.)}
+
+\item{debug}{A logical, turning on messages from the autoscale algorithm.}
 
 \item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
 
@@ -248,10 +259,9 @@ The argument \code{textAnnot} allows customised annotation around and inside eac
 symbol. This takes a list of lists, whose names may include "topleft",
 "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
 "inside". Each inner list should contain a character vector as its first
-element (with the text to be printed), followed by further arguments passed to
-\code{\link[=text]{text()}}. For example, \code{textAnnot = list(left = list(c(A = "1"), cex = 2))}
-prints a large number "1" to the left of individual A (if such an individual
-exists in the pedigree). See Examples.
+element (with the text to be printed), followed by further arguments passed
+to \code{\link[=text]{text()}}. For example, \code{textAnnot = list(left = list(c(A = "1"), cex = 2))} prints a large number "1" to the left of individual A (if such an
+individual exists in the pedigree). See Examples.
 
 The arguments \code{col}, \code{fill}, \code{lty} and \code{lwd} can all be indicated in a number
 of ways:

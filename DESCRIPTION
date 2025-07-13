@@ -1,7 +1,7 @@
 Type: Package
 Package: pedtools
 Title: Creating and Working with Pedigrees and Marker Data
-Version: 2.8.1
+Version: 2.8.2
 Authors@R: 
     person("Magnus Dehli", "Vigeland", , "m.d.vigeland@medisin.uio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9134-4962"))
@@ -27,9 +27,9 @@ Encoding: UTF-8
 Language: en-GB
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-04-29 16:50:55 UTC; magnu
-Author: Magnus Dehli Vigeland [aut, cre]
-    (<https://orcid.org/0000-0002-9134-4962>)
+Packaged: 2025-07-13 12:22:20 UTC; magnu
+Author: Magnus Dehli Vigeland [aut, cre] (ORCID:
+    <https://orcid.org/0000-0002-9134-4962>)
 Maintainer: Magnus Dehli Vigeland <m.d.vigeland@medisin.uio.no>
 Repository: CRAN
-Date/Publication: 2025-04-29 17:30:06 UTC
+Date/Publication: 2025-07-13 13:00:02 UTC
