@@ -7,6 +7,7 @@
 \alias{addSon}
 \alias{addDaughter}
 \alias{addParents}
+\alias{addSibling}
 \alias{removeIndividuals}
 \alias{trim}
 \alias{branch}
@@ -31,6 +32,8 @@ addDaughter(x, parents, id = NULL, verbose = TRUE)
 
 addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
 
+addSibling(x, id, sex = 1, side = c("right", "left"), verbose = TRUE)
+
 removeIndividuals(
   x,
   ids,
@@ -43,7 +46,7 @@ trim(x, uninformative, verbose = TRUE)
 
 branch(x, id)
 
-\method{subset}{ped}(x, subset, ...)
+\method{subset}{ped}(x, subset, ..., missingParents = c("error", "exclude", "include"))
 }
 \arguments{
 \item{x}{A \code{ped} object, or a list of such.}
@@ -56,17 +59,21 @@ the other parent is created and given a suitable name.}
 \item{nch}{A positive integer indicating the number of children to be
 created. Default: 1.}
 
-\item{sex}{Gender codes of the created children (recycled if needed).}
+\item{sex}{A vector of integers indicating the sex of the created
+individuals. (1 = male, 2 = female, 0 = unknown). Recycled as needed.}
 
 \item{ids}{A vector of ID labels. In \code{addChildren()} these are the children
 to be created. If NULL (default) given, automatic labels are generated.}
 
-\item{verbose}{A logical: Verbose output or not.}
+\item{verbose}{A logical.}
 
 \item{parents}{A vector of 1 or 2 ID labels, of which at least one must be an
 existing member of \code{x}.}
 
 \item{id}{The ID label of a pedigree member.}
+
+\item{side}{A word indicating whether a new sibling should be placed to the
+left or right of the indicated individual. Default: "right".}
 
 \item{remove}{Either "ancestors" or "descendants" (default), dictating the
 method of removing pedigree members. Abbreviations are allowed.}
@@ -79,10 +86,14 @@ removing them.}
 or a function (typically a helper function like \code{\link[=untypedMembers]{untypedMembers()}}).
 Uninformative leaves are removed iteratively until no more can be found.}
 
-\item{subset}{A character vector (or coercible to such) with ID labels
-forming a connected sub-pedigree.}
+\item{subset}{A character vector (or coercible to such): A subset of the ID
+labels of \code{x}.}
 
 \item{...}{Not used.}
+
+\item{missingParents}{A word indicating how to deal with single parents in
+the subset. Either "error" (default), "exclude" (remove the parent-child
+connection) or "include" (expand \code{subset} to include the missing parents).}
 }
 \value{
 The modified \code{ped} object.
@@ -100,22 +111,32 @@ most common use of \code{addChildren()}, namely adding a single child to a
 pedigree. Note that the parents can be given in any order. If only one parent
 is supplied, the other is created as a new individual.
 
+\code{addSibling()} adds a sibling to the indicated individual, creating parents
+if necessary. The new sibling is placed either directly before or after the
+indicated individual, depending on the \code{side} argument. (But note that the
+internal ordering of individuals is not always respected when plotting the
+pedigree.)
+
 \code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
 all of their ancestors OR descendants, depending on the \code{remove} argument.
 Leftover spouses disconnected from the remaining pedigree are also removed.
 
 The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
-his/her spouses and descendants.
+his/her descendants, and all necessary spouses. Note that some structure may
+be lost in this process; for instance, compare \code{x = halfSibTriangle(3)} with
+\code{branch(x, 1)}.
 
 The \code{trim()} function iteratively removes uninformative leaves (i.e., members
 without children) from the pedigree. Note that the definition of
 "uninformative" is entirely user-defined. For example, \code{trim(x, untypedMembers)}, will remove untyped individuals from the bottom until the
 process stops.
 
-Finally, \code{subset()} can be used to extract any connected sub-pedigree. (Note
-that in the current implementation, the function does not actually check that
-the indicated subset forms a connected pedigree; failing to comply with this
-may lead to obscure errors.)
+Finally, \code{subset()} can be used to extract any sub-pedigree, returning a list
+of pedigrees if the result is disconnected. By default, an error is raised if
+some individuals would be left with exactly one parent. Alternatively,
+\code{missingParents = "exclude"} removes the parent-child connection in such
+cases, while \code{missingParents = "include"} adds the missing parent to the
+subset.
 }
 \examples{
 
@@ -133,6 +154,14 @@ y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 # Adding a child across components
 z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
 
+# Extract a branch
+w = cousinPed(1, child = TRUE)
+w4 = branch(w, 4)
+plot(list(w, w4))
+
+# General subsetting depends on `missingParent`:
+subset(w, c(3,7), missingParents = "exclude")
+subset(w, c(3,7), missingParents = "include")
 
 }
 \seealso{

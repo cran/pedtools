@@ -11,12 +11,20 @@
 #' pedigree. Note that the parents can be given in any order. If only one parent
 #' is supplied, the other is created as a new individual.
 #'
+#' `addSibling()` adds a sibling to the indicated individual, creating parents
+#' if necessary. The new sibling is placed either directly before or after the
+#' indicated individual, depending on the `side` argument. (But note that the
+#' internal ordering of individuals is not always respected when plotting the
+#' pedigree.)
+#'
 #' `removeIndividuals()` removes the individuals indicated with `ids` along with
 #' all of their ancestors OR descendants, depending on the `remove` argument.
 #' Leftover spouses disconnected from the remaining pedigree are also removed.
 #'
 #' The `branch()` function extracts the sub-pedigree formed by `id` and all
-#' his/her spouses and descendants.
+#' his/her descendants, and all necessary spouses. Note that some structure may
+#' be lost in this process; for instance, compare `x = halfSibTriangle(3)` with
+#' `branch(x, 1)`.
 #'
 #' The `trim()` function iteratively removes uninformative leaves (i.e., members
 #' without children) from the pedigree. Note that the definition of
@@ -24,10 +32,12 @@
 #' untypedMembers)`, will remove untyped individuals from the bottom until the
 #' process stops.
 #'
-#' Finally, `subset()` can be used to extract any connected sub-pedigree. (Note
-#' that in the current implementation, the function does not actually check that
-#' the indicated subset forms a connected pedigree; failing to comply with this
-#' may lead to obscure errors.)
+#' Finally, `subset()` can be used to extract any sub-pedigree, returning a list
+#' of pedigrees if the result is disconnected. By default, an error is raised if
+#' some individuals would be left with exactly one parent. Alternatively,
+#' `missingParents = "exclude"` removes the parent-child connection in such
+#' cases, while `missingParents = "include"` adds the missing parent to the
+#' subset.
 #'
 #' @param x A `ped` object, or a list of such.
 #' @param ids A vector of ID labels. In `addChildren()` these are the children
@@ -47,10 +57,13 @@
 #'   the other parent is created and given a suitable name.
 #' @param nch A positive integer indicating the number of children to be
 #'   created. Default: 1.
-#' @param sex Gender codes of the created children (recycled if needed).
-#' @param verbose A logical: Verbose output or not.
+#' @param sex A vector of integers indicating the sex of the created
+#'   individuals. (1 = male, 2 = female, 0 = unknown). Recycled as needed.
 #' @param parents A vector of 1 or 2 ID labels, of which at least one must be an
 #'   existing member of `x`.
+#' @param side A word indicating whether a new sibling should be placed to the
+#'   left or right of the indicated individual. Default: "right".
+#' @param verbose A logical.
 #'
 #' @return The modified `ped` object.
 #' @seealso [ped()], [relabel()], [swapSex()]
@@ -71,6 +84,14 @@
 #' # Adding a child across components
 #' z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
 #'
+#' # Extract a branch
+#' w = cousinPed(1, child = TRUE)
+#' w4 = branch(w, 4)
+#' plot(list(w, w4))
+#'
+#' # General subsetting depends on `missingParent`:
+#' subset(w, c(3,7), missingParents = "exclude")
+#' subset(w, c(3,7), missingParents = "include")
 #'
 #' @name ped_modify
 NULL
@@ -233,7 +254,7 @@ addDaughter = function(x, parents, id = NULL, verbose = TRUE) {
 #' @rdname ped_modify
 #' @export
 addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
-  if (length(id) > 1)
+  if(length(id) > 1)
       stop2("Cannot add parents to multiple individuals: ", id)
 
   labs = labels(x)
@@ -306,6 +327,43 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
   reorderPed(y, neworder, internal = TRUE)
 }
 
+#' @rdname ped_modify
+#' @export
+addSibling = function(x, id, sex = 1, side = c("right", "left"), verbose = TRUE) {
+
+  if(length(id) > 1)
+    stop2("Cannot add sibling to multiple individuals: ", id)
+
+  if(is.pedList(x)) {
+    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
+    x[[comp]] = addSibling(x[[comp]], id = id, sex = sex, side = side)
+    return(x)
+  }
+
+  ### By now, x is a connected pedigree
+
+  if(id %in% founders(x))
+    x = addParents(x, id, verbose = FALSE)
+
+  # Variables needed below
+  n = length(x$ID)
+  idInt = internalID(x, id)
+  side = match.arg(side)
+
+  # Add the sibling
+  y = addChild(x, parents(x, id), sex = sex, verbose = verbose)
+
+  # If no reordering needed, return
+  if(n == idInt && side == "right")
+    return(y)
+
+  # Move sib directly before or after `id`
+  ord = switch(side,
+               left = c(seq_len(idInt-1), n+1, idInt:n),
+               right = c(seq_len(idInt), n+1, if(idInt < n) seq.int(idInt+1, n)))
+
+  reorderPed(y, ord, internal = TRUE)
+}
 
 
 #' @rdname ped_modify
@@ -403,7 +461,7 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
   }
 
   if(length(makeFounderIdx))
-    new[match(makeFounderIdx, new[,1]), 2:3] = 0
+    new[match(makeFounderIdx, new[,1]), 2:3] = 0L
 
   attrs = attributes(xmatr)
 
@@ -457,17 +515,20 @@ branch = function(x, id) {
   # sort (since subset() does not sort)
   ids = ids[order(internalID(x, ids))]
 
-  subset(x, subset = ids)
+  subset(x, subset = ids, missingParents = "exclude")
 }
 
 
-#' @param subset A character vector (or coercible to such) with ID labels
-#'   forming a connected sub-pedigree.
+#' @param subset A character vector (or coercible to such): A subset of the ID
+#'   labels of `x`.
 #' @param ... Not used.
+#' @param missingParents A word indicating how to deal with single parents in
+#'   the subset. Either "error" (default), "exclude" (remove the parent-child
+#'   connection) or "include" (expand `subset` to include the missing parents).
 #'
 #' @rdname ped_modify
 #' @export
-subset.ped = function(x, subset, ...) {
+subset.ped = function(x, subset, ..., missingParents = c("error", "exclude", "include")) {
   if(!is.null(x$LOOP_BREAKERS))
     stop2("`subset()` is not yet implemented for pedigrees with broken loops")
 
@@ -477,13 +538,33 @@ subset.ped = function(x, subset, ...) {
     stop2("Duplicated ID label: ", unique(subset[duplicated(subset)]))
 
   pedm = as.matrix(x)
+
+  missPar = match.arg(missingParents)
+
+  # If missing parents are to be included, do this now
+  if(missPar == "include") {
+    fa = pedm[sub_idx, 2]
+    mo = pedm[sub_idx, 3]
+    missFa = fa > 0 & !fa %in% sub_idx
+    missMo = mo > 0 & !mo %in% sub_idx
+    eF = fa[missFa & !missMo]
+    eM = mo[!missFa & missMo]
+    sub_idx = sort.int(unique.default(c(sub_idx, eF, eM)))
+  }
+
+  # Main subsetting
   subped = pedm[sub_idx, , drop = FALSE]
 
-  # set FID = 0 if father is not in subset
+  # Set FID = 0 for fathers outside subset
   subped[!(subped[, 2] %in% sub_idx), 2] = 0L
 
-  # set MID = 0 if mother is not in subset
+  # Set MID = 0 for mothers outside in subset
   subped[!(subped[, 3] %in% sub_idx), 3] = 0L
+
+  # Single parents: Remove edge if "exclude"
+  if(missPar == "exclude") {
+    subped[xor(subped[,2] > 0, subped[,3] > 0), 2:3] = 0L
+  }
 
   # Fix labels
   attrs = attributes(pedm)
