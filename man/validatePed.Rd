@@ -4,7 +4,16 @@
 \alias{validatePed}
 \title{Pedigree errors}
 \usage{
-validatePed(x = NULL, id = NULL, fid = NULL, mid = NULL, sex = NULL)
+validatePed(
+  x = NULL,
+  id = x$ID,
+  fid = NULL,
+  mid = NULL,
+  sex = x$SEX,
+  famid = x$FAMID,
+  fidx = x$FIDX,
+  midx = x$MIDX
+)
 }
 \arguments{
 \item{x}{A \code{ped} object.}
@@ -18,6 +27,10 @@ or NA.}
 \item{sex}{A numeric of the same length as \code{id}, describing the genders of
 the individuals (in the same order as \code{id}.) Each entry must be either 1
 (=male), 2 (=female) or 0 (=unknown).}
+
+\item{famid}{A character string. Default: An empty string.}
+
+\item{fidx, midx}{Integer vectors of parental indices (for internal use).}
 }
 \value{
 If no errors are detected, the function returns NULL invisibly.
